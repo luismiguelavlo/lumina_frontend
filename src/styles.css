@@ -1,3 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: #ffb247;
+  --color-background-light: #fffbf5;
+  --color-background-dark: #2d2424;
+  --color-text-dark: #2d2424;
+  --color-text-light: #fffbf5;
+  --color-surface-dark: #3d3333;
+
+  --font-display: 'Lexend', ui-sans-serif, system-ui, sans-serif;
+
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+
+  --shadow-neumorphic-inner:
+    inset 2px 2px 5px rgb(0 0 0 / 0.05), inset -2px -2px 5px rgb(255 255 255 / 0.8);
+  --shadow-neumorphic-inner-focus:
+    inset 4px 4px 8px rgb(0 0 0 / 0.08), inset -4px -4px 8px rgb(255 255 255 / 0.9);
+  --shadow-glass: 0 8px 32px 0 rgb(31 38 135 / 0.07);
+  --shadow-neumorphic-lift: 4px 4px 10px rgb(0 0 0 / 0.1), -4px -4px 10px rgb(255 255 255 / 1);
+  --shadow-neumorphic-lift-hover: 2px 2px 5px rgb(0 0 0 / 0.1), -2px -2px 5px rgb(255 255 255 / 1);
+}

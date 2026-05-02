@@ -1,0 +1,51 @@
+<section class="scroll-mt-24 px-6 py-24" id="explore-catalog">
+  <div class="mx-auto flex max-w-7xl flex-col items-center gap-16 lg:flex-row">
+    <div class="space-y-8 lg:w-1/2">
+      <h2 class="text-4xl font-bold text-slate-900 dark:text-slate-100">Explore the book catalog</h2>
+      <p class="text-xl leading-relaxed text-slate-600 dark:text-slate-400">
+        Browsing books is like browsing a playlist. Curated collections, personalized recommendations, and
+        a visual interface that makes finding your next read an experience.
+      </p>
+      <div
+        class="inline-flex items-center gap-3 rounded-full bg-slate-200/80 px-5 py-3 text-sm font-medium text-slate-800 shadow-neomorph-inset dark:bg-slate-800/80 dark:text-slate-200 dark:shadow-neo-icon-active-dark"
+      >
+        <app-lum-icon [extraClass]="'text-primary'" [name]="'schedule'" />
+        Coming soon: we’re upgrading the way you explore
+      </div>
+    </div>
+    <div class="w-full lg:w-1/2">
+      <div class="grid grid-cols-2 gap-4">
+        <div
+          class="group relative flex aspect-square flex-col justify-end overflow-hidden rounded-2xl bg-background-light p-6 shadow-neomorph-raised dark:bg-background-dark dark:shadow-[10px_10px_20px_#1a140b,-10px_-10px_20px_#2c2213]"
+        >
+          <img
+            alt="Classic books"
+            class="absolute inset-0 h-full w-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9bZlLUbyAp81nqs5mdWQBvE47L8wafMDXvmisVOLQ-DFRip_W11hQqYop_GPQiQMbY87e1A7BiDx9JMbINMHwrh04bgtIr7-23I6A4YXq_oAtj15a_UywqtxCIA99UkzFoJtND5s-_Mnkwc35HM6r4tyhK_7-QPMgieyhYj68aNTBrYbNnlfe87gMcl3SNw0WAWNEWi_BkTqvwTErb0TIqBIwbT0yVjI6tg3kZZXJigrrzdR4orcQlwPM3y0p6_0cSs4QAZr3oRs"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-[#e5d8cc] via-transparent to-transparent dark:from-background-dark"
+            aria-hidden="true"
+          ></div>
+          <h3 class="relative z-10 text-xl font-bold text-slate-900 dark:text-slate-100">Classics</h3>
+        </div>
+        <div
+          class="flex aspect-square flex-col items-center justify-center rounded-2xl bg-primary/10 p-6 text-center shadow-glass"
+        >
+          <app-lum-icon [extraClass]="'mb-4 text-5xl text-primary'" [name]="'search'" />
+          <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Visual search</h3>
+        </div>
+        <a
+          class="col-span-2 flex items-center justify-between rounded-2xl bg-background-light p-6 no-underline shadow-neomorph-raised transition-transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none dark:bg-background-dark dark:shadow-[10px_10px_20px_#1a140b,-10px_-10px_20px_#2c2213] dark:focus-visible:ring-offset-background-dark"
+          routerLink="/catalog"
+        >
+          <div>
+            <h3 class="mb-1 text-xl font-bold text-slate-900 dark:text-slate-100">New arrivals</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400">Updated daily</p>
+          </div>
+          <app-lum-icon [extraClass]="'text-3xl text-primary'" [name]="'arrow_forward'" />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

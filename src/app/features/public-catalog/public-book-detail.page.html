@@ -1,0 +1,32 @@
+<div
+  class="relative flex min-h-screen flex-col bg-background-light font-display text-slate-900 selection:bg-primary selection:text-white dark:bg-background-dark dark:text-slate-100 dark:selection:text-slate-900"
+>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_50%_50%,rgba(255,178,71,0.05)_0%,transparent_70%)]"
+  ></div>
+
+  <app-lum-public-catalog-nav
+    brandLabel="Lumina Archive"
+    searchPlaceholder="Search catalog..."
+    [searchControl]="searchControl"
+  />
+
+  <main class="mx-auto w-full max-w-7xl grow px-4 pt-28 pb-20 md:px-8">
+    @if (store.detail(); as d) {
+      <app-lum-public-book-detail-layout [detail]="d" />
+    } @else if (store.loadErrorMessage(); as message) {
+      <div
+        class="rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+      >
+        {{ message }}
+      </div>
+    }
+  </main>
+
+  <app-lum-public-catalog-site-footer
+    brandLabel="Lumina Archive Portal"
+    [links]="store.footerLinks"
+    copyright="© 2026 Lumina Archive Portal"
+  />
+</div>

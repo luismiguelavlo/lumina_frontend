@@ -1,0 +1,19 @@
+<div
+  class="mb-6 flex flex-col gap-4 rounded-2xl border border-white/60 bg-white/50 p-4 shadow-glass backdrop-blur-md md:flex-row md:items-center md:justify-between dark:border-white/10 dark:bg-[color-mix(in_oklab,var(--color-background-dark)_50%,transparent)] dark:shadow-[0_8px_32px_0_rgb(0_0_0/0.25)]"
+>
+  <app-lum-fine-status-filter [active]="activeFilter()" (filterChange)="filterChange.emit($event)" />
+
+  <div class="relative w-full md:w-64 md:max-w-xs md:shrink-0">
+    <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-slate-400">
+      <app-lum-icon [extraClass]="'text-sm'" [name]="'badge'" />
+    </span>
+    <input
+      class="w-full rounded-xl border border-slate-200/90 bg-white py-2 pr-4 pl-9 text-sm text-slate-900 shadow-sm outline-none transition-shadow placeholder:text-slate-400 focus:border-primary/50 focus:ring-2 focus:ring-primary/30 dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder:text-slate-500"
+      type="search"
+      aria-label="Filter by student name"
+      placeholder="Student name…"
+      [value]="studentIdQuery()"
+      (input)="onStudentInput($any($event.target).value)"
+    />
+  </div>
+</div>

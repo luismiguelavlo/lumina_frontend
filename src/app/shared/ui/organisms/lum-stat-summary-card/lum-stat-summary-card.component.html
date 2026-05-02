@@ -1,0 +1,40 @@
+<app-lum-admin-glass [paddingClass]="'p-6'" [roundedClass]="'rounded-xl'">
+  <div class="group relative overflow-hidden">
+    <div
+      class="pointer-events-none absolute top-0 right-0 -z-10 h-32 w-32 rounded-bl-full transition-transform group-hover:scale-110"
+      [class]="accentBlobClass(accent())"
+    ></div>
+
+    <div class="mb-4 flex items-start justify-between">
+      <div>
+        <p class="mb-1 text-sm font-medium text-slate-500 dark:text-slate-400">{{ title() }}</p>
+        <h3 class="text-3xl font-bold text-slate-900 dark:text-slate-100">{{ value() }}</h3>
+      </div>
+      <div
+        class="flex h-12 w-12 items-center justify-center rounded-lg shadow-neo-icon dark:shadow-neo-icon-dark"
+        [class]="iconWrapClass(accent())"
+      >
+        <app-lum-icon [name]="icon()" />
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      @if (trendDirection() === 'up') {
+        <span
+          class="flex items-center rounded bg-green-100 px-2 py-0.5 text-sm font-medium text-green-600 dark:bg-green-900/30 dark:text-green-400"
+        >
+          <app-lum-icon [extraClass]="'text-[16px]'" [name]="'trending_up'" />
+          {{ trendLabel() }}
+        </span>
+      } @else {
+        <span
+          class="flex items-center rounded bg-red-100 px-2 py-0.5 text-sm font-medium text-red-600 dark:bg-red-900/30 dark:text-red-400"
+        >
+          <app-lum-icon [extraClass]="'text-[16px]'" [name]="'trending_down'" />
+          {{ trendLabel() }}
+        </span>
+      }
+      <span class="text-xs text-slate-500 dark:text-slate-400">{{ footnote() }}</span>
+    </div>
+  </div>
+</app-lum-admin-glass>

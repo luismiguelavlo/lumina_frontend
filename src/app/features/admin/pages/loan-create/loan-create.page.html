@@ -1,0 +1,158 @@
+<div class="relative mx-auto min-w-0 max-w-5xl pb-12">
+  <div aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10 opacity-90 dark:opacity-50">
+    <div
+      class="absolute top-0 right-0 h-[50%] w-[55%] rounded-full bg-primary/10 blur-3xl"
+    ></div>
+    <div
+      class="absolute bottom-0 left-0 h-[45%] w-[50%] rounded-full bg-primary/5 blur-3xl"
+    ></div>
+  </div>
+
+  <a
+    class="mb-6 inline-flex w-fit items-center gap-2 text-sm font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-400 dark:hover:text-primary"
+    routerLink="/admin/loans"
+  >
+    <app-lum-icon [extraClass]="'text-lg'" [name]="'arrow_back'" />
+    Loans
+  </a>
+
+  <header class="mb-8 text-center lg:mb-10 lg:text-left">
+    <h1 class="mb-2 text-[1.875rem] leading-tight font-bold tracking-tight text-slate-900 dark:text-slate-100">
+      {{ pageTitle }}
+    </h1>
+    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
+      {{ pageSubtitle }}
+    </p>
+  </header>
+
+  <div
+    class="relative overflow-hidden rounded-3xl border border-white/60 bg-white/70 p-6 shadow-glass backdrop-blur-md lg:p-10 dark:border-white/10 dark:bg-[color-mix(in_oklab,var(--color-background-dark)_55%,transparent)] dark:shadow-[0_8px_32px_0_rgb(0_0_0/0.25)]"
+  >
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute top-0 right-0 h-64 w-64 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary/5 blur-3xl"
+    ></div>
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute bottom-0 left-0 h-48 w-48 -translate-x-1/4 translate-y-1/2 rounded-full bg-primary/5 blur-2xl"
+    ></div>
+
+    <form class="relative z-10 space-y-10" [formGroup]="form" (ngSubmit)="registerLoan()">
+      @if (saveError(); as message) {
+        <div
+          class="rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+        >
+          {{ message }}
+        </div>
+      }
+
+      <section class="space-y-4">
+        <app-lum-loan-create-section-heading step="1" title="Reader" />
+        <app-lum-loan-create-icon-search
+          ariaLabel="Search for a student by name or ID"
+          icon="person_search"
+          placeholder="Search by student name or ID…"
+          [query]="studentQuery()"
+          (queryChange)="onStudentQuery($event)"
+        />
+        @if (!selectedStudent()) {
+          <app-lum-loan-create-student-pick-list
+            [options]="filteredStudents()"
+            (pick)="pickStudent($event)"
+          />
+        }
+        @if (selectedStudent(); as st) {
+          <app-lum-loan-create-selected-student-card [student]="st" (clearClick)="clearStudent()" />
+        }
+      </section>
+
+      <section class="space-y-4">
+        <app-lum-loan-create-section-heading step="2" title="Material" />
+        <app-lum-loan-create-icon-search
+          ariaLabel="Search for a book by title, author, or ISBN"
+          icon="search"
+          placeholder="Search by title, author, or ISBN…"
+          [query]="bookQuery()"
+          (queryChange)="onBookQuery($event)"
+        />
+        @if (!selectedBook()) {
+          <app-lum-loan-create-book-pick-list [options]="filteredBooks()" (pick)="pickBook($event)" />
+        }
+        @if (selectedBook(); as bk) {
+          <app-lum-loan-create-selected-book-card [book]="bk" (clearClick)="clearBook()" />
+        }
+      </section>
+
+      <section class="space-y-6">
+        <app-lum-loan-create-section-heading step="3" title="Loan details" />
+        <div class="max-w-md">
+          <app-lum-loan-create-due-field [control]="form.controls.dueDate" />
+        </div>
+      </section>
+
+      <div
+        class="mt-8 flex flex-col-reverse justify-end gap-4 border-t border-primary/15 pt-6 sm:flex-row"
+      >
+        <button
+          class="rounded-xl px-6 py-3 text-sm font-semibold text-slate-500 transition-colors hover:bg-slate-200/60 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-100"
+          type="button"
+          (click)="cancel()"
+        >
+          Cancel
+        </button>
+        <button
+          class="flex items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary px-8 py-3 text-sm font-semibold text-white shadow-primary-glow transition-all hover:scale-[1.02] hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+          type="submit"
+          [disabled]="isSaving()"
+        >
+          <app-lum-icon [extraClass]="'text-[18px]'" [name]="'bookmark_added'" />
+          @if (isSaving()) {
+            Registering...
+          } @else {
+            Register loan
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@if (showSuccessModal()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/20 p-4 backdrop-blur-sm dark:bg-black/50"
+    role="presentation"
+  >
+    <div
+      class="w-full max-w-md rounded-2xl border border-white/70 bg-white/50 p-6 shadow-2xl backdrop-blur-md dark:border-white/15 dark:bg-slate-900/80"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="loan-created-title"
+    >
+      <div class="mb-4 flex items-start gap-3">
+        <div
+          class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-300"
+        >
+          <app-lum-icon [extraClass]="'text-xl'" [name]="'check_circle'" />
+        </div>
+        <div class="min-w-0">
+          <h3 id="loan-created-title" class="text-lg font-bold text-slate-900 dark:text-slate-100">
+            Loan created
+          </h3>
+          <p class="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">
+            {{ successMessage() }}
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end">
+        <button
+          type="button"
+          class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/30 transition-colors hover:bg-primary/90"
+          (click)="confirmSuccessAndBackToLoans()"
+        >
+          Back to loans
+        </button>
+      </div>
+    </div>
+  </div>
+}

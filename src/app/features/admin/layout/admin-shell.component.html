@@ -1,0 +1,51 @@
+<div
+  class="font-display flex h-screen min-h-0 min-w-0 overflow-hidden bg-background-light text-slate-900 dark:bg-background-dark dark:text-slate-100"
+>
+  <app-lum-admin-sidebar
+    [avatarAlt]="userProfile.avatarAlt"
+    [avatarUrl]="userProfile.avatarUrl"
+    [brandIcon]="'local_library'"
+    [brandTitle]="'Lumina'"
+    [mobileOpen]="sidebarOpen()"
+    [navItems]="navItems"
+    [userName]="userProfile.name"
+    [userRole]="userProfile.role"
+    (logoutRequested)="onLogoutRequested()"
+  />
+
+  @if (sidebarOpen()) {
+    <button
+      type="button"
+      class="fixed inset-0 z-40 cursor-default bg-slate-900/45 backdrop-blur-[2px] md:hidden"
+      aria-label="Close navigation menu"
+      (click)="closeSidebar()"
+    ></button>
+  }
+
+  <main
+    class="relative z-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto bg-background-light dark:bg-background-dark"
+  >
+    <!-- Degradado suave a todo el ancho (misma tinta en X; fundido largo en Y) -->
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(255,178,71,0.2)_0%,rgba(255,178,71,0.11)_18%,rgba(255,178,71,0.05)_40%,rgba(255,178,71,0.02)_65%,var(--color-background-light)_100%)] dark:bg-[linear-gradient(180deg,rgba(255,178,71,0.22)_0%,rgba(255,178,71,0.12)_20%,rgba(255,178,71,0.06)_42%,rgba(255,178,71,0.02)_68%,var(--color-background-dark)_100%)]"
+    ></div>
+
+    <div
+      class="relative z-0 mx-auto flex h-full min-w-0 max-w-7xl flex-col px-4 py-8 sm:px-6 lg:px-8"
+    >
+      <router-outlet />
+    </div>
+
+    <button
+      type="button"
+      class="fixed right-4 top-4 z-50 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/40 bg-white/70 text-slate-800 shadow-glass backdrop-blur-md transition hover:bg-white/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:hidden dark:border-white/10 dark:bg-[color-mix(in_oklab,var(--color-background-dark)_55%,transparent)] dark:text-slate-100 dark:hover:bg-[color-mix(in_oklab,var(--color-background-dark)_70%,transparent)]"
+      [attr.aria-expanded]="sidebarOpen()"
+      aria-controls="admin-nav-drawer"
+      [attr.aria-label]="sidebarOpen() ? 'Close navigation menu' : 'Open navigation menu'"
+      (click)="toggleSidebar()"
+    >
+      <app-lum-icon [extraClass]="'text-2xl'" [name]="sidebarOpen() ? 'close' : 'menu'" />
+    </button>
+  </main>
+</div>

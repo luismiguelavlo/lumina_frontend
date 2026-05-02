@@ -1,0 +1,28 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-center justify-between px-2">
+    <div class="flex items-center gap-2">
+      <app-lum-icon [extraClass]="'text-primary'" [name]="sectionIcon()" />
+      <h2 class="text-xl leading-tight font-bold text-slate-900 dark:text-slate-100">{{ sectionTitle() }}</h2>
+    </div>
+    <button
+      class="text-sm font-medium text-primary hover:underline"
+      type="button"
+      (click)="onViewAll()"
+    >
+      View All
+    </button>
+  </div>
+
+  <div
+    class="relative min-h-[320px] rounded-2xl border border-white/60 bg-white/50 p-8 shadow-glass backdrop-blur-md lg:min-h-[500px] dark:border-white/10 dark:bg-[color-mix(in_oklab,var(--color-background-dark)_55%,transparent)] dark:shadow-[0_8px_32px_0_rgb(0_0_0/0.25)]"
+  >
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute top-0 bottom-0 left-6 z-0 w-0.5 bg-gradient-to-b from-primary to-primary/20"
+    ></div>
+
+    @for (loan of items(); track $index; let last = $last) {
+      <app-lum-student-loan-timeline-item [isLast]="last" [item]="loan" />
+    }
+  </div>
+</div>

@@ -1,0 +1,121 @@
+<div
+  class="overflow-hidden rounded-2xl border border-white/60 bg-white/45 shadow-glass backdrop-blur-md dark:border-white/10 dark:bg-[color-mix(in_oklab,var(--color-background-dark)_50%,transparent)] dark:shadow-[0_8px_32px_0_rgb(0_0_0/0.25)]"
+>
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse text-left">
+      <thead
+        class="border-b border-white/70 bg-white/55 dark:border-white/10 dark:bg-slate-900/55"
+      >
+        <tr>
+          <th class="px-6 py-4 text-sm font-bold tracking-wider text-amber-800/90 uppercase dark:text-amber-200/90">
+            <div class="flex items-center gap-2 whitespace-nowrap">
+              <app-lum-icon [extraClass]="'text-[18px]'" [name]="'book'" />
+              Book details
+            </div>
+          </th>
+          <th class="px-6 py-4 text-sm font-bold tracking-wider text-amber-800/90 uppercase dark:text-amber-200/90">
+            <div class="flex items-center gap-2 whitespace-nowrap">
+              <app-lum-icon [extraClass]="'text-[18px]'" [name]="'person'" />
+              Borrower
+            </div>
+          </th>
+          <th class="px-6 py-4 text-sm font-bold tracking-wider text-amber-800/90 uppercase dark:text-amber-200/90">
+            <div class="flex items-center gap-2 whitespace-nowrap">
+              <app-lum-icon [extraClass]="'text-[18px]'" [name]="'calendar_today'" />
+              Due date
+            </div>
+          </th>
+          <th
+            class="max-w-[250px] px-6 py-4 text-sm font-bold tracking-wider text-amber-800/90 uppercase dark:text-amber-200/90"
+          >
+            <div class="flex items-center gap-2 whitespace-nowrap">
+              <app-lum-icon [extraClass]="'text-[18px]'" [name]="'hourglass_empty'" />
+              Time remaining
+            </div>
+          </th>
+          <th
+            class="px-6 py-4 text-right text-sm font-bold tracking-wider text-amber-800/90 uppercase dark:text-amber-200/90"
+          >
+            Action
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-white/50 dark:divide-white/10">
+        @for (row of rows(); track row.id) {
+          <tr class="group transition-colors hover:bg-white/25 dark:hover:bg-white/5">
+            <td class="px-6 py-5 align-top">
+              <app-lum-loan-book-cell [loanIdLabel]="row.loanIdLabel" [title]="row.bookTitle" />
+            </td>
+            <td class="px-6 py-5 align-top">
+              <app-lum-table-student-identity-cell
+                [initials]="row.borrowerInitials"
+                [name]="row.borrowerName"
+              />
+            </td>
+            <td class="px-6 py-5 align-top">
+              <app-lum-loan-due-display [dateLabel]="row.dueDateLabel" [dueIsToday]="row.dueIsToday" />
+            </td>
+            <td class="px-6 py-5 align-top">
+              <app-lum-loan-countdown-bar
+                [daysLeftLabel]="row.daysLeftLabel"
+                [progressPercent]="row.progressPercent"
+                [urgency]="row.urgency"
+              />
+            </td>
+            <td class="px-6 py-5 text-right align-top">
+              <button
+                class="ml-auto inline-flex items-center justify-center gap-2 rounded-lg border border-white/70 bg-background-light px-4 py-2 text-sm font-bold text-primary shadow-neomorph-raised transition-all active:shadow-neomorph-inset dark:border-white/10 dark:bg-background-dark dark:shadow-[10px_10px_20px_#1a140b,-10px_-10px_20px_#2c2213] dark:active:shadow-neo-icon-active-dark"
+                type="button"
+                (click)="onRenew(row)"
+              >
+                <app-lum-icon [extraClass]="'text-[18px]'" [name]="'update'" />
+                Return
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td class="p-12 text-center text-sm text-slate-500 dark:text-slate-400" colspan="5">
+              No loans match your search.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div
+    class="flex flex-col gap-3 border-t border-white/60 bg-white/40 px-6 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-white/10 dark:bg-slate-900/35"
+  >
+    <span class="text-sm font-medium text-slate-500 dark:text-slate-400">
+      @if ((pagination()?.total ?? rows().length) === 0) {
+        Showing 0 loans
+      } @else {
+        Showing {{ rows().length }} {{ rows().length === 1 ? 'loan' : 'loans' }}
+        @if (pagination(); as p) {
+          <span class="ml-1">· Page {{ p.current_page }} of {{ p.total_pages || 1 }}</span>
+        }
+      }
+    </span>
+    <div class="flex items-center gap-2">
+      <button
+        class="rounded-lg border border-slate-200 bg-white p-2 text-slate-800 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
+        [disabled]="!(pagination()?.has_prev ?? false)"
+        type="button"
+        aria-label="Previous page"
+        (click)="onPrevPage()"
+      >
+        <app-lum-icon [extraClass]="'text-sm'" [name]="'chevron_left'" />
+      </button>
+      <button
+        class="rounded-lg border border-slate-200 bg-white p-2 text-slate-800 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
+        [disabled]="!(pagination()?.has_next ?? false)"
+        type="button"
+        aria-label="Next page"
+        (click)="onNextPage()"
+      >
+        <app-lum-icon [extraClass]="'text-sm'" [name]="'chevron_right'" />
+      </button>
+    </div>
+  </div>
+</div>

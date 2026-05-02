@@ -1,0 +1,12 @@
+<label
+  class="flex flex-col transition-[filter,opacity] duration-200 has-[:disabled]:opacity-[0.82] has-[:disabled]:grayscale-[0.45]"
+>
+  <app-lum-neo-field-label [text]="label()" />
+  <input
+    class="h-12 rounded-lg border-none bg-background-light px-4 text-slate-800 shadow-neumorphic-inset transition-all focus:ring-2 focus:ring-primary focus:outline-none disabled:cursor-not-allowed disabled:bg-slate-200/70 disabled:text-slate-500 disabled:shadow-none disabled:ring-0 dark:bg-background-dark dark:text-slate-200 dark:shadow-neo-icon-active-dark dark:disabled:bg-slate-800/75 dark:disabled:text-slate-500"
+    [class.font-mono]="mono()"
+    [attr.autocomplete]="autocomplete()"
+    [formControl]="control()"
+    [type]="inputType()"
+  />
+</label>

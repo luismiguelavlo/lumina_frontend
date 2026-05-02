@@ -1,0 +1,80 @@
+<div class="flex min-w-0 flex-col overflow-x-hidden pb-8">
+  <app-lum-students-page-toolbar
+    addButtonLabel="Add student"
+    searchPlaceholder="Search students by name, ID, or reason…"
+    [subtitle]="store.pageSubtitle"
+    title="Students"
+    [searchQuery]="store.searchControl.value"
+    (addStudentClick)="onAddStudent()"
+    (searchQueryChange)="store.searchControl.setValue($event)"
+  />
+
+  @if (store.createSuccess(); as successMessage) {
+    <div
+      class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200"
+    >
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (store.isLoading()) {
+    <p class="mb-4 text-sm text-slate-500 dark:text-slate-400">Loading students...</p>
+  }
+  @if (store.loadError(); as message) {
+    <div
+      class="mb-4 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+    >
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <span>{{ message }}</span>
+        <button
+          type="button"
+          class="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100 dark:border-red-700 dark:text-red-200 dark:hover:bg-red-900/40"
+          (click)="store.retryLoad()"
+        >
+          Retry
+        </button>
+      </div>
+    </div>
+  }
+
+  <app-lum-students-table [rows]="store.rows()" (viewProfileClick)="onViewProfile($event)" />
+
+  <div class="mt-2 flex flex-wrap items-center justify-between gap-3">
+    <p class="text-sm text-slate-600 dark:text-slate-400">
+      Page {{ store.pagination().current_page || 1 }}
+      @if (store.pagination().total_pages > 0) {
+        <span>of {{ store.pagination().total_pages }}</span>
+      }
+      <span class="ml-2">({{ store.pagination().total }} students)</span>
+    </p>
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
+        [disabled]="!store.pagination().has_prev"
+        (click)="store.goToPrevPage()"
+      >
+        Previous
+      </button>
+      <button
+        type="button"
+        class="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-500 disabled:cursor-not-allowed disabled:opacity-50"
+        [disabled]="!store.pagination().has_next"
+        (click)="store.goToNextPage()"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+
+  @if (store.isCreateModalOpen()) {
+    <app-lum-create-student-modal
+      [form]="store.createForm"
+      [degreeOptions]="store.degreeOptions"
+      [isSaving]="store.isCreating()"
+      [errorMessage]="store.createError()"
+      (cancelClick)="store.closeCreateModal()"
+      (submitClick)="store.submitCreateStudent()"
+    />
+  }
+</div>

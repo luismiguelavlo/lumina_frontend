@@ -1,0 +1,23 @@
+<app-lum-auth-shell>
+  <app-lum-auth-brand
+    [iconName]="'auto_stories'"
+    [subtitle]="'A high-end library management system'"
+    [title]="'Lumina Library'"
+  />
+
+  <app-lum-login-form
+    [cardTitle]="'Welcome Back'"
+    [emailLabel]="'Email Address'"
+    [emailPlaceholder]="'librarian@lumina.edu'"
+    [errorMessage]="loginErrorMessage()"
+    [footerCtaLabel]="'Request Access'"
+    [footerPrompt]="footerPrompt"
+    [form]="form"
+    [isSubmitting]="isSubmitting()"
+    [loginLabel]="loginButtonLabel()"
+    [passwordLabel]="'Password'"
+    [passwordPlaceholder]="'••••••••'"
+    [rememberLabel]="'Remember me'"
+    (submitted)="onSubmitted()"
+  />
+</app-lum-auth-shell>

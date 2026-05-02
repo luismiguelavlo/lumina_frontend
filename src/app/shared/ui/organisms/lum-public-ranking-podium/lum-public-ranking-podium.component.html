@@ -1,0 +1,5 @@
+<div class="mb-12 flex h-80 items-end justify-center gap-4 p-4">
+  @for (leader of leaders(); track leader.place) {
+    <app-lum-public-podium-column [leader]="leader" />
+  }
+</div>

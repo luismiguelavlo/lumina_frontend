@@ -1,0 +1,47 @@
+<app-lum-public-book-detail-breadcrumb [categoryLabel]="detail().breadcrumbCategory" />
+
+<div class="grid w-full flex-1 grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+  <div class="flex flex-col items-center lg:col-span-4 lg:items-start">
+    <div
+      class="relative aspect-[2/3] w-full max-w-[320px] overflow-hidden rounded-lg border border-white/50 bg-stone-200 shadow-neumorphic transition-transform duration-500 hover:scale-[1.02] dark:bg-stone-800 dark:shadow-[0_10px_28px_rgb(0_0_0/0.35)]"
+    >
+      <img class="h-full w-full object-cover" [alt]="detail().coverAlt" [src]="detail().coverUrl" />
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-white/10 mix-blend-overlay"
+      ></div>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-8 lg:col-span-8">
+    <div class="flex flex-col gap-4 border-b border-stone-200 pb-8 dark:border-stone-700/60">
+      <app-lum-public-book-detail-badges-row
+        [availability]="detail().availability"
+        [secondaryBadgeLabel]="detail().secondaryBadgeLabel"
+      />
+      <h1
+        class="font-display text-4xl leading-tight font-bold tracking-tight text-slate-900 md:text-5xl dark:text-slate-100"
+      >
+        {{ detail().title }}
+      </h1>
+      <div class="flex flex-wrap items-center gap-2 text-lg font-medium text-slate-600 dark:text-slate-400">
+        <span>by</span>
+        <span
+          class="text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-amber-600 dark:hover:text-amber-300"
+          >{{ detail().author }}</span
+        >
+      </div>
+    </div>
+
+    <app-lum-public-book-detail-synopsis-panel [body]="detail().synopsis" />
+
+    <div class="grid grid-cols-2 gap-4 md:grid-cols-2">
+      <app-lum-public-detail-stat-tile
+        iconName="calendar_today"
+        label="Published"
+        [value]="detail().publishedYear"
+      />
+      <app-lum-public-detail-stat-tile iconName="layers" label="Pages" [value]="detail().pageCount" />
+    </div>
+  </div>
+</div>

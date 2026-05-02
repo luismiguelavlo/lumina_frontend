@@ -1,0 +1,64 @@
+<app-lum-admin-glass [paddingClass]="'p-6'" [roundedClass]="'rounded-xl'">
+  <div class="flex min-w-0 flex-col">
+    <div class="mb-6 flex items-center justify-between">
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">{{ headingTitle() }}</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400">{{ headingSubtitle() }}</p>
+      </div>
+      <a
+        class="flex items-center text-sm font-medium text-primary hover:underline"
+        [href]="reportHref()"
+      >
+        {{ reportLabel() }}
+        <app-lum-icon [extraClass]="'ml-1 text-[18px]'" [name]="'chevron_right'" />
+      </a>
+    </div>
+
+    <div class="relative min-h-[300px] w-full min-w-0 flex-1 pt-4">
+      <div
+        class="absolute top-0 bottom-8 left-0 flex w-8 flex-col justify-between text-xs text-slate-400"
+      >
+        @for (label of yAxisLabels; track label) {
+          <span>{{ label }}</span>
+        }
+      </div>
+
+      <div
+        class="absolute top-0 right-0 bottom-8 left-8 flex min-w-0 flex-col justify-between border-slate-200 dark:border-slate-700/50"
+      >
+        @for (_ of yAxisLabels; track $index) {
+          <div class="w-full border-t border-slate-200 dark:border-slate-700/50"></div>
+        }
+      </div>
+
+      <div
+        class="relative z-10 grid min-h-[240px] w-full min-w-0 grid-cols-5 gap-2 pb-8 pl-10 pr-1 sm:gap-3 sm:pr-2"
+      >
+        @for (bar of bars(); track bar.shortLabel) {
+          <div class="group relative flex min-h-0 min-w-0 flex-col items-center">
+            <div class="relative flex w-full min-w-0 flex-1 flex-col items-center justify-end">
+              <div
+                class="pointer-events-none absolute -top-8 left-1/2 z-20 -translate-x-1/2 rounded bg-slate-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 dark:bg-slate-700"
+              >
+                {{ bar.heightPct }}
+              </div>
+              <div
+                class="w-full rounded-t-lg bg-gradient-to-t from-primary/60 to-primary transition-all duration-300 group-hover:opacity-80"
+                [class.shadow-primary-glow]="bar.highlight"
+                [style.height.%]="bar.heightPct"
+              ></div>
+            </div>
+            <span
+              class="mt-3 w-full truncate text-center text-xs text-slate-600 dark:text-slate-400"
+              [class.font-bold]="bar.highlight"
+              [class.font-medium]="!bar.highlight"
+              [class.text-primary]="bar.highlight"
+              [attr.title]="bar.fullTitle"
+              >{{ bar.shortLabel }}</span
+            >
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</app-lum-admin-glass>

@@ -1,0 +1,48 @@
+<app-lum-dashboard-page-header
+  [subtitle]="overviewSubtitle"
+  title="Overview"
+  (notificationsClick)="onNotificationsClick()"
+/>
+
+@if (loadError(); as message) {
+  <div
+    class="mb-4 max-w-xl rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+  >
+    {{ message }}
+  </div>
+}
+
+<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+  @for (card of statCards(); track card.title) {
+    <app-lum-stat-summary-card
+      [accent]="card.accent"
+      [footnote]="card.footnote"
+      [icon]="card.icon"
+      [title]="card.title"
+      [trendDirection]="card.trendDirection"
+      [trendLabel]="card.trendLabel"
+      [value]="card.value"
+    />
+  }
+</div>
+
+<div class="grid min-w-0 flex-1 grid-cols-1 gap-8 pb-8 lg:grid-cols-3">
+  <div class="min-w-0 lg:col-span-2">
+    <app-lum-borrowed-books-chart
+      [bars]="borrowedBars()"
+      headingSubtitle="Top 5 titles this month"
+      headingTitle="Most Borrowed Books"
+      reportHref="#"
+      reportLabel="View Full Report"
+    />
+  </div>
+
+  <div class="min-w-0 lg:col-span-1">
+    <app-lum-recent-activity
+      [items]="activityItems()"
+      sectionTitle="Recent Activity"
+      viewAllLabel="View All Activity"
+      (viewAllClick)="onViewAllActivity()"
+    />
+  </div>
+</div>

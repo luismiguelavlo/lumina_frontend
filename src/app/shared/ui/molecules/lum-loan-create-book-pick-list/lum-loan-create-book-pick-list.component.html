@@ -1,0 +1,20 @@
+@if (options().length > 0) {
+  <ul
+    class="mt-2 max-h-56 space-y-1 overflow-y-auto rounded-xl border border-slate-200/80 bg-white/60 p-1 dark:border-slate-700/80 dark:bg-slate-900/50"
+    role="listbox"
+    aria-label="Matching books"
+  >
+    @for (o of options(); track o.id) {
+      <li>
+        <button
+          class="flex w-full flex-col gap-0.5 rounded-lg px-3 py-2.5 text-left text-sm transition-colors hover:bg-primary/10 dark:hover:bg-primary/15"
+          type="button"
+          (click)="pick.emit(o)"
+        >
+          <span class="font-medium text-slate-900 dark:text-slate-100">{{ o.title }}</span>
+          <span class="text-xs text-slate-500 dark:text-slate-400">{{ o.author }} · {{ o.isbn }}</span>
+        </button>
+      </li>
+    }
+  </ul>
+}

@@ -1,0 +1,20 @@
+<a
+  #rla="routerLinkActive"
+  class="flex items-center gap-4 rounded-lg px-4 py-3 font-medium transition-colors hover:text-slate-900 dark:hover:text-slate-100"
+  [class.text-slate-600]="!rla.isActive"
+  [class.dark:text-slate-400]="!rla.isActive"
+  [class.text-primary]="rla.isActive"
+  [class.dark:text-primary]="rla.isActive"
+  [class.bg-primary/10]="rla.isActive"
+  [class.dark:bg-primary/20]="rla.isActive"
+  [class.shadow-neo-icon]="!rla.isActive"
+  [class.dark:shadow-neo-icon-dark]="!rla.isActive"
+  [class.shadow-neo-icon-active]="rla.isActive"
+  [class.dark:shadow-neo-icon-active-dark]="rla.isActive"
+  [routerLink]="routePath()"
+  [routerLinkActiveOptions]="{ exact: exact() }"
+  routerLinkActive
+>
+  <app-lum-icon [name]="icon()" />
+  <span>{{ label() }}</span>
+</a>

@@ -1,0 +1,15 @@
+@if (status() === 'sanctioned') {
+  <span
+    class="inline-flex items-center rounded-full border border-orange-200 bg-orange-100 px-2.5 py-1 text-xs font-bold text-orange-700 dark:border-orange-900/50 dark:bg-orange-950/40 dark:text-orange-300"
+  >
+    <span class="mr-1.5 size-1.5 rounded-full bg-orange-500"></span>
+    Sanctioned
+  </span>
+} @else {
+  <span
+    class="inline-flex items-center rounded-full border border-green-200 bg-green-100 px-2.5 py-1 text-xs font-bold text-green-700 dark:border-green-900/50 dark:bg-green-950/40 dark:text-green-300"
+  >
+    <span class="mr-1.5 size-1.5 rounded-full bg-green-500"></span>
+    Active
+  </span>
+}

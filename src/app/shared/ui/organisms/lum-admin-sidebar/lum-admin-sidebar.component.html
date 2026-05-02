@@ -1,0 +1,64 @@
+<aside
+  id="admin-nav-drawer"
+  role="complementary"
+  aria-label="Admin navigation"
+  class="z-10 h-full w-64 flex-shrink-0 border-r border-slate-200/70 bg-background-light shadow-glass md:relative md:block dark:border-white/10 dark:bg-background-dark dark:shadow-[0_8px_32px_0_rgb(0_0_0/0.3)]"
+  [class.max-md:hidden]="!mobileOpen()"
+  [class.max-md:fixed]="mobileOpen()"
+  [class.max-md:inset-y-0]="mobileOpen()"
+  [class.max-md:left-0]="mobileOpen()"
+  [class.max-md:z-50]="mobileOpen()"
+  [class.max-md:flex]="mobileOpen()"
+  [class.max-md:flex-col]="mobileOpen()"
+>
+  <div class="flex h-full flex-col py-6">
+    <div class="mb-8 flex items-center gap-3 px-6">
+      <div
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary"
+      >
+        <app-lum-icon [extraClass]="'text-2xl'" [name]="brandIcon()" />
+      </div>
+      <h1 class="text-xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
+        {{ brandTitle() }}
+      </h1>
+    </div>
+
+    <nav class="flex-1 space-y-2 px-4">
+      @for (item of navItems(); track item.path) {
+        <app-lum-sidebar-nav-link
+          [exact]="item.exact ?? false"
+          [icon]="item.icon"
+          [label]="item.label"
+          [routePath]="item.path"
+        />
+      }
+    </nav>
+
+    <div class="mt-auto px-4">
+      <app-lum-admin-glass [interactive]="true" [paddingClass]="'p-4'" [roundedClass]="'rounded-xl'">
+        <div class="flex items-center gap-3">
+          <img
+            class="h-10 w-10 rounded-full border-2 border-primary/30 object-cover"
+            [alt]="avatarAlt()"
+            [src]="avatarUrl()"
+          />
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
+              {{ userName() }}
+            </p>
+            <p class="truncate text-xs text-slate-500 dark:text-slate-400">{{ userRole() }}</p>
+          </div>
+          <button
+            type="button"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-200/70 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-slate-400 dark:hover:bg-slate-700/60"
+            aria-label="Logout"
+            title="Logout"
+            (click)="requestLogout()"
+          >
+            <app-lum-icon [extraClass]="'text-xl'" [name]="'logout'" />
+          </button>
+        </div>
+      </app-lum-admin-glass>
+    </div>
+  </div>
+</aside>

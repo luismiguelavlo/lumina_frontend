@@ -1,0 +1,13 @@
+<div class="mt-2 flex items-center">
+  <input
+    class="h-5 w-5 cursor-pointer rounded border-none bg-background-light text-primary shadow-neumorphic-inner focus:ring-0 focus:ring-offset-0 dark:bg-surface-dark"
+    [formControl]="control()"
+    [id]="fieldId()"
+    type="checkbox"
+  />
+  <label
+    class="ml-3 cursor-pointer select-none text-sm font-medium text-text-dark/70 dark:text-text-light/70"
+    [attr.for]="fieldId()"
+    >{{ label() }}</label
+  >
+</div>

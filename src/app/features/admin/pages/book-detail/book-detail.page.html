@@ -1,0 +1,49 @@
+@if (store.loadError()) {
+  <div
+    class="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+  >
+    {{ store.loadError() }}
+  </div>
+}
+@if (store.saveError()) {
+  <div
+    class="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+  >
+    {{ store.saveError() }}
+  </div>
+}
+@if (store.saveSuccess()) {
+  <div
+    class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200"
+  >
+    {{ store.saveSuccess() }}
+  </div>
+}
+
+<div
+  class="mx-auto flex min-w-0 max-w-[1200px] flex-col items-stretch gap-10 pb-12 lg:flex-row lg:items-start lg:gap-12"
+>
+  <app-lum-book-cover-column
+    [availability]="store.availability()"
+    [checkedOut]="store.checkedOut()"
+    [coverAlt]="store.coverAlt()"
+    [coverUrl]="store.coverUrl()"
+    [totalCopies]="store.totalCopies()"
+    (changeCoverClick)="store.onChangeCover()"
+  />
+
+  <div class="flex min-w-0 flex-1 flex-col lg:w-2/3">
+    <app-lum-book-editor-header
+      [libraryId]="store.libraryId()"
+      [saving]="store.isSaving()"
+      [title]="store.titlePreview()"
+      (discardClick)="store.onDiscard()"
+      (saveClick)="store.onSave()"
+    />
+
+    <app-lum-book-editor-form
+      [form]="store.form"
+      [genreOptions]="store.genreOptions()"
+    />
+  </div>
+</div>

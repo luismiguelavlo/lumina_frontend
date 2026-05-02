@@ -1,0 +1,16 @@
+<div class="space-y-2">
+  <label class="block text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-slate-400">
+    {{ label() }}
+  </label>
+  <div class="relative">
+    <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-slate-500 dark:text-slate-400">
+      <app-lum-icon [extraClass]="'text-[22px]'" [name]="'calendar_month'" />
+    </span>
+    <input
+      class="w-full cursor-pointer rounded-xl border-none bg-background-light py-3 pr-4 pl-12 text-sm text-slate-900 shadow-neomorph-inset transition-all focus:ring-2 focus:ring-primary/50 focus:outline-none dark:bg-background-dark dark:text-slate-100 dark:shadow-neo-icon-active-dark"
+      type="date"
+      [formControl]="control()"
+    />
+  </div>
+  <p class="pl-1 text-xs text-slate-500/80 dark:text-slate-500">{{ hint() }}</p>
+</div>

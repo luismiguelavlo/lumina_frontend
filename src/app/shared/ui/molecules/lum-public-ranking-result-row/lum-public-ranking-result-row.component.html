@@ -1,0 +1,30 @@
+@if (result(); as r) {
+  <div
+    class="flex cursor-default items-center justify-between rounded-xl border border-primary/50 bg-primary/10 p-4 shadow-sm backdrop-blur-md transition-colors dark:bg-primary/15"
+  >
+    <div class="flex items-center gap-4">
+      <span class="w-10 shrink-0 text-center text-xl font-bold text-primary">
+        @if (r.rank > 0) {
+          {{ r.rank }}
+        } @else {
+          —
+        }
+      </span>
+      <img
+        class="size-12 rounded-full border-2 border-primary object-cover"
+        [alt]="r.avatarAlt"
+        [src]="r.avatarUrl"
+      />
+      <div class="flex flex-col">
+        <span class="text-lg font-bold text-slate-900 dark:text-slate-100">{{ r.displayName }}</span>
+        <span class="text-sm text-slate-500 dark:text-slate-400">{{ r.subtitle }}</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-xl font-black text-primary">{{ r.pointsDisplay }}</span>
+      <span class="text-sm font-medium tracking-wider text-slate-500 uppercase dark:text-slate-400"
+        >Pts</span
+      >
+    </div>
+  </div>
+}

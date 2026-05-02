@@ -1,0 +1,17 @@
+<button
+  class="rounded-full px-5 py-2 text-[0.875rem] font-medium transition-all"
+  type="button"
+  [class.bg-primary]="selected()"
+  [class.shadow-primary-glow]="selected()"
+  [class.text-white]="selected()"
+  [class.bg-stone-100]="!selected()"
+  [class.text-slate-900]="!selected()"
+  [class.shadow-sm]="!selected()"
+  [class.dark:bg-stone-800/80]="!selected()"
+  [class.dark:text-slate-100]="!selected()"
+  [class.hover:bg-stone-200]="!selected()"
+  [class.dark:hover:bg-stone-700/80]="!selected()"
+  (click)="select()"
+>
+  {{ label() }}
+</button>

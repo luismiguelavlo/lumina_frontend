@@ -1,0 +1,28 @@
+<div class="mb-8 flex min-w-0 flex-col gap-5">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div class="flex min-w-0 flex-1 flex-col gap-2">
+      <h1
+        class="text-3xl leading-tight font-bold tracking-tight text-slate-900 md:text-4xl dark:text-slate-100"
+      >
+        {{ title() }}
+      </h1>
+      <p class="text-sm font-medium text-slate-500 md:text-base dark:text-slate-400">
+        {{ subtitle() }}
+      </p>
+    </div>
+    <button
+      class="flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-white shadow-lg shadow-primary/40 transition-colors hover:bg-primary/90"
+      type="button"
+      (click)="addStudentClick.emit()"
+    >
+      <app-lum-icon [extraClass]="'text-[18px]'" [name]="'person_add'" />
+      <span>{{ addButtonLabel() }}</span>
+    </button>
+  </div>
+
+  <app-lum-students-neo-search
+    [placeholder]="searchPlaceholder()"
+    [query]="searchQuery()"
+    (queryChange)="searchQueryChange.emit($event)"
+  />
+</div>

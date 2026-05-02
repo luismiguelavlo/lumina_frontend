@@ -1,0 +1,38 @@
+<nav
+  class="fixed top-0 z-50 flex h-20 w-full items-center justify-between border-b border-white/20 bg-white/70 px-6 shadow-[0_4px_12px_rgba(255,178,71,0.05)] backdrop-blur-lg sm:px-8 dark:border-slate-700/30 dark:bg-slate-900/70"
+>
+  <div class="flex items-center gap-8">
+    <a
+      class="text-2xl font-bold tracking-tighter text-primary dark:text-amber-400"
+      routerLink="/"
+      >Lumina</a
+    >
+    <div class="hidden gap-6 text-sm font-medium tracking-wide md:flex">
+      <a
+        class="text-slate-700 transition-colors hover:text-primary dark:text-slate-300 dark:hover:text-primary"
+        [routerLink]="['/']"
+        fragment="meet-top-three"
+        >Explore</a
+      >
+      <a
+        class="pb-1 text-slate-700 transition-colors hover:text-primary dark:text-slate-300 dark:hover:text-primary"
+        routerLink="/catalog"
+        routerLinkActive="border-b-2 border-primary text-primary dark:text-amber-300"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >Catalog</a
+      >
+      <a
+        class="pb-1 text-slate-700 transition-colors hover:text-primary dark:text-slate-300 dark:hover:text-primary"
+        routerLink="/rankings"
+        routerLinkActive="border-b-2 border-primary text-primary dark:text-amber-300"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >Rankings</a
+      >
+    </div>
+  </div>
+  <a
+    class="text-sm font-medium tracking-wide text-primary transition-transform hover:text-primary/90 active:scale-95 dark:text-amber-400"
+    routerLink="/auth/login"
+    >Sign in</a
+  >
+</nav>

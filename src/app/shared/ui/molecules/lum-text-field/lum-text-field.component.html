@@ -1,0 +1,41 @@
+<div>
+  @if (auxiliaryLink(); as link) {
+    <div class="mb-2 flex items-center justify-between">
+      <app-lum-field-label [forId]="fieldId()" [text]="label()" />
+      <app-lum-text-link [href]="link.href" [label]="link.label" [size]="'xs'" />
+    </div>
+  } @else {
+    <app-lum-field-label [extraClass]="'mb-2'" [forId]="fieldId()" [text]="label()" />
+  }
+
+  <div class="relative">
+    <span
+      class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-text-dark/40 dark:text-text-light/40"
+    >
+      <app-lum-icon [extraClass]="'text-xl'" [name]="leadingIcon()" />
+    </span>
+
+    <input
+      class="h-14 w-full rounded-xl border-none bg-background-light pl-12 text-text-dark shadow-neumorphic-inner transition-shadow duration-300 placeholder:text-text-dark/30 focus:shadow-neumorphic-inner-focus focus:outline-none focus:ring-0 dark:bg-surface-dark dark:text-text-light dark:placeholder:text-text-light/30"
+      [class.pr-12]="showPasswordToggle()"
+      [class.pr-4]="!showPasswordToggle()"
+      [attr.autocomplete]="autocomplete()"
+      [formControl]="control()"
+      [id]="fieldId()"
+      [placeholder]="placeholder()"
+      [type]="resolvedInputType()"
+    />
+
+    @if (showPasswordToggle()) {
+      <button
+        class="absolute inset-y-0 right-0 flex items-center pr-4 text-text-dark/40 transition-colors hover:text-text-dark focus:outline-none dark:text-text-light/40 dark:hover:text-text-light"
+        type="button"
+        [attr.aria-label]="passwordVisible() ? 'Hide password' : 'Show password'"
+        [attr.aria-pressed]="passwordVisible()"
+        (click)="togglePasswordVisibility()"
+      >
+        <app-lum-icon [extraClass]="'text-xl'" [name]="toggleIcon()" />
+      </button>
+    }
+  </div>
+</div>

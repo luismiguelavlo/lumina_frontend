@@ -1,0 +1,45 @@
+<div
+  class="flex flex-col gap-6 rounded-2xl border border-white/60 bg-white/50 p-4 shadow-glass backdrop-blur-md dark:border-white/10 dark:bg-[color-mix(in_oklab,var(--color-background-dark)_55%,transparent)] dark:shadow-[0_8px_32px_0_rgb(0_0_0/0.25)]"
+>
+  <div
+    class="flex w-full flex-col gap-6 p-4 md:flex-row md:items-center md:justify-between"
+  >
+    <div class="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
+      <div class="relative shrink-0">
+        <div
+          class="h-32 w-32 rounded-full border-4 border-background-light bg-cover bg-center shadow-neomorph-raised dark:border-background-dark dark:shadow-[10px_10px_20px_#1a140b,-10px_-10px_20px_#2c2213]"
+          role="img"
+          [attr.aria-label]="avatarAlt()"
+          [style.background-image]="'url(' + avatarUrl() + ')'"
+        ></div>
+        @if (verified()) {
+          <div
+            class="absolute right-0 bottom-0 rounded-full bg-primary p-2 text-white shadow-lg"
+            aria-hidden="true"
+          >
+            <app-lum-icon [extraClass]="'text-sm'" [name]="'verified'" />
+          </div>
+        }
+      </div>
+      <div class="flex min-w-0 flex-col items-center gap-1 text-center sm:items-start sm:text-left">
+        <p class="text-3xl leading-tight font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          {{ name() }}
+        </p>
+        <p class="text-lg font-medium text-primary">{{ subtitle() }}</p>
+        <div class="mt-2 flex items-center gap-2 text-slate-500 dark:text-slate-400">
+          <app-lum-icon [extraClass]="'text-sm'" [name]="'calendar_month'" />
+          <p class="text-sm font-normal">{{ memberSinceLabel() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <button
+      class="flex h-12 min-w-[120px] shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-white shadow-[0_4px_14px_0_rgba(255,178,71,0.39)] transition-all hover:bg-primary/90 hover:shadow-[0_6px_20px_rgba(255,178,71,0.23)]"
+      type="button"
+      (click)="onEdit()"
+    >
+      <app-lum-icon [extraClass]="'text-sm'" [name]="'edit'" />
+      <span>Edit Profile</span>
+    </button>
+  </div>
+</div>

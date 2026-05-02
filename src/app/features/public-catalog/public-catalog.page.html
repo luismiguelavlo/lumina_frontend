@@ -1,0 +1,74 @@
+<div
+  class="flex min-h-screen flex-col bg-background-light font-display text-slate-900 antialiased selection:bg-primary selection:text-white dark:bg-background-dark dark:text-slate-100 dark:selection:text-slate-900"
+>
+  <app-lum-public-catalog-nav
+    brandLabel="Lumina Archive"
+    searchPlaceholder="Search archive..."
+    [searchControl]="store.searchControl"
+  />
+
+  <main class="relative z-10 mx-auto w-full max-w-7xl grow px-6 pt-28 pb-16 md:px-12">
+    <div aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10">
+      <div
+        class="absolute top-[-10%] right-[-5%] h-[40%] w-[40%] rounded-full bg-primary/10 blur-[100px]"
+      ></div>
+      <div
+        class="absolute bottom-[-10%] left-[-5%] h-[50%] w-[50%] rounded-full bg-amber-200/20 blur-[120px] dark:bg-amber-900/20"
+      ></div>
+    </div>
+
+    <app-lum-public-catalog-page-hero
+      title="Library Catalog"
+      description="Browse our extensive collection of academic texts, classic literature, and new arrivals. Reserved for currently enrolled students."
+    />
+
+    <app-lum-public-catalog-filters-bar
+      [filterOptions]="store.filterOptions()"
+      [selectedFilterId]="store.selectedFilter()"
+      [sortOptions]="store.sortOptions"
+      [selectedSortId]="store.selectedSort()"
+      (filterChange)="store.onFilterChange($event)"
+      (sortChange)="store.onSortChange($event)"
+    />
+
+    @if (store.isBooksLoading()) {
+      <p class="mb-4 text-sm text-slate-600 dark:text-slate-400">Loading books...</p>
+    }
+
+    <app-lum-public-catalog-book-grid [books]="store.books()" />
+
+    <div class="mt-8 flex flex-wrap items-center justify-between gap-3">
+      <p class="text-sm text-slate-600 dark:text-slate-400">
+        Page {{ store.pagination().current_page || 1 }}
+        @if (store.pagination().total_pages > 0) {
+          <span>of {{ store.pagination().total_pages }}</span>
+        }
+        <span class="ml-2">({{ store.pagination().total }} books)</span>
+      </p>
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+          [disabled]="!store.pagination().has_prev"
+          (click)="store.goToPrevPage()"
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          class="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-500 disabled:cursor-not-allowed disabled:opacity-50"
+          [disabled]="!store.pagination().has_next"
+          (click)="store.goToNextPage()"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <app-lum-public-catalog-site-footer
+    brandLabel="Lumina Archive"
+    [links]="store.footerLinks"
+    copyright="© 2026 Lumina Archive Portal"
+  />
+</div>

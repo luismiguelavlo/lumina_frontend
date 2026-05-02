@@ -1,0 +1,30 @@
+<div class="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+  <div class="min-w-0">
+    <h1
+      class="mb-2 text-[32px] leading-tight font-bold tracking-tight text-slate-900 dark:text-slate-100"
+    >
+      {{ title() }}
+    </h1>
+    <p class="text-slate-500 dark:text-slate-400">ID: {{ libraryId() }}</p>
+  </div>
+  <div class="flex shrink-0 gap-4">
+    <button
+      class="flex h-10 items-center justify-center gap-2 rounded-lg bg-background-light px-6 text-sm font-medium text-slate-600 shadow-neumorphic transition-colors hover:text-primary disabled:cursor-not-allowed disabled:opacity-50 dark:bg-background-dark dark:text-slate-300 dark:shadow-[0_10px_28px_rgb(0_0_0/0.35)] dark:hover:text-primary"
+      type="button"
+      [disabled]="saving()"
+      (click)="discardClick.emit()"
+    >
+      <app-lum-icon [extraClass]="'text-[18px]'" [name]="'delete'" />
+      Discard
+    </button>
+    <button
+      class="flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-6 text-sm font-bold text-slate-900 shadow-save-primary transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+      type="button"
+      [disabled]="saving()"
+      (click)="saveClick.emit()"
+    >
+      <app-lum-icon [extraClass]="'text-[18px]'" [name]="'save'" />
+      Save changes
+    </button>
+  </div>
+</div>

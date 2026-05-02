@@ -1,0 +1,47 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/10 p-4 backdrop-blur-sm dark:bg-black/40"
+  role="presentation"
+  (click)="onBackdropClick($event)"
+>
+  <div
+    class="w-full max-w-md rounded-2xl border border-white/80 bg-white/40 p-6 shadow-2xl backdrop-blur-md dark:border-white/15 dark:bg-slate-900/80"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="lift-sanction-title"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex items-start gap-4">
+      <div
+        class="flex size-12 shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-600 dark:bg-orange-950/60 dark:text-orange-400"
+      >
+        <app-lum-icon [extraClass]="'text-2xl'" [name]="'warning'" />
+      </div>
+      <div class="min-w-0 flex-1 pt-1">
+        <h3 id="lift-sanction-title" class="mb-2 text-lg font-bold text-slate-900 dark:text-slate-100">
+          Confirm action
+        </h3>
+        <p class="mb-6 text-sm leading-relaxed font-medium text-slate-600 dark:text-slate-300">
+          Are you sure you want to lift the sanction for
+          <strong class="text-slate-900 dark:text-slate-100">{{ studentName() }}</strong
+          >? This will restore full borrowing privileges.
+        </p>
+        <div class="flex items-center justify-end gap-3">
+          <button
+            class="rounded-xl px-5 py-2.5 text-sm font-bold text-slate-600 transition-colors hover:bg-white/50 dark:text-slate-300 dark:hover:bg-white/10"
+            type="button"
+            (click)="cancelClick.emit()"
+          >
+            Cancel
+          </button>
+          <button
+            class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/30 transition-colors hover:bg-primary/90"
+            type="button"
+            (click)="confirmClick.emit()"
+          >
+            Confirm lift
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

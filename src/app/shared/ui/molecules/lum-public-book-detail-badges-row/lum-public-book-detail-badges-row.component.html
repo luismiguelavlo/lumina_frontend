@@ -1,0 +1,23 @@
+<div class="flex flex-wrap items-center gap-3">
+  @if (availability() === 'available') {
+    <div
+      class="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-gradient-to-r from-primary/20 to-primary/5 px-3 py-1 text-xs font-semibold tracking-wider text-amber-800 uppercase shadow-[0_0_10px_rgba(255,178,71,0.2)] dark:text-amber-200"
+    >
+      <app-lum-icon [extraClass]="'text-sm'" [name]="'check_circle'" />
+      Available
+    </div>
+  } @else {
+    <div
+      class="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold tracking-wider text-red-800 uppercase dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+    >
+      <app-lum-icon [extraClass]="'text-sm'" [name]="'schedule'" />
+      Checked Out
+    </div>
+  }
+  <div
+    class="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-stone-100 px-3 py-1 text-xs tracking-wider text-slate-600 uppercase dark:border-stone-600 dark:bg-stone-800 dark:text-slate-300"
+  >
+    <app-lum-icon [extraClass]="'text-sm'" [name]="'menu_book'" />
+    {{ secondaryBadgeLabel() }}
+  </div>
+</div>

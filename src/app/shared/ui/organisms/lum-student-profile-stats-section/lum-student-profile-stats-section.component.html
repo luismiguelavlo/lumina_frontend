@@ -1,0 +1,17 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-center gap-2 px-2">
+    <app-lum-icon [extraClass]="'text-primary'" [name]="sectionIcon()" />
+    <h2 class="text-xl leading-tight font-bold text-slate-900 dark:text-slate-100">{{ sectionTitle() }}</h2>
+  </div>
+  <div class="grid grid-cols-2 gap-4">
+    @for (s of stats(); track s.label) {
+      <app-lum-profile-stat-tile
+        [accent]="s.accent"
+        [icon]="s.icon"
+        [label]="s.label"
+        [value]="s.value"
+        [valueSuffix]="s.valueSuffix"
+      />
+    }
+  </div>
+</div>

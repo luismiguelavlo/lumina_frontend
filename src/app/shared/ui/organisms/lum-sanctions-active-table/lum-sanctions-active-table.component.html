@@ -1,0 +1,100 @@
+<div
+  class="overflow-hidden rounded-2xl border border-white/50 bg-white/70 shadow-glass backdrop-blur-xl dark:border-white/10 dark:bg-[color-mix(in_oklab,var(--color-background-dark)_55%,transparent)] dark:shadow-[0_8px_32px_0_rgb(0_0_0/0.25)]"
+>
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse text-left">
+      <thead>
+        <tr
+          class="border-b border-slate-200/80 bg-white/50 dark:border-slate-700/80 dark:bg-slate-900/40"
+        >
+          <th class="p-5 text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-slate-400">
+            Student
+          </th>
+          <th class="p-5 text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-slate-400">
+            Reason
+          </th>
+          <th class="p-5 text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-slate-400">
+            Date applied
+          </th>
+          <th class="p-5 text-right text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-slate-400">
+            Action
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200/50 text-sm dark:divide-slate-700/50">
+        @for (row of rows(); track row.id) {
+          <tr class="group transition-colors hover:bg-white/40 dark:hover:bg-white/5">
+            <td class="p-5 align-top">
+              <app-lum-table-student-identity-cell
+                [detailLine]="row.recordId"
+                [initials]="row.initials"
+                [name]="row.studentName"
+              />
+            </td>
+            <td class="max-w-md p-5 align-top">
+              <p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                {{ row.reason }}
+              </p>
+            </td>
+            <td class="p-5 align-top">
+              <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                <app-lum-icon [extraClass]="'text-[18px] text-primary/70'" [name]="'calendar_month'" />
+                {{ row.appliedOnLabel }}
+              </div>
+            </td>
+            <td class="p-5 align-top text-right">
+              <button
+                class="inline-flex items-center justify-center rounded-lg border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary shadow-sm transition-all hover:border-transparent hover:bg-primary hover:text-white hover:shadow-primary-glow focus:ring-2 focus:ring-primary/50 focus:outline-none"
+                type="button"
+                (click)="onLift(row)"
+              >
+                Lift sanction
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td class="p-12 text-center text-sm text-slate-500 dark:text-slate-400" colspan="4">
+              No active sanctions match your search.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div
+    class="flex flex-col gap-3 border-t border-slate-200/70 bg-white/40 px-5 py-5 sm:flex-row sm:items-center sm:justify-between dark:border-slate-700/70 dark:bg-slate-900/30"
+  >
+    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
+      @if ((pagination()?.total ?? rows().length) === 0) {
+        Showing 0 sanctions
+      } @else {
+        Showing {{ rows().length }} {{ rows().length === 1 ? 'sanction' : 'sanctions' }}
+        @if (pagination(); as p) {
+          <span class="ml-1">· Page {{ p.current_page }} of {{ p.total_pages || 1 }}</span>
+        }
+      }
+    </p>
+    <div class="flex items-center gap-2">
+      <button
+        class="rounded-lg p-2 text-slate-600 transition-colors hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:text-slate-400 dark:text-slate-300 dark:hover:text-primary"
+        [disabled]="!(pagination()?.has_prev ?? false)"
+        type="button"
+        aria-label="Previous page"
+        (click)="onPrevPage()"
+      >
+        <app-lum-icon [extraClass]="'text-[20px]'" [name]="'chevron_left'" />
+      </button>
+      <button
+        class="rounded-lg p-2 text-slate-600 transition-colors hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:text-slate-400 dark:text-slate-300 dark:hover:text-primary"
+        [disabled]="!(pagination()?.has_next ?? false)"
+        type="button"
+        aria-label="Next page"
+        (click)="onNextPage()"
+      >
+        <app-lum-icon [extraClass]="'text-[20px]'" [name]="'chevron_right'" />
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+<a
+  class="transition-colors"
+  [class.font-medium]="!emphasis()"
+  [class.font-semibold]="emphasis()"
+  [class.text-xs]="size() === 'xs'"
+  [class.text-sm]="size() === 'sm'"
+  [class.text-primary]="variant() === 'primary'"
+  [class.hover:text-primary/80]="variant() === 'primary'"
+  [class.text-text-dark/60]="variant() === 'muted'"
+  [class.dark:text-text-light/60]="variant() === 'muted'"
+  [class.hover:underline]="variant() === 'primary'"
+  [href]="href()"
+>{{ label() }}</a>

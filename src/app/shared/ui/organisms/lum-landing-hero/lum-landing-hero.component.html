@@ -1,0 +1,54 @@
+<section
+  class="relative flex min-h-[min(921px,100svh)] flex-col items-center justify-center overflow-hidden px-6 py-20 pt-28"
+>
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0 z-0">
+    <div
+      class="absolute top-1/2 left-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 opacity-60 blur-[100px]"
+    ></div>
+  </div>
+
+  <div
+    class="relative z-10 mx-auto max-w-4xl space-y-8 rounded-3xl border border-white/60 bg-white/70 p-8 text-center shadow-glass backdrop-blur-md sm:p-12 dark:border-white/10 dark:bg-[color-mix(in_oklab,var(--color-background-dark)_55%,transparent)]"
+  >
+    <div class="pointer-events-none absolute top-0 right-0 p-4 opacity-20" aria-hidden="true">
+      <app-lum-icon [extraClass]="'text-[120px] text-primary'" [name]="'auto_stories'" />
+    </div>
+
+    <h1
+      class="relative z-10 text-5xl leading-tight font-black tracking-tight text-slate-900 md:text-7xl dark:text-slate-100"
+    >
+      See the collection.<br />
+      <span class="text-primary">See the leaders.</span><br />
+      See your progress.
+    </h1>
+    <p
+      class="relative z-10 mx-auto max-w-2xl text-xl font-light leading-relaxed text-slate-600 md:text-2xl dark:text-slate-400"
+    >
+      Lumina is your campus library online—built around students.
+    </p>
+    <div class="relative z-10 flex flex-col justify-center gap-6 pt-4 sm:flex-row">
+      <a
+        class="rounded-xl bg-primary px-8 py-4 text-center text-lg font-bold text-white shadow-primary-glow transition-all hover:-translate-y-1 hover:bg-primary/90"
+        routerLink="/catalog"
+      >
+        Explore the book catalog
+      </a>
+      <a
+        class="rounded-xl border border-white/50 bg-background-light px-8 py-4 text-center text-lg font-bold text-slate-900 shadow-neomorph-raised transition-all hover:-translate-y-1 hover:text-primary dark:border-white/10 dark:bg-background-dark dark:text-slate-100 dark:shadow-[10px_10px_20px_#1a140b,-10px_-10px_20px_#2c2213]"
+        [routerLink]="['/']"
+        fragment="meet-top-three"
+      >
+        View the Top 3
+      </a>
+    </div>
+    <div
+      class="relative z-10 flex flex-wrap items-center justify-center gap-4 pt-8 text-xs font-medium tracking-widest text-slate-500 uppercase dark:text-slate-400"
+    >
+      <span>Top 3 readers</span>
+      <span class="size-1.5 shrink-0 rounded-full bg-primary/40" aria-hidden="true"></span>
+      <span>Book catalog</span>
+      <span class="size-1.5 shrink-0 rounded-full bg-primary/40" aria-hidden="true"></span>
+      <span>Your profile &amp; history</span>
+    </div>
+  </div>
+</section>

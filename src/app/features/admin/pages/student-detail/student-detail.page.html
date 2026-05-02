@@ -1,0 +1,197 @@
+<div class="relative mx-auto min-w-0 max-w-[1200px] pb-12">
+  <div
+    aria-hidden="true"
+    class="pointer-events-none fixed top-[-10%] left-[-10%] z-0 h-[40%] w-[40%] rounded-full bg-primary/10 blur-[100px]"
+  ></div>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none fixed right-[-10%] bottom-[-10%] z-0 h-[40%] w-[30%] rounded-full bg-primary/20 blur-[120px]"
+  ></div>
+
+  <div class="relative z-10 flex flex-col gap-8">
+    <a
+      class="inline-flex w-fit items-center gap-2 text-sm font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-400 dark:hover:text-primary"
+      routerLink="/admin/students"
+    >
+      <app-lum-icon [extraClass]="'text-lg'" [name]="'arrow_back'" />
+      Students
+    </a>
+
+    @let p = store.profile();
+    <app-lum-student-profile-hero
+      [avatarAlt]="p.avatarAlt"
+      [avatarUrl]="p.avatarUrl"
+      [memberSinceLabel]="p.memberSinceLabel"
+      [name]="p.name"
+      [subtitle]="p.subtitle"
+      [verified]="p.verified"
+      (editProfileClick)="onEditProfile()"
+    />
+
+    @if (store.updateSuccess(); as successMessage) {
+      <div
+        class="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200"
+      >
+        {{ successMessage }}
+      </div>
+    }
+    @if (store.deactivateError(); as deactivateErrorMessage) {
+      <div
+        class="rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+      >
+        {{ deactivateErrorMessage }}
+      </div>
+    }
+    @if (store.sanctionError(); as sanctionErrorMessage) {
+      <div
+        class="rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+      >
+        {{ sanctionErrorMessage }}
+      </div>
+    }
+    @if (store.sanctionSuccess(); as sanctionSuccessMessage) {
+      <div
+        class="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200"
+      >
+        {{ sanctionSuccessMessage }}
+      </div>
+    }
+
+    <app-lum-student-admin-actions-bar
+      [deactivateLoading]="store.isDeactivating()"
+      (fineClick)="startFineFlow()"
+      (sanctionClick)="startSanctionFlow()"
+      (deactivateClick)="onDeactivateUser()"
+    />
+
+    @if (isDeactivateConfirmOpen()) {
+      <app-lum-confirm-action-modal
+        [title]="'Confirm user deactivation'"
+        [message]="'Are you sure you want to deactivate this student account?'"
+        [confirmLabel]="'Deactivate user'"
+        [cancelLabel]="'Cancel'"
+        [isLoading]="store.isDeactivating()"
+        (cancelClick)="cancelDeactivateUser()"
+        (confirmClick)="confirmDeactivateUser()"
+      />
+    }
+
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div class="flex flex-col gap-8 lg:col-span-1">
+        <app-lum-student-profile-stats-section
+          sectionIcon="bar_chart"
+          sectionTitle="Personal Stats"
+          [stats]="p.stats"
+        />
+        <app-lum-student-badge-gallery
+          sectionIcon="military_tech"
+          sectionTitle="Badge Gallery"
+          [badges]="p.badges"
+          [countLabel]="store.badgeCountLabel()"
+          [adminMode]="true"
+          [mutatingBadgeId]="store.mutatingBadgeId()"
+          (grantBadge)="store.grantStudentBadge($event)"
+          (revokeBadge)="store.revokeStudentBadge($event)"
+        />
+      </div>
+
+      <div class="flex flex-col gap-4 lg:col-span-2">
+        <app-lum-student-loan-history
+          sectionIcon="history"
+          sectionTitle="Loan History"
+          [items]="p.loans"
+        />
+      </div>
+    </div>
+  </div>
+
+  @if (store.isEditModalOpen()) {
+    <app-lum-create-student-modal
+      [title]="'Edit student profile'"
+      [subtitle]="'Update the student information and save the changes.'"
+      [submitLabel]="'Save changes'"
+      [form]="store.editForm"
+      [degreeOptions]="store.degreeOptions"
+      [isSaving]="store.isUpdating()"
+      [errorMessage]="store.updateError()"
+      (cancelClick)="store.closeEditModal()"
+      (submitClick)="store.submitUpdate()"
+    />
+  }
+
+  @if (store.isFineModalOpen()) {
+    <app-lum-create-fine-modal
+      [form]="store.createFineForm"
+      [loanOptions]="store.activeLoanOptions()"
+      [isLoadingLoans]="store.isLoadingStudentLoans()"
+      [isSaving]="store.isFineCreating()"
+      [errorMessage]="store.fineError()"
+      (cancelClick)="store.closeFineModal()"
+      (submitClick)="store.requestFineConfirmation()"
+    />
+  }
+
+  @if (store.isFineConfirmOpen()) {
+    <app-lum-confirm-action-modal
+      [title]="'Confirm fine creation'"
+      [message]="'Are you sure you want to create this fine for the selected loan?'"
+      [confirmLabel]="'Create fine'"
+      [cancelLabel]="'Cancel'"
+      [isLoading]="store.isFineCreating()"
+      (cancelClick)="store.cancelFineConfirmation()"
+      (confirmClick)="store.confirmCreateFine()"
+    />
+  }
+
+  @if (store.isSanctionModalOpen()) {
+    <app-lum-create-sanction-modal
+      [form]="store.createSanctionForm"
+      [isSaving]="store.isSanctionCreating()"
+      [errorMessage]="store.sanctionError()"
+      (cancelClick)="store.closeSanctionModal()"
+      (submitClick)="store.requestSanctionConfirmation()"
+    />
+  }
+
+  @if (store.isSanctionConfirmOpen()) {
+    <app-lum-confirm-action-modal
+      [title]="'Confirm sanction creation'"
+      [message]="'Are you sure you want to create this sanction for the student?'"
+      [confirmLabel]="'Create sanction'"
+      [cancelLabel]="'Cancel'"
+      [isLoading]="store.isSanctionCreating()"
+      (cancelClick)="store.cancelSanctionConfirmation()"
+      (confirmClick)="store.confirmCreateSanction()"
+    />
+  }
+
+  @if (store.badgeToast(); as toast) {
+    <div
+      class="fixed bottom-6 left-1/2 z-[100] w-[min(92vw,24rem)] -translate-x-1/2 rounded-xl border px-4 py-3 text-sm shadow-xl backdrop-blur-md"
+      [class.border-emerald-200]="toast.variant === 'success'"
+      [class.bg-emerald-50]="toast.variant === 'success'"
+      [class.text-emerald-800]="toast.variant === 'success'"
+      [class.dark:border-emerald-900/50]="toast.variant === 'success'"
+      [class.dark:bg-emerald-950/90]="toast.variant === 'success'"
+      [class.dark:text-emerald-100]="toast.variant === 'success'"
+      [class.border-red-200]="toast.variant === 'error'"
+      [class.bg-red-50]="toast.variant === 'error'"
+      [class.text-red-800]="toast.variant === 'error'"
+      [class.dark:border-red-900/50]="toast.variant === 'error'"
+      [class.dark:bg-red-950/90]="toast.variant === 'error'"
+      [class.dark:text-red-100]="toast.variant === 'error'"
+      role="alert"
+    >
+      <div class="flex items-start justify-between gap-3">
+        <span class="font-medium">{{ toast.message }}</span>
+        <button
+          type="button"
+          class="shrink-0 rounded-lg px-2 py-0.5 text-xs font-semibold opacity-80 transition-opacity hover:opacity-100"
+          (click)="store.dismissBadgeToast()"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  }
+</div>

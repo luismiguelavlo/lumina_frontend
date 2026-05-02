@@ -1,0 +1,65 @@
+<app-lum-glass-card>
+  <div class="relative z-20 w-full">
+    <h2 class="mb-6 text-center text-2xl font-semibold">{{ cardTitle() }}</h2>
+
+    <form class="flex flex-col gap-6" [formGroup]="form()" (ngSubmit)="handleSubmit()">
+      <app-lum-text-field
+        [autocomplete]="'email'"
+        [control]="emailControl()"
+        [fieldId]="emailFieldId()"
+        [inputKind]="'email'"
+        [label]="emailLabel()"
+        [leadingIcon]="'mail'"
+        [placeholder]="emailPlaceholder()"
+      />
+
+      <app-lum-text-field
+        [auxiliaryLink]="forgotLink()"
+        [autocomplete]="'current-password'"
+        [control]="passwordControl()"
+        [fieldId]="passwordFieldId()"
+        [inputKind]="'password'"
+        [label]="passwordLabel()"
+        [leadingIcon]="'lock'"
+        [placeholder]="passwordPlaceholder()"
+        [showPasswordToggle]="true"
+      />
+
+      @if (errorMessage(); as msg) {
+        <p
+          class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/50 dark:text-red-200"
+          role="alert"
+        >
+          {{ msg }}
+        </p>
+      }
+
+      <app-lum-checkbox
+        [control]="rememberControl()"
+        [fieldId]="rememberFieldId()"
+        [label]="rememberLabel()"
+      />
+
+      <app-lum-button
+        [disabled]="isSubmitting()"
+        [endIcon]="'arrow_forward'"
+        [label]="loginLabel()"
+        [type]="'submit'"
+      />
+    </form>
+
+    <div class="mt-8 text-center">
+      <p
+        class="flex flex-wrap items-center justify-center gap-1 text-sm text-text-dark/60 dark:text-text-light/60"
+      >
+        <span>{{ footerPrompt() }}</span>
+        <app-lum-text-link
+          [emphasis]="true"
+          [href]="requestAccessHref()"
+          [label]="footerCtaLabel()"
+          [size]="'sm'"
+        />
+      </p>
+    </div>
+  </div>
+</app-lum-glass-card>

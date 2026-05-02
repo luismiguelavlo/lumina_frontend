@@ -1,0 +1,87 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/20 p-4 backdrop-blur-sm dark:bg-black/50"
+  role="presentation"
+  (click)="onBackdropClick($event)"
+>
+  <div
+    class="w-full max-w-2xl rounded-2xl border border-white/70 bg-white/45 p-6 shadow-2xl backdrop-blur-md dark:border-white/15 dark:bg-slate-900/80"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="create-student-title"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="mb-6 flex items-start justify-between gap-4">
+      <div class="flex min-w-0 items-start gap-3">
+        <div
+          class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary dark:bg-primary/20"
+        >
+          <app-lum-icon [extraClass]="'text-xl'" [name]="'person_add'" />
+        </div>
+        <div class="min-w-0">
+          <h3 id="create-student-title" class="text-lg font-bold text-slate-900 dark:text-slate-100">
+            {{ title() }}
+          </h3>
+          <p class="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">
+            {{ subtitle() }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    @if (errorMessage(); as message) {
+      <div
+        class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+      >
+        {{ message }}
+      </div>
+    }
+
+    <form class="space-y-4" [formGroup]="form()" (ngSubmit)="$event.preventDefault(); submitClick.emit()">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <app-lum-neo-input-field label="First name" [control]="$any(form().get('firstName'))" />
+        <app-lum-neo-input-field label="Last name" [control]="$any(form().get('lastName'))" />
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <app-lum-neo-input-field label="Email" [control]="$any(form().get('email'))" />
+        <app-lum-neo-select-field
+          label="Degree level"
+          [control]="$any(form().get('degreeLevel'))"
+          [options]="degreeOptions()"
+        />
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <app-lum-neo-input-field label="Major" [control]="$any(form().get('major'))" />
+        <app-lum-neo-input-field
+          inputType="number"
+          label="Expected graduation year"
+          [control]="$any(form().get('expectedGraduationYear'))"
+        />
+      </div>
+    </form>
+
+    <div class="mt-6 flex items-center justify-end gap-3">
+      <button
+        type="button"
+        class="rounded-xl px-5 py-2.5 text-sm font-bold text-slate-600 transition-colors hover:bg-white/50 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-300 dark:hover:bg-white/10"
+        [disabled]="isSaving()"
+        (click)="cancelClick.emit()"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/30 transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+        [disabled]="isSaving()"
+        (click)="submitClick.emit()"
+      >
+        @if (isSaving()) {
+          Saving...
+        } @else {
+          {{ submitLabel() }}
+        }
+      </button>
+    </div>
+  </div>
+</div>

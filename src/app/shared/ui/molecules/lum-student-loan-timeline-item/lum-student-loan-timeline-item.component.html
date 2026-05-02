@@ -1,0 +1,91 @@
+@let row = item();
+<div class="group relative pl-12" [class.mb-10]="!isLast()">
+  <div
+    class="absolute top-1 left-4 z-10 size-4 -translate-x-1/2 rounded-full border-4 border-background-light dark:border-background-dark"
+    [class.bg-primary]="row.timelineDotActive"
+    [class.bg-slate-300]="!row.timelineDotActive"
+    [class.dark:bg-slate-600]="!row.timelineDotActive"
+    [class.group-hover:bg-primary]="!row.timelineDotActive"
+    [class.shadow-primary-glow]="row.timelineDotActive"
+  ></div>
+
+  <div
+    class="flex flex-col gap-6 rounded-xl border border-white/20 p-5 backdrop-blur-sm transition-all hover:shadow-neomorph-raised sm:flex-row dark:border-white/5 dark:hover:shadow-[10px_10px_20px_#1a140b,-10px_-10px_20px_#2c2213]"
+    [class.bg-background-light/50]="row.tone === 'active'"
+    [class.dark:bg-background-dark/50]="row.tone === 'active'"
+    [class.bg-background-light/30]="row.tone === 'returned'"
+    [class.dark:bg-background-dark/30]="row.tone === 'returned'"
+    [class.opacity-80]="row.tone === 'returned'"
+    [class.hover:opacity-100]="row.tone === 'returned'"
+  >
+    <div
+      class="h-32 w-24 shrink-0 rounded-lg bg-slate-200 bg-cover bg-center shadow-md dark:bg-slate-800"
+      role="img"
+      [attr.aria-label]="row.coverAlt"
+      [style.background-image]="'url(' + row.coverUrl + ')'"
+    ></div>
+
+    <div class="flex min-w-0 flex-1 flex-col">
+      <div class="mb-2 flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+        <div class="min-w-0">
+          @if (row.segmentLabel) {
+            <span class="mb-1 block text-xs font-bold tracking-wider text-primary uppercase">{{
+              row.segmentLabel
+            }}</span>
+          }
+          <h3 class="text-lg leading-tight font-bold text-slate-900 dark:text-slate-100">
+            {{ row.title }}
+          </h3>
+        </div>
+        @if (row.tone === 'active') {
+          <span
+            class="shrink-0 rounded-full bg-green-100 px-3 py-1 text-xs font-bold whitespace-nowrap text-green-700 dark:bg-green-900/30 dark:text-green-400"
+          >
+            {{ row.statusLabel }}
+          </span>
+        } @else {
+          <span
+            class="shrink-0 rounded-full bg-slate-200 px-3 py-1 text-xs font-bold whitespace-nowrap text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+          >
+            {{ row.statusLabel }}
+          </span>
+        }
+      </div>
+      <p class="mb-4 text-sm text-slate-500 dark:text-slate-400">{{ row.authors }}</p>
+
+      <div class="mt-auto flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+        @if (row.tone === 'active') {
+          <div class="flex flex-wrap items-center gap-4 text-slate-600 dark:text-slate-300">
+            <div class="flex items-center gap-2">
+              <app-lum-icon [extraClass]="'text-sm'" [name]="'calendar_today'" />
+              <span>{{ row.primaryDateLabel }}</span>
+            </div>
+            @if (row.dueDateLabel) {
+              <div class="flex items-center gap-2 font-medium text-primary">
+                <app-lum-icon [extraClass]="'text-sm'" [name]="'event'" />
+                <span>{{ row.dueDateLabel }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="flex flex-wrap items-center gap-6">
+            <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+              <app-lum-icon [extraClass]="'text-sm'" [name]="'calendar_today'" />
+              <span>{{ row.dateRangeLabel }}</span>
+            </div>
+            @if (row.ratingOutOf5; as rating) {
+              <div class="flex items-center gap-0.5 text-primary">
+                @for (n of starSlots; track n) {
+                  <app-lum-icon
+                    [extraClass]="n <= rating ? 'text-sm' : 'text-sm text-slate-300 dark:text-slate-700'"
+                    [name]="'star'"
+                  />
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

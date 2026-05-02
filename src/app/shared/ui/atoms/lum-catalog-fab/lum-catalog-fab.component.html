@@ -1,0 +1,8 @@
+<button
+  class="fixed bottom-10 right-10 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white shadow-catalog-fab transition-transform hover:scale-105 hover:bg-primary/90"
+  type="button"
+  [attr.aria-label]="ariaLabel()"
+  (click)="onClick()"
+>
+  <app-lum-icon [extraClass]="'text-3xl font-bold'" [name]="icon()" />
+</button>

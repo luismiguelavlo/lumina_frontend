@@ -1,0 +1,95 @@
+<div class="flex min-w-0 flex-col overflow-x-hidden pb-8">
+  <header class="mb-8 flex flex-col gap-2">
+    <h1
+      class="text-3xl leading-tight font-bold tracking-tight text-slate-900 md:text-[1.875rem] dark:text-slate-100"
+    >
+      {{ pageTitle }}
+    </h1>
+    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
+      {{ pageSubtitle }}
+    </p>
+  </header>
+
+  <app-lum-fines-filters-bar
+    [activeFilter]="statusFilter()"
+    [studentIdQuery]="studentQuery()"
+    (filterChange)="onFilterChange($event)"
+    (studentIdQueryChange)="onStudentQueryChange($event)"
+  />
+
+  @if (selectedStudent(); as selected) {
+    <div class="mb-4 flex items-center gap-2">
+      <span
+        class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
+      >
+        Student: {{ selected.first_name }} {{ selected.last_name }}
+      </span>
+      <button
+        type="button"
+        class="rounded-lg px-2 py-1 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-700"
+        (click)="clearSelectedStudent()"
+      >
+        Clear
+      </button>
+    </div>
+  } @else if (studentSuggestions().length > 0) {
+    <ul
+      class="mb-4 max-w-md space-y-1 rounded-xl border border-slate-200/80 bg-white/70 p-1 dark:border-slate-700/80 dark:bg-slate-900/60"
+    >
+      @for (student of studentSuggestions(); track student.id) {
+        <li>
+          <button
+            type="button"
+            class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-primary/10 dark:hover:bg-primary/15"
+            (click)="pickStudent(student)"
+          >
+            <span class="font-medium text-slate-900 dark:text-slate-100">
+              {{ student.first_name }} {{ student.last_name }}
+            </span>
+            <span class="font-mono text-xs text-slate-500 dark:text-slate-400">
+              {{ student.student_id_code }}
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (loadError(); as message) {
+    <div
+      class="mb-4 max-w-xl rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+    >
+      {{ message }}
+    </div>
+  }
+  @if (actionSuccess(); as successMessage) {
+    <div
+      class="mb-4 max-w-xl rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200"
+    >
+      {{ successMessage }}
+    </div>
+  }
+
+  <app-lum-fines-table
+    [rows]="filteredRows()"
+    [pagination]="pagination()"
+    (markPaidClick)="onMarkPaid($event)"
+    (markWaivedClick)="onMarkWaived($event)"
+    (prevPageClick)="prevPage()"
+    (nextPageClick)="nextPage()"
+  />
+
+  @if (pendingFineAction(); as pending) {
+    <app-lum-confirm-action-modal
+      [title]="pending.type === 'paid' ? 'Confirm payment update' : 'Confirm fine waiver'"
+      [message]="pending.type === 'paid'
+        ? 'Are you sure you want to mark this fine as paid?'
+        : 'Are you sure you want to mark this fine as waived?'"
+      [confirmLabel]="pending.type === 'paid' ? 'Mark paid' : 'Mark waived'"
+      [cancelLabel]="'Cancel'"
+      [isLoading]="isMutatingFine()"
+      (cancelClick)="cancelFineAction()"
+      (confirmClick)="confirmFineAction()"
+    />
+  }
+</div>

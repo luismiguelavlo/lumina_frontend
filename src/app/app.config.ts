@@ -1,11 +1,34 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {
+  APP_INITIALIZER,
+  ApplicationConfig,
+  inject,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { AuthBootstrapService } from './features/auth/data-access/auth-bootstrap.service';
+import { authTokenInterceptor } from './features/auth/data-access/auth-token.interceptor';
 
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes)
-  ]
+    provideHttpClient(withInterceptors([authTokenInterceptor])),
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      useFactory: () => {
+        const authBootstrap = inject(AuthBootstrapService);
+        return () => authBootstrap.initialize();
+      },
+    },
+    provideRouter(
+      routes,
+      withInMemoryScrolling({
+        anchorScrolling: 'enabled',
+        scrollPositionRestoration: 'enabled',
+      }),
+    ),
+  ],
 };

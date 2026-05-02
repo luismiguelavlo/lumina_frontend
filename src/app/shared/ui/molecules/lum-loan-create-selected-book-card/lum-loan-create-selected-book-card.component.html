@@ -1,0 +1,26 @@
+<div
+  class="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-slate-200/70 bg-white/50 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/40"
+>
+  <div
+    class="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent to-primary/5 opacity-0 transition-opacity group-hover:opacity-100"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="relative z-10 h-16 w-12 shrink-0 overflow-hidden rounded border border-slate-200/80 bg-slate-100 shadow-sm dark:border-slate-600 dark:bg-slate-800"
+  >
+    <img class="h-full w-full object-cover" [alt]="book().coverAlt" [src]="book().coverUrl" />
+  </div>
+  <div class="relative z-10 min-w-0 flex-1">
+    <h4 class="line-clamp-1 text-sm font-semibold text-slate-900 dark:text-slate-100">{{ book().title }}</h4>
+    <p class="mb-1 text-xs tracking-wide text-slate-500 dark:text-slate-400">{{ book().author }}</p>
+    <p class="font-mono text-[0.7rem] text-slate-500/80 dark:text-slate-500">ISBN: {{ book().isbn }}</p>
+  </div>
+  <button
+    class="relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-red-500/10 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
+    type="button"
+    [attr.aria-label]="'Remove ' + book().title"
+    (click)="clear()"
+  >
+    <app-lum-icon [extraClass]="'text-[20px]'" [name]="'close'" />
+  </button>
+</div>

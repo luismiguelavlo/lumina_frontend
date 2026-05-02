@@ -1,0 +1,124 @@
+<div class="flex min-h-0 w-full min-w-0 flex-col gap-6 overflow-x-hidden pb-24">
+  @if (store.authorCreateSuccess(); as successMessage) {
+    <div
+      class="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200"
+      role="status"
+    >
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <span>{{ successMessage }}</span>
+        <button
+          type="button"
+          class="rounded-lg border border-emerald-300 px-3 py-1.5 text-xs font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 dark:border-emerald-700 dark:text-emerald-100 dark:hover:bg-emerald-900/40"
+          (click)="store.dismissAuthorSuccess()"
+        >
+          Dismiss
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (store.bookCreateSuccess(); as bookSuccessMessage) {
+    <div
+      class="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200"
+      role="status"
+    >
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <span>{{ bookSuccessMessage }}</span>
+        <button
+          type="button"
+          class="rounded-lg border border-emerald-300 px-3 py-1.5 text-xs font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 dark:border-emerald-700 dark:text-emerald-100 dark:hover:bg-emerald-900/40"
+          (click)="store.dismissBookSuccess()"
+        >
+          Dismiss
+        </button>
+      </div>
+    </div>
+  }
+
+  <app-lum-catalog-hero
+    searchPlaceholder="Search by title, author, or ISBN..."
+    tagline="Curate and oversee the library's expanding collection"
+    title="Catalog Management"
+    [searchQuery]="store.searchControl.value"
+    (queryChange)="store.searchControl.setValue($event)"
+  />
+
+  <!-- Genre filter pills -->
+  <div class="flex flex-wrap gap-2">
+    @for (genre of store.genreFilterOptions(); track genre.id) {
+      <app-lum-filter-pill-button
+        [label]="genre.name"
+        [selected]="store.selectedGenreId() === genre.id"
+        (pillSelected)="store.onGenreSelect(genre.id)"
+      />
+    }
+  </div>
+
+  <!-- Loading state -->
+  @if (store.isLoading()) {
+    <p class="text-sm text-slate-500 dark:text-slate-400">Loading books...</p>
+  }
+
+  <!-- Book grid -->
+  <section aria-label="Book catalog">
+    @if (store.books().length > 0) {
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        @for (book of store.books(); track book.id) {
+          <app-lum-catalog-book-card [book]="book" />
+        }
+      </div>
+    } @else if (!store.isLoading()) {
+      <p class="py-12 text-center text-slate-400 dark:text-slate-500">No books found for the current filters.</p>
+    }
+  </section>
+
+  <!-- Pagination -->
+  @if (store.pagination().total_pages > 1) {
+    <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        Page {{ store.pagination().current_page }} of {{ store.pagination().total_pages }}
+        <span class="ml-2">({{ store.pagination().total }} books)</span>
+      </p>
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
+          [disabled]="!store.pagination().has_prev"
+          (click)="store.goToPrevPage()"
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          class="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-500 disabled:cursor-not-allowed disabled:opacity-50"
+          [disabled]="!store.pagination().has_next"
+          (click)="store.goToNextPage()"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  }
+</div>
+
+@if (store.isCreateModalOpen()) {
+  <app-lum-catalog-create-modal
+    [activeTab]="store.createModalTab()"
+    [isModalBusy]="store.isCreateModalBusy()"
+    [authorForm]="store.authorForm"
+    [isSavingAuthor]="store.isCreatingAuthor()"
+    [authorErrorMessage]="store.authorCreateError()"
+    [bookForm]="store.bookForm"
+    [isSavingBook]="store.isCreatingBook()"
+    [bookErrorMessage]="store.bookCreateError()"
+    [authorPickOptions]="store.authorPickOptions()"
+    [genrePickOptions]="store.genrePickOptions()"
+    [isLoadingPicklists]="store.isLoadingCatalogPicklists()"
+    (tabChange)="store.setCreateModalTab($event)"
+    (cancelClick)="store.closeCreateModal()"
+    (submitAuthorClick)="store.submitCreateAuthor()"
+    (submitBookClick)="store.submitCreateBook()"
+  />
+}
+
+<app-lum-catalog-fab ariaLabel="Add book or author to catalog" (fabClick)="onAddToCatalog()" />

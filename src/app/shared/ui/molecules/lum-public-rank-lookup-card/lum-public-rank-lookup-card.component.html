@@ -1,0 +1,74 @@
+<form
+  class="flex flex-col gap-4 rounded-xl bg-background-light p-8 shadow-neomorph-raised dark:bg-background-dark dark:shadow-neo-icon-dark"
+  (submit)="onSubmit($event)"
+>
+  <h2 class="text-center text-xl font-bold text-slate-900 dark:text-slate-100">{{ title() }}</h2>
+
+  @if (errorMessage(); as err) {
+    <p class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-center text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
+      {{ err }}
+    </p>
+  }
+
+  <div class="flex w-full flex-col gap-4 md:flex-row md:items-start">
+    <div class="relative min-w-0 flex-1">
+      <label class="flex min-h-12 w-full flex-col" [attr.for]="inputId()">
+        <span class="sr-only">{{ placeholder() }}</span>
+        <div
+          class="flex h-full min-h-12 w-full items-stretch rounded-lg border border-slate-300 bg-white transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary dark:border-slate-700 dark:bg-slate-800"
+        >
+          <input
+            class="min-h-12 w-full min-w-0 flex-1 rounded-lg border-none bg-transparent px-4 text-base leading-normal font-normal text-slate-900 placeholder:text-slate-400 focus:ring-0 focus:outline-none dark:text-slate-100"
+            [formControl]="control()"
+            [id]="inputId()"
+            [placeholder]="placeholder()"
+            type="search"
+            autocomplete="off"
+            [attr.aria-expanded]="suggestions().length > 0"
+            [attr.aria-controls]="inputId() + '-suggestions'"
+          />
+        </div>
+      </label>
+
+      @if (loadingSuggestions()) {
+        <p
+          class="absolute z-20 mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-500 shadow-md dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400"
+          role="status"
+        >
+          Buscando estudiantes…
+        </p>
+      } @else if (suggestions().length > 0) {
+        <ul
+          class="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-600 dark:bg-slate-800"
+          [id]="inputId() + '-suggestions'"
+          role="listbox"
+          [attr.aria-label]="'Resultados de búsqueda'"
+        >
+          @for (s of suggestions(); track s.id) {
+            <li role="option">
+              <button
+                class="flex w-full flex-col gap-0.5 px-4 py-3 text-left text-sm transition-colors hover:bg-primary/10 dark:hover:bg-primary/15"
+                type="button"
+                (click)="onPick(s.id)"
+              >
+                <span class="font-semibold text-slate-900 dark:text-slate-100">{{ s.label }}</span>
+                <span class="text-xs text-slate-500 dark:text-slate-400">{{ s.subtitle }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+    <button
+      class="h-12 shrink-0 rounded-lg bg-primary px-6 text-sm font-bold whitespace-nowrap text-white shadow-md transition-colors hover:bg-orange-500 disabled:cursor-not-allowed disabled:opacity-60"
+      type="submit"
+      [disabled]="loadingRanking()"
+    >
+      @if (loadingRanking()) {
+        Consultando…
+      } @else {
+        {{ submitLabel() }}
+      }
+    </button>
+  </div>
+</form>

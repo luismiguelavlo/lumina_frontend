@@ -1,0 +1,203 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/20 p-4 backdrop-blur-sm dark:bg-black/50"
+  role="presentation"
+  (click)="onBackdropClick($event)"
+>
+  <div
+    class="flex max-h-[min(92vh,880px)] w-full max-w-2xl flex-col rounded-2xl border border-white/70 bg-white/45 shadow-2xl backdrop-blur-md dark:border-white/15 dark:bg-slate-900/80"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="catalog-create-title"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="shrink-0 border-b border-slate-200/80 p-6 pb-4 dark:border-slate-700/80">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex min-w-0 items-start gap-3">
+          <div
+            class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary dark:bg-primary/20"
+          >
+            <app-lum-icon [extraClass]="'text-xl'" [name]="'library_add'" />
+          </div>
+          <div class="min-w-0">
+            <h3 id="catalog-create-title" class="text-lg font-bold text-slate-900 dark:text-slate-100">
+              Add to catalog
+            </h3>
+            <p class="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">
+              Create a new book or register an author.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 flex gap-2" role="tablist" aria-label="Creation type">
+        <button
+          id="tab-book"
+          type="button"
+          role="tab"
+          class="rounded-xl px-4 py-2 text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+          [class.bg-primary]="activeTab() === 'book'"
+          [class.text-white]="activeTab() === 'book'"
+          [class.shadow-primary-glow]="activeTab() === 'book'"
+          [class.bg-stone-100]="activeTab() !== 'book'"
+          [class.text-slate-900]="activeTab() !== 'book'"
+          [class.shadow-sm]="activeTab() !== 'book'"
+          [class.dark:bg-stone-800/80]="activeTab() !== 'book'"
+          [class.dark:text-slate-100]="activeTab() !== 'book'"
+          [class.hover:bg-stone-200]="activeTab() !== 'book'"
+          [class.dark:hover:bg-stone-700/80]="activeTab() !== 'book'"
+          [attr.aria-selected]="activeTab() === 'book'"
+          [disabled]="isModalBusy()"
+          (click)="selectTab('book')"
+        >
+          New book
+        </button>
+        <button
+          id="tab-author"
+          type="button"
+          role="tab"
+          class="rounded-xl px-4 py-2 text-sm font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+          [class.bg-primary]="activeTab() === 'author'"
+          [class.text-white]="activeTab() === 'author'"
+          [class.shadow-primary-glow]="activeTab() === 'author'"
+          [class.bg-stone-100]="activeTab() !== 'author'"
+          [class.text-slate-900]="activeTab() !== 'author'"
+          [class.shadow-sm]="activeTab() !== 'author'"
+          [class.dark:bg-stone-800/80]="activeTab() !== 'author'"
+          [class.dark:text-slate-100]="activeTab() !== 'author'"
+          [class.hover:bg-stone-200]="activeTab() !== 'author'"
+          [class.dark:hover:bg-stone-700/80]="activeTab() !== 'author'"
+          [attr.aria-selected]="activeTab() === 'author'"
+          [disabled]="isModalBusy()"
+          (click)="selectTab('author')"
+        >
+          New author
+        </button>
+      </div>
+    </div>
+
+    <div class="min-h-0 flex-1 overflow-y-auto p-6 pt-4">
+      @if (activeTab() === 'author' && authorErrorMessage(); as message) {
+        <div
+          class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+          role="alert"
+        >
+          {{ message }}
+        </div>
+      }
+      @if (activeTab() === 'book' && bookErrorMessage(); as bookErr) {
+        <div
+          class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200"
+          role="alert"
+        >
+          {{ bookErr }}
+        </div>
+      }
+
+      @if (activeTab() === 'book') {
+        <div role="tabpanel" id="panel-book" aria-labelledby="tab-book" tabindex="0">
+          @if (isLoadingPicklists()) {
+            <p class="text-sm text-slate-500 dark:text-slate-400">Loading authors and genres…</p>
+          } @else {
+            <form
+              class="space-y-4"
+              [formGroup]="bookForm()"
+              (ngSubmit)="$event.preventDefault(); submitBookClick.emit()"
+            >
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <app-lum-neo-input-field label="Title" [control]="$any(bookForm().get('title'))" />
+                <app-lum-neo-input-field label="ISBN" [control]="$any(bookForm().get('isbn'))" />
+              </div>
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <app-lum-neo-input-field label="Catalog code" [control]="$any(bookForm().get('catalog_code'))" />
+                <app-lum-neo-input-field
+                  inputType="number"
+                  label="Publication year"
+                  [control]="$any(bookForm().get('publication_year'))"
+                />
+              </div>
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <app-lum-neo-input-field inputType="number" label="Pages" [control]="$any(bookForm().get('pages'))" />
+                <app-lum-neo-input-field
+                  inputType="number"
+                  label="Total copies"
+                  [control]="$any(bookForm().get('total_copies'))"
+                />
+              </div>
+              <app-lum-neo-input-field label="Location" [control]="$any(bookForm().get('location'))" />
+              <app-lum-neo-input-field label="Cover URL (optional)" [control]="$any(bookForm().get('cover_url'))" />
+              <app-lum-neo-textarea-field label="Synopsis (optional)" [rows]="4" [control]="$any(bookForm().get('synopsis'))" />
+              <app-lum-neo-multi-search-pick
+                label="Authors"
+                searchPlaceholder="Search authors…"
+                emptyListHint="No authors match your search."
+                [options]="authorPickOptions()"
+                [control]="$any(bookForm().get('author_ids'))"
+              />
+              <app-lum-neo-multi-search-pick
+                label="Genres"
+                searchPlaceholder="Search genres…"
+                emptyListHint="No genres match your search."
+                [options]="genrePickOptions()"
+                [control]="$any(bookForm().get('genre_ids'))"
+              />
+            </form>
+          }
+        </div>
+      } @else {
+        <div role="tabpanel" id="panel-author" aria-labelledby="tab-author" tabindex="0">
+          <form
+            class="space-y-4"
+            [formGroup]="authorForm()"
+            (ngSubmit)="$event.preventDefault(); submitAuthorClick.emit()"
+          >
+            <app-lum-neo-input-field label="Name" [control]="$any(authorForm().get('name'))" />
+            <app-lum-neo-textarea-field
+              label="Biography (optional)"
+              [rows]="5"
+              [control]="$any(authorForm().get('bio'))"
+            />
+          </form>
+        </div>
+      }
+    </div>
+
+    <div class="flex shrink-0 items-center justify-end gap-3 border-t border-slate-200/80 p-6 pt-4 dark:border-slate-700/80">
+      <button
+        type="button"
+        class="rounded-xl px-5 py-2.5 text-sm font-bold text-slate-600 transition-colors hover:bg-white/50 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-300 dark:hover:bg-white/10"
+        [disabled]="isModalBusy()"
+        (click)="cancelClick.emit()"
+      >
+        Cancel
+      </button>
+      @if (activeTab() === 'author') {
+        <button
+          type="button"
+          class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/30 transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+          [disabled]="isModalBusy()"
+          (click)="submitAuthorClick.emit()"
+        >
+          @if (isSavingAuthor()) {
+            Creating…
+          } @else {
+            Create author
+          }
+        </button>
+      }
+      @if (activeTab() === 'book') {
+        <button
+          type="button"
+          class="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/30 transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+          [disabled]="isModalBusy() || isLoadingPicklists()"
+          (click)="submitBookClick.emit()"
+        >
+          @if (isSavingBook()) {
+            Creating…
+          } @else {
+            Create book
+          }
+        </button>
+      }
+    </div>
+  </div>
+</div>

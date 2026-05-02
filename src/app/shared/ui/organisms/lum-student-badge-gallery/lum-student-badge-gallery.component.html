@@ -1,0 +1,30 @@
+<div class="flex flex-col gap-4">
+  <div class="flex items-center justify-between px-2">
+    <div class="flex items-center gap-2">
+      <app-lum-icon [extraClass]="'text-primary'" [name]="sectionIcon()" />
+      <h2 class="text-xl leading-tight font-bold text-slate-900 dark:text-slate-100">{{ sectionTitle() }}</h2>
+    </div>
+    <span class="text-sm font-medium text-primary">{{ countLabel() }}</span>
+  </div>
+  @if (adminMode()) {
+    <p class="px-2 text-xs text-slate-600 dark:text-slate-400">
+      Tap a locked badge to award it, or an earned badge to remove it.
+    </p>
+  }
+  <div
+    class="grid grid-cols-3 gap-4 rounded-2xl border border-white/60 bg-white/50 p-6 shadow-glass backdrop-blur-md dark:border-white/10 dark:bg-[color-mix(in_oklab,var(--color-background-dark)_55%,transparent)] dark:shadow-[0_8px_32px_0_rgb(0_0_0/0.25)]"
+  >
+    @for (b of badges(); track trackBadge($index, b)) {
+      <app-lum-profile-badge-tile
+        [icon]="b.icon"
+        [label]="b.label"
+        [locked]="b.locked"
+        [adminMode]="adminMode()"
+        [busy]="isBusy(b)"
+        [description]="b.description"
+        [criteria]="b.criteria"
+        (tileClick)="onTileClick(b)"
+      />
+    }
+  </div>
+</div>

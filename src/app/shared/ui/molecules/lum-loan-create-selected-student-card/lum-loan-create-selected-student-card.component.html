@@ -1,0 +1,38 @@
+<div
+  class="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-slate-200/70 bg-white/50 p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-900/40"
+>
+  <div
+    class="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent to-primary/5 opacity-0 transition-opacity group-hover:opacity-100"
+    aria-hidden="true"
+  ></div>
+  <img
+    class="relative z-10 size-14 shrink-0 rounded-full border-2 border-primary/25 object-cover shadow-sm"
+    [alt]="student().avatarAlt"
+    [src]="student().avatarUrl"
+  />
+  <div class="relative z-10 min-w-0 flex-1">
+    <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ student().name }}</h4>
+    <p class="text-xs tracking-wide text-slate-500 uppercase dark:text-slate-400">
+      ID: {{ student().id }}
+    </p>
+  </div>
+  <div
+    class="relative z-10 flex shrink-0 items-center gap-1 rounded-full border border-primary/20 bg-background-light px-3 py-1 shadow-neomorph-raised dark:bg-background-dark dark:shadow-[6px_6px_12px_#1a140b,-6px_-6px_12px_#2c2213]"
+  >
+    <span
+      class="size-2 shrink-0 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.45)]"
+      aria-hidden="true"
+    ></span>
+    <span class="text-[0.75rem] font-medium tracking-wider text-emerald-700 uppercase dark:text-emerald-300">
+      {{ student().statusLabel }}
+    </span>
+  </div>
+  <button
+    class="relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-red-500/10 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
+    type="button"
+    [attr.aria-label]="'Remove ' + student().name"
+    (click)="clear()"
+  >
+    <app-lum-icon [extraClass]="'text-[20px]'" [name]="'close'" />
+  </button>
+</div>

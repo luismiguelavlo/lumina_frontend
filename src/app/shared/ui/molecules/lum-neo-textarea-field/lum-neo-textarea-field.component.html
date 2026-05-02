@@ -1,0 +1,8 @@
+<label class="flex flex-col">
+  <app-lum-neo-field-label [text]="label()" />
+  <textarea
+    class="resize-none rounded-lg border-none bg-background-light p-4 text-slate-800 shadow-neumorphic-inset transition-all focus:ring-2 focus:ring-primary focus:outline-none dark:bg-background-dark dark:text-slate-200 dark:shadow-neo-icon-active-dark"
+    [formControl]="control()"
+    [rows]="rows()"
+  ></textarea>
+</label>

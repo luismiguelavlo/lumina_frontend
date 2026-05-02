@@ -1,0 +1,21 @@
+<label
+  class="flex flex-col transition-[filter,opacity] duration-200 has-[:disabled]:opacity-[0.82] has-[:disabled]:grayscale-[0.45]"
+>
+  <app-lum-neo-field-label [text]="label()" />
+  <div class="relative">
+    <select
+      class="h-12 w-full appearance-none rounded-lg border-none bg-background-light px-4 text-slate-800 shadow-neumorphic-inset transition-all focus:ring-2 focus:ring-primary focus:outline-none disabled:cursor-not-allowed disabled:bg-slate-200/70 disabled:text-slate-500 disabled:shadow-none disabled:ring-0 dark:bg-background-dark dark:text-slate-200 dark:shadow-neo-icon-active-dark dark:disabled:bg-slate-800/75 dark:disabled:text-slate-500"
+      [formControl]="control()"
+    >
+      @for (opt of options(); track opt.value) {
+        <option [value]="opt.value">{{ opt.label }}</option>
+      }
+    </select>
+    <span
+      class="pointer-events-none absolute top-3 right-4 text-slate-500 dark:text-slate-400"
+      aria-hidden="true"
+    >
+      <app-lum-icon [name]="'expand_more'" />
+    </span>
+  </div>
+</label>

@@ -1,0 +1,25 @@
+<section class="relative scroll-mt-24 bg-background-light px-6 py-24 dark:bg-background-dark" id="meet-top-three">
+  <div class="mx-auto max-w-7xl">
+    <div class="mb-16 text-center">
+      <h2 class="mb-4 text-3xl font-bold text-slate-900 md:text-4xl dark:text-slate-100">
+        Meet the Top 3
+      </h2>
+      <p class="text-lg text-slate-600 dark:text-slate-400">
+        The highest-ranked readers leading the campus.
+      </p>
+    </div>
+    <div class="grid items-end gap-8 md:grid-cols-3">
+      @for (leader of leaders(); track leader.rank) {
+        <app-lum-landing-leader-card [leader]="leader" />
+      }
+    </div>
+    <div class="mt-14 flex justify-center">
+      <a
+        class="inline-flex items-center justify-center rounded-xl border border-primary/25 bg-primary/10 px-8 py-3 text-sm font-bold text-primary shadow-sm transition-all hover:-translate-y-0.5 hover:bg-primary hover:text-white dark:border-primary/30 dark:hover:text-slate-900"
+        routerLink="/rankings"
+      >
+        Discover your place on the leaderboard
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,47 @@
+<div class="flex flex-wrap gap-2">
+  <button
+    class="rounded-full px-4 py-2 text-sm font-semibold transition-all"
+    [class.bg-primary]="isActive('pending')"
+    [class.text-white]="isActive('pending')"
+    [class.shadow-primary-glow]="isActive('pending')"
+    [class.font-medium]="!isActive('pending')"
+    [class.text-slate-600]="!isActive('pending')"
+    [class.hover:bg-slate-200]="!isActive('pending')"
+    [class.dark:text-slate-300]="!isActive('pending')"
+    [class.dark:hover:bg-slate-700]="!isActive('pending')"
+    type="button"
+    (click)="select('pending')"
+  >
+    Pending
+  </button>
+  <button
+    class="rounded-full px-4 py-2 text-sm font-semibold transition-all"
+    [class.bg-primary]="isActive('paid')"
+    [class.text-white]="isActive('paid')"
+    [class.shadow-primary-glow]="isActive('paid')"
+    [class.font-medium]="!isActive('paid')"
+    [class.text-slate-600]="!isActive('paid')"
+    [class.hover:bg-slate-200]="!isActive('paid')"
+    [class.dark:text-slate-300]="!isActive('paid')"
+    [class.dark:hover:bg-slate-700]="!isActive('paid')"
+    type="button"
+    (click)="select('paid')"
+  >
+    Paid
+  </button>
+  <button
+    class="rounded-full px-4 py-2 text-sm font-semibold transition-all"
+    [class.bg-primary]="isActive('waived')"
+    [class.text-white]="isActive('waived')"
+    [class.shadow-primary-glow]="isActive('waived')"
+    [class.font-medium]="!isActive('waived')"
+    [class.text-slate-600]="!isActive('waived')"
+    [class.hover:bg-slate-200]="!isActive('waived')"
+    [class.dark:text-slate-300]="!isActive('waived')"
+    [class.dark:hover:bg-slate-700]="!isActive('waived')"
+    type="button"
+    (click)="select('waived')"
+  >
+    Waived
+  </button>
+</div>

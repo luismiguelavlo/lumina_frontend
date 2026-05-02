@@ -1,0 +1,74 @@
+@switch (leader().place) {
+  @case ('second') {
+    <div class="z-10 flex flex-col items-center pb-8">
+      <div class="relative mb-4">
+        <img
+          class="size-24 rounded-full border-4 border-slate-300 object-cover shadow-lg shadow-primary-glow"
+          [alt]="leader().avatarAlt"
+          [src]="leader().avatarUrl"
+        />
+        <div
+          class="absolute -right-2 -bottom-2 flex size-8 items-center justify-center rounded-full bg-slate-300 text-sm font-bold text-slate-800 shadow-md"
+          aria-hidden="true"
+        >
+          2
+        </div>
+      </div>
+      <p class="mb-1 text-base font-bold text-slate-900 dark:text-slate-100">{{ leader().name }}</p>
+      <p class="mb-4 text-sm font-semibold text-primary">{{ leader().pointsDisplay }}</p>
+      <div
+        class="flex h-32 w-32 items-start justify-center rounded-t-xl bg-background-light pt-4 shadow-neomorph-raised dark:bg-background-dark dark:shadow-neo-icon-dark"
+      >
+        <app-lum-icon [extraClass]="'text-4xl text-slate-400'" [name]="leader().pedestalIcon" />
+      </div>
+    </div>
+  }
+  @case ('first') {
+    <div class="z-20 flex flex-col items-center">
+      <div class="relative mb-4">
+        <img
+          class="size-32 rounded-full border-4 border-primary object-cover shadow-lg shadow-primary-glow"
+          [alt]="leader().avatarAlt"
+          [src]="leader().avatarUrl"
+        />
+        <div
+          class="absolute -right-2 -bottom-2 flex size-10 items-center justify-center rounded-full bg-primary text-lg font-bold text-white shadow-md"
+          aria-hidden="true"
+        >
+          1
+        </div>
+      </div>
+      <p class="mb-1 text-lg font-bold text-primary">{{ leader().name }}</p>
+      <p class="mb-4 text-base font-bold text-primary">{{ leader().pointsDisplay }}</p>
+      <div
+        class="flex h-48 w-36 items-start justify-center rounded-t-xl border-t-2 border-primary bg-background-light pt-4 shadow-neomorph-raised dark:bg-background-dark dark:shadow-neo-icon-dark"
+      >
+        <app-lum-icon [extraClass]="'text-5xl text-primary'" [name]="leader().pedestalIcon" />
+      </div>
+    </div>
+  }
+  @case ('third') {
+    <div class="z-10 flex flex-col items-center pb-12">
+      <div class="relative mb-4">
+        <img
+          class="size-20 rounded-full border-4 border-[#cd7f32] object-cover shadow-lg shadow-primary-glow"
+          [alt]="leader().avatarAlt"
+          [src]="leader().avatarUrl"
+        />
+        <div
+          class="absolute -right-2 -bottom-2 flex size-8 items-center justify-center rounded-full bg-[#cd7f32] text-sm font-bold text-white shadow-md"
+          aria-hidden="true"
+        >
+          3
+        </div>
+      </div>
+      <p class="mb-1 text-base font-bold text-slate-900 dark:text-slate-100">{{ leader().name }}</p>
+      <p class="mb-4 text-sm font-semibold text-primary">{{ leader().pointsDisplay }}</p>
+      <div
+        class="flex h-24 w-32 items-start justify-center rounded-t-xl bg-background-light pt-4 shadow-neomorph-raised dark:bg-background-dark dark:shadow-neo-icon-dark"
+      >
+        <app-lum-icon [extraClass]="'text-4xl text-[#cd7f32]'" [name]="leader().pedestalIcon" />
+      </div>
+    </div>
+  }
+}

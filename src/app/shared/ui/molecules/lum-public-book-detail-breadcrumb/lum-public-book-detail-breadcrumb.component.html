@@ -1,0 +1,16 @@
+<div
+  class="mb-8 flex w-full flex-wrap items-center gap-2 text-sm font-medium tracking-wide text-slate-600 dark:text-slate-400"
+>
+  <a
+    class="group flex items-center gap-1 no-underline transition-colors hover:text-primary"
+    [routerLink]="catalogLink()"
+  >
+    <app-lum-icon
+      [extraClass]="'text-lg transition-transform group-hover:-translate-x-1'"
+      [name]="'arrow_back'"
+    />
+    {{ backLabel() }}
+  </a>
+  <span class="mx-2 text-stone-300 dark:text-stone-600" aria-hidden="true">|</span>
+  <span class="opacity-70">{{ categoryLabel() }}</span>
+</div>

@@ -3,7 +3,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
-import { catchError, finalize, forkJoin, map, of, switchMap, take } from 'rxjs';
+import { catchError, finalize, forkJoin, map, of, startWith, switchMap, take } from 'rxjs';
 import { StudentProfileApiService } from '../../../../shared/data-access/student-profile-api.service';
 import { StudentsApiService } from '../../../../shared/data-access/students-api.service';
 import { BadgesApiService } from '../../../../shared/data-access/badges-api.service';
@@ -101,24 +101,51 @@ export class StudentDetailStore {
     toObservable(this.queryState).pipe(
       switchMap(({ id }) => {
         if (!id) {
-          return of({ profile: this.fallbackProfile('—'), raw: null as StudentProfileApiResponse | null });
+          return of({
+            status: 'empty' as const,
+            profile: this.fallbackProfile('—'),
+            raw: null as StudentProfileApiResponse | null,
+          });
         }
         return forkJoin({
           profileResp: this.profileApi.getProfile(id, 10),
           catalog: this.badgesApi.listBadges().pipe(catchError(() => of([] as readonly BadgeCatalogItem[]))),
         }).pipe(
           map(({ profileResp, catalog }) => ({
+            status: 'ok' as const,
             profile: this.mapApiToView(profileResp, catalog),
             raw: profileResp,
           })),
-          catchError(() => of({ profile: this.fallbackProfile(id), raw: null as StudentProfileApiResponse | null })),
+          catchError(() =>
+            of({
+              status: 'error' as const,
+              profile: this.fallbackProfile(id),
+              raw: null as StudentProfileApiResponse | null,
+            }),
+          ),
+          startWith({
+            status: 'loading' as const,
+            profile: null as StudentProfileDetail | null,
+            raw: null as StudentProfileApiResponse | null,
+          }),
         );
       }),
     ),
-    { initialValue: { profile: this.fallbackProfile('—'), raw: null as StudentProfileApiResponse | null } },
+    {
+      initialValue: {
+        status: 'loading' as const,
+        profile: null as StudentProfileDetail | null,
+        raw: null as StudentProfileApiResponse | null,
+      },
+    },
   );
 
-  readonly profile = computed(() => this.profileState().profile);
+  readonly isProfileLoading = computed(() => {
+    const s = this.profileState().status;
+    return s === 'loading';
+  });
+
+  readonly profile = computed(() => this.profileState().profile ?? this.fallbackProfile(this.studentId() || '—'));
   private readonly rawProfile = computed(() => this.profileState().raw);
   readonly studentRouteId = computed(() => this.studentId());
   readonly badgeCountLabel = computed(() => {

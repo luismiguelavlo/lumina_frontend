@@ -7,12 +7,29 @@
     <div class="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
       <div class="relative shrink-0">
         <div
-          class="h-32 w-32 rounded-full border-4 border-background-light bg-cover bg-center shadow-neomorph-raised dark:border-background-dark dark:shadow-[10px_10px_20px_#1a140b,-10px_-10px_20px_#2c2213]"
+          class="relative h-32 w-32 overflow-hidden rounded-full border-4 border-background-light bg-stone-200 shadow-neomorph-raised dark:border-background-dark dark:bg-slate-800 dark:shadow-[10px_10px_20px_#1a140b,-10px_-10px_20px_#2c2213]"
           role="img"
+          [attr.aria-busy]="isLoading() || isAvatarPending()"
           [attr.aria-label]="avatarAlt()"
-          [style.background-image]="'url(' + avatarUrl() + ')'"
-        ></div>
-        @if (verified()) {
+        >
+          @if (showAvatarImage()) {
+            <div
+              class="absolute inset-0 bg-cover bg-center"
+              [style.background-image]="'url(' + avatarUrl() + ')'"
+            ></div>
+          } @else {
+            <div
+              class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-stone-200 to-stone-300 dark:from-slate-700 dark:to-slate-800"
+            >
+              <span
+                class="size-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary"
+                aria-hidden="true"
+              ></span>
+              <span class="sr-only">Loading avatar</span>
+            </div>
+          }
+        </div>
+        @if (verified() && showAvatarImage()) {
           <div
             class="absolute right-0 bottom-0 rounded-full bg-primary p-2 text-white shadow-lg"
             aria-hidden="true"
@@ -22,20 +39,27 @@
         }
       </div>
       <div class="flex min-w-0 flex-col items-center gap-1 text-center sm:items-start sm:text-left">
-        <p class="text-3xl leading-tight font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          {{ name() }}
-        </p>
-        <p class="text-lg font-medium text-primary">{{ subtitle() }}</p>
-        <div class="mt-2 flex items-center gap-2 text-slate-500 dark:text-slate-400">
-          <app-lum-icon [extraClass]="'text-sm'" [name]="'calendar_month'" />
-          <p class="text-sm font-normal">{{ memberSinceLabel() }}</p>
-        </div>
+        @if (isLoading()) {
+          <div class="h-8 w-48 animate-pulse rounded-lg bg-stone-200 dark:bg-slate-700"></div>
+          <div class="mt-2 h-5 w-36 animate-pulse rounded-lg bg-stone-200 dark:bg-slate-700"></div>
+          <div class="mt-3 h-4 w-40 animate-pulse rounded-lg bg-stone-200 dark:bg-slate-700"></div>
+        } @else {
+          <p class="text-3xl leading-tight font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            {{ name() }}
+          </p>
+          <p class="text-lg font-medium text-primary">{{ subtitle() }}</p>
+          <div class="mt-2 flex items-center gap-2 text-slate-500 dark:text-slate-400">
+            <app-lum-icon [extraClass]="'text-sm'" [name]="'calendar_month'" />
+            <p class="text-sm font-normal">{{ memberSinceLabel() }}</p>
+          </div>
+        }
       </div>
     </div>
 
     <button
-      class="flex h-12 min-w-[120px] shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-white shadow-[0_4px_14px_0_rgba(255,178,71,0.39)] transition-all hover:bg-primary/90 hover:shadow-[0_6px_20px_rgba(255,178,71,0.23)]"
+      class="flex h-12 min-w-[120px] shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-white shadow-[0_4px_14px_0_rgba(255,178,71,0.39)] transition-all hover:bg-primary/90 hover:shadow-[0_6px_20px_rgba(255,178,71,0.23)] disabled:cursor-not-allowed disabled:opacity-60"
       type="button"
+      [disabled]="isLoading()"
       (click)="onEdit()"
     >
       <app-lum-icon [extraClass]="'text-sm'" [name]="'edit'" />

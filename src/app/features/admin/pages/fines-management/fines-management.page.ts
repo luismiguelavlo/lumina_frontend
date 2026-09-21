@@ -21,6 +21,8 @@ import {
 import type { FineRow, FineStatusFilter } from '../../../../shared/models/fine-row.model';
 import type { FinesApiPagination, FinesApiResponse } from '../../../../shared/models/fines-api.model';
 import type { StudentsApiItem } from '../../../../shared/models/students-api.model';
+import { I18nService } from '../../../../shared/i18n/i18n.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { FinesApiService } from '../../../../shared/data-access/fines-api.service';
 import { StudentsApiService } from '../../../../shared/data-access/students-api.service';
 import { LumFinesFiltersBarComponent } from '../../../../shared/ui/organisms/lum-fines-filters-bar/lum-fines-filters-bar.component';
@@ -29,18 +31,21 @@ import { LumConfirmActionModalComponent } from '../../../../shared/ui/organisms/
 
 @Component({
   selector: 'app-fines-management-page',
-  imports: [LumFinesFiltersBarComponent, LumFinesTableComponent, LumConfirmActionModalComponent],
+  imports: [
+    LumFinesFiltersBarComponent,
+    LumFinesTableComponent,
+    LumConfirmActionModalComponent,
+    TranslatePipe,
+  ],
   templateUrl: './fines-management.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FinesManagementPage {
   private readonly finesApi = inject(FinesApiService);
   private readonly studentsApi = inject(StudentsApiService);
+  private readonly i18n = inject(I18nService);
   private readonly currentPage = signal(1);
   private readonly refreshNonce = signal(0);
-
-  protected readonly pageTitle = 'Fines';
-  protected readonly pageSubtitle = 'Loan-related fine management';
 
   protected readonly statusFilter = signal<FineStatusFilter>('pending');
   protected readonly studentQuery = signal('');
@@ -94,7 +99,7 @@ export class FinesManagementPage {
           })
           .pipe(
             catchError((error: unknown) => {
-              this.loadError.set(this.toErrorMessage(error));
+              this.loadError.set(this.toErrorMessage(error, 'fines.errors.load'));
               return of(this.emptyResponse(page));
             }),
             finalize(() => this.isLoading.set(false)),
@@ -105,10 +110,12 @@ export class FinesManagementPage {
   );
 
   protected readonly filteredRows = computed((): readonly FineRow[] => {
+    this.i18n.locale();
     const status = this.statusFilter();
     return this.finesResponse()
       .data.map((row) => {
-        const studentName = row.student_name ?? 'Unknown student';
+        const studentName = row.student_name ?? this.i18n.t('fines.unknownStudent');
+        const reasonFallback = this.i18n.t('fines.noDetails');
         return {
           id: row.id,
           studentName,
@@ -120,8 +127,8 @@ export class FinesManagementPage {
             minimumFractionDigits: 2,
           }).format(row.amount ?? 0),
           status: this.mapStatus(row.status),
-          reason: (row.reason ?? 'No details').slice(0, 120),
-          reasonTitle: row.reason ?? 'No details',
+          reason: (row.reason ?? reasonFallback).slice(0, 120),
+          reasonTitle: row.reason ?? reasonFallback,
         } satisfies FineRow;
       })
       .filter((row) => row.status === status);
@@ -202,14 +209,14 @@ export class FinesManagementPage {
         next: () => {
           this.actionSuccess.set(
             pending.type === 'paid'
-              ? `Fine ${pending.row.id} marked as paid.`
-              : `Fine ${pending.row.id} marked as waived.`,
+              ? this.i18n.t('fines.success.paid', { id: pending.row.id })
+              : this.i18n.t('fines.success.waived', { id: pending.row.id }),
           );
           this.pendingFineAction.set(null);
           this.refreshNonce.update((n) => n + 1);
         },
         error: (error: unknown) => {
-          this.loadError.set(this.toErrorMessage(error));
+          this.loadError.set(this.toErrorMessage(error, 'fines.errors.update'));
         },
       });
   }
@@ -246,9 +253,9 @@ export class FinesManagementPage {
     return `${student.first_name} ${student.last_name}`.trim();
   }
 
-  private toErrorMessage(error: unknown): string {
+  private toErrorMessage(error: unknown, fallbackKey: string): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'Could not load fines.';
+      return this.i18n.t(fallbackKey);
     }
     const backendMessage =
       error.error && typeof error.error === 'object' && 'message' in error.error
@@ -257,6 +264,6 @@ export class FinesManagementPage {
     if (typeof backendMessage === 'string' && backendMessage.trim()) {
       return backendMessage;
     }
-    return 'Could not load fines.';
+    return this.i18n.t(fallbackKey);
   }
 }

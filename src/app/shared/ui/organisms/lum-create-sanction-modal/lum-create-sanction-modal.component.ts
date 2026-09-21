@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 import { LumNeoTextareaFieldComponent } from '../../molecules/lum-neo-textarea-field/lum-neo-textarea-field.component';
 
 @Component({
   selector: 'app-lum-create-sanction-modal',
-  imports: [ReactiveFormsModule, LumIconComponent, LumNeoTextareaFieldComponent],
+  imports: [ReactiveFormsModule, LumIconComponent, LumNeoTextareaFieldComponent, TranslatePipe],
   templateUrl: './lum-create-sanction-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

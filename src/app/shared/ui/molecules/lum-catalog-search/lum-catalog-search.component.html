@@ -6,7 +6,7 @@
     <input
       class="w-full flex-1 border-none bg-transparent text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:ring-0 dark:text-slate-100 dark:placeholder:text-slate-500"
       type="search"
-      [attr.aria-label]="ariaLabel()"
+      [attr.aria-label]="resolvedAriaLabel()"
       [placeholder]="placeholder()"
       [value]="query()"
       (input)="onInput($any($event.target).value)"

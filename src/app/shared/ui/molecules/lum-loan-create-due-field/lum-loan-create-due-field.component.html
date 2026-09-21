@@ -1,6 +1,6 @@
 <div class="space-y-2">
   <label class="block text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-slate-400">
-    {{ label() }}
+    {{ resolvedLabel() }}
   </label>
   <div class="relative">
     <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-slate-500 dark:text-slate-400">
@@ -12,5 +12,5 @@
       [formControl]="control()"
     />
   </div>
-  <p class="pl-1 text-xs text-slate-500/80 dark:text-slate-500">{{ hint() }}</p>
+  <p class="pl-1 text-xs text-slate-500/80 dark:text-slate-500">{{ resolvedHint() }}</p>
 </div>

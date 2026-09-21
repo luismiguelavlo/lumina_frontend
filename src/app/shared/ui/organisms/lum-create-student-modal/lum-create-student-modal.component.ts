@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 import { LumNeoInputFieldComponent } from '../../molecules/lum-neo-input-field/lum-neo-input-field.component';
 import {
@@ -16,6 +17,7 @@ import { LumImageUploadComponent } from '../../molecules/lum-image-upload/lum-im
     LumNeoInputFieldComponent,
     LumNeoSelectFieldComponent,
     LumImageUploadComponent,
+    TranslatePipe,
   ],
   templateUrl: './lum-create-student-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,9 +25,9 @@ import { LumImageUploadComponent } from '../../molecules/lum-image-upload/lum-im
 export class LumCreateStudentModalComponent {
   readonly form = input.required<FormGroup>();
   readonly degreeOptions = input.required<readonly LumSelectOption[]>();
-  readonly title = input('Create student');
-  readonly subtitle = input('Register a new student in the library system.');
-  readonly submitLabel = input('Create student');
+  readonly title = input<string | undefined>(undefined);
+  readonly subtitle = input<string | undefined>(undefined);
+  readonly submitLabel = input<string | undefined>(undefined);
   readonly isSaving = input(false);
   readonly errorMessage = input<string | null>(null);
 

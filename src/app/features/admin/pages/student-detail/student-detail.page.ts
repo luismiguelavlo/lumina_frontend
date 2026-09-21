@@ -10,6 +10,7 @@ import { LumCreateStudentModalComponent } from '../../../../shared/ui/organisms/
 import { LumCreateFineModalComponent } from '../../../../shared/ui/organisms/lum-create-fine-modal/lum-create-fine-modal.component';
 import { LumCreateSanctionModalComponent } from '../../../../shared/ui/organisms/lum-create-sanction-modal/lum-create-sanction-modal.component';
 import { LumConfirmActionModalComponent } from '../../../../shared/ui/organisms/lum-confirm-action-modal/lum-confirm-action-modal.component';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { StudentDetailStore } from './student-detail.store';
 
 @Component({
@@ -26,6 +27,7 @@ import { StudentDetailStore } from './student-detail.store';
     LumCreateFineModalComponent,
     LumCreateSanctionModalComponent,
     LumConfirmActionModalComponent,
+    TranslatePipe,
   ],
   providers: [StudentDetailStore],
   templateUrl: './student-detail.page.html',

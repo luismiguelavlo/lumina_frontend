@@ -3,12 +3,18 @@ import { Router } from '@angular/router';
 import { LumStudentsPageToolbarComponent } from '../../../../shared/ui/organisms/lum-students-page-toolbar/lum-students-page-toolbar.component';
 import { LumStudentsTableComponent } from '../../../../shared/ui/organisms/lum-students-table/lum-students-table.component';
 import type { StudentPatronRow } from '../../../../shared/models/student-patron.model';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { StudentsManagementStore } from './students-management.store';
 import { LumCreateStudentModalComponent } from '../../../../shared/ui/organisms/lum-create-student-modal/lum-create-student-modal.component';
 
 @Component({
   selector: 'app-students-management-page',
-  imports: [LumStudentsPageToolbarComponent, LumStudentsTableComponent, LumCreateStudentModalComponent],
+  imports: [
+    LumStudentsPageToolbarComponent,
+    LumStudentsTableComponent,
+    LumCreateStudentModalComponent,
+    TranslatePipe,
+  ],
   providers: [StudentsManagementStore],
   templateUrl: './students-management.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

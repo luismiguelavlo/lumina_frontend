@@ -25,7 +25,7 @@
                 class="size-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary"
                 aria-hidden="true"
               ></span>
-              <span class="sr-only">Loading avatar</span>
+              <span class="sr-only">{{ 'studentDetail.loadingAvatar' | t }}</span>
             </div>
           }
         </div>
@@ -63,7 +63,7 @@
       (click)="onEdit()"
     >
       <app-lum-icon [extraClass]="'text-sm'" [name]="'edit'" />
-      <span>Edit Profile</span>
+      <span>{{ 'studentDetail.editProfile' | t }}</span>
     </button>
   </div>
 </div>

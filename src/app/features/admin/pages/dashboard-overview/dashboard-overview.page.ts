@@ -10,6 +10,8 @@ import type {
 } from '../../../../shared/models/dashboard.models';
 import type { AnalyticsDashboardApiResponse } from '../../../../shared/models/analytics-dashboard-api.model';
 import { AnalyticsApiService } from '../../../../shared/data-access/analytics-api.service';
+import { I18nService } from '../../../../shared/i18n/i18n.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { LumBorrowedBooksChartComponent } from '../../../../shared/ui/organisms/lum-borrowed-books-chart/lum-borrowed-books-chart.component';
 import { LumDashboardPageHeaderComponent } from '../../../../shared/ui/organisms/lum-dashboard-page-header/lum-dashboard-page-header.component';
 import { LumRecentActivityComponent } from '../../../../shared/ui/organisms/lum-recent-activity/lum-recent-activity.component';
@@ -22,6 +24,7 @@ import { LumStatSummaryCardComponent } from '../../../../shared/ui/organisms/lum
     LumStatSummaryCardComponent,
     LumBorrowedBooksChartComponent,
     LumRecentActivityComponent,
+    TranslatePipe,
   ],
   templateUrl: './dashboard-overview.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,8 +32,8 @@ import { LumStatSummaryCardComponent } from '../../../../shared/ui/organisms/lum
 export class DashboardOverviewPage {
   private readonly analyticsApi = inject(AnalyticsApiService);
   private readonly router = inject(Router);
+  private readonly i18n = inject(I18nService);
 
-  protected readonly overviewSubtitle = "Welcome back! Here's what's happening today.";
   protected readonly loadError = signal<string | null>(null);
 
   private readonly dashboardData = toSignal(
@@ -47,35 +50,44 @@ export class DashboardOverviewPage {
     { initialValue: this.emptyDashboard() },
   );
 
+  protected readonly overviewSubtitle = computed(() => {
+    this.i18n.locale();
+    return this.i18n.t('dashboard.subtitle');
+  });
+
   protected readonly statCards = computed((): readonly StatCardModel[] => {
+    this.i18n.locale();
     const data = this.dashboardData();
     return [
       {
-        title: 'Total Books',
+        title: this.i18n.t('dashboard.stats.totalBooks'),
         value: this.numberLabel(data.total_books),
         icon: 'library_books',
         accent: 'primary',
         trendDirection: 'up',
-        trendLabel: 'Live',
-        footnote: 'in catalog',
+        trendLabel: this.i18n.t('dashboard.stats.live'),
+        footnote: this.i18n.t('dashboard.stats.footnote.catalog'),
       },
       {
-        title: 'Active Students',
+        title: this.i18n.t('dashboard.stats.activeStudents'),
         value: this.numberLabel(data.active_students),
         icon: 'group',
         accent: 'blue',
         trendDirection: 'up',
-        trendLabel: 'Live',
-        footnote: 'currently active',
+        trendLabel: this.i18n.t('dashboard.stats.live'),
+        footnote: this.i18n.t('dashboard.stats.footnote.active'),
       },
       {
-        title: 'Overdue Fines',
+        title: this.i18n.t('dashboard.stats.overdueFines'),
         value: this.numberLabel(data.overdue_fines),
         icon: 'payments',
         accent: 'red',
         trendDirection: data.overdue_fines > 0 ? 'up' : 'down',
-        trendLabel: data.overdue_fines > 0 ? 'Pending' : 'Clear',
-        footnote: 'with overdue status',
+        trendLabel:
+          data.overdue_fines > 0
+            ? this.i18n.t('dashboard.stats.pending')
+            : this.i18n.t('dashboard.stats.clear'),
+        footnote: this.i18n.t('dashboard.stats.footnote.overdue'),
       },
     ] as const;
   });
@@ -92,16 +104,19 @@ export class DashboardOverviewPage {
     }));
   });
 
-  protected readonly activityItems = computed((): readonly ActivityItemModel[] =>
-    this.dashboardData().recent_activity.slice(0, 4).map((activity, index, all) => ({
-      icon: this.activityIcon(activity.event_type),
-      tone: this.activityTone(activity.event_type),
-      title: activity.title || 'Activity',
-      subtitle: this.activitySubtitle(activity),
-      time: this.timeAgo(activity.created_at),
-      showConnector: index < all.length - 1,
-    })),
-  );
+  protected readonly activityItems = computed((): readonly ActivityItemModel[] => {
+    this.i18n.locale();
+    return this.dashboardData()
+      .recent_activity.slice(0, 4)
+      .map((activity, index, all) => ({
+        icon: this.activityIcon(activity.event_type),
+        tone: this.activityTone(activity.event_type),
+        title: activity.title || this.i18n.t('dashboard.activity.fallbackTitle'),
+        subtitle: this.activitySubtitle(activity),
+        time: this.timeAgo(activity.created_at),
+        showConnector: index < all.length - 1,
+      }));
+  });
 
   protected onNotificationsClick(): void {
     // Wire to notifications panel / service when available.
@@ -143,7 +158,7 @@ export class DashboardOverviewPage {
     if (detail) return detail;
     if (activity.student_name) return activity.student_name;
     if (activity.actor_name) return activity.actor_name;
-    return 'No details';
+    return this.i18n.t('dashboard.activity.noDetails');
   }
 
   private numberLabel(value: number): string {
@@ -152,20 +167,24 @@ export class DashboardOverviewPage {
 
   private timeAgo(value: string): string {
     const createdAt = new Date(value);
-    if (Number.isNaN(createdAt.getTime())) return 'Now';
+    if (Number.isNaN(createdAt.getTime())) return this.i18n.t('dashboard.time.now');
     const diffMs = Date.now() - createdAt.getTime();
     const minuteMs = 60_000;
     const hourMs = 60 * minuteMs;
     const dayMs = 24 * hourMs;
-    if (diffMs < minuteMs) return 'Just now';
-    if (diffMs < hourMs) return `${Math.floor(diffMs / minuteMs)} min ago`;
-    if (diffMs < dayMs) return `${Math.floor(diffMs / hourMs)} h ago`;
-    return `${Math.floor(diffMs / dayMs)} d ago`;
+    if (diffMs < minuteMs) return this.i18n.t('dashboard.time.justNow');
+    if (diffMs < hourMs) {
+      return this.i18n.t('dashboard.time.minutesAgo', { n: Math.floor(diffMs / minuteMs) });
+    }
+    if (diffMs < dayMs) {
+      return this.i18n.t('dashboard.time.hoursAgo', { n: Math.floor(diffMs / hourMs) });
+    }
+    return this.i18n.t('dashboard.time.daysAgo', { n: Math.floor(diffMs / dayMs) });
   }
 
   private toErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'Could not load dashboard analytics.';
+      return this.i18n.t('dashboard.errors.load');
     }
     const backendMessage =
       error.error && typeof error.error === 'object' && 'message' in error.error
@@ -174,6 +193,6 @@ export class DashboardOverviewPage {
     if (typeof backendMessage === 'string' && backendMessage.trim()) {
       return backendMessage;
     }
-    return 'Could not load dashboard analytics.';
+    return this.i18n.t('dashboard.errors.load');
   }
 }

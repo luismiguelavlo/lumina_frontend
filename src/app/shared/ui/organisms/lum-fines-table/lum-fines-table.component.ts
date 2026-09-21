@@ -1,13 +1,19 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import type { FineRow } from '../../../models/fine-row.model';
 import type { FinesApiPagination } from '../../../models/fines-api.model';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 import { LumTableStudentIdentityCellComponent } from '../../molecules/lum-table-student-identity-cell/lum-table-student-identity-cell.component';
 import { LumFineStatusPillComponent } from '../../molecules/lum-fine-status-pill/lum-fine-status-pill.component';
 
 @Component({
   selector: 'app-lum-fines-table',
-  imports: [LumIconComponent, LumFineStatusPillComponent, LumTableStudentIdentityCellComponent],
+  imports: [
+    LumIconComponent,
+    LumFineStatusPillComponent,
+    LumTableStudentIdentityCellComponent,
+    TranslatePipe,
+  ],
   templateUrl: './lum-fines-table.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

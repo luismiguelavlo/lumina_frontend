@@ -10,19 +10,19 @@
           <th class="px-6 py-4 text-sm font-bold tracking-wider text-amber-800/90 uppercase dark:text-amber-200/90">
             <div class="flex items-center gap-2 whitespace-nowrap">
               <app-lum-icon [extraClass]="'text-[18px]'" [name]="'book'" />
-              Book details
+              {{ 'loans.table.bookDetails' | t }}
             </div>
           </th>
           <th class="px-6 py-4 text-sm font-bold tracking-wider text-amber-800/90 uppercase dark:text-amber-200/90">
             <div class="flex items-center gap-2 whitespace-nowrap">
               <app-lum-icon [extraClass]="'text-[18px]'" [name]="'person'" />
-              Borrower
+              {{ 'loans.table.borrower' | t }}
             </div>
           </th>
           <th class="px-6 py-4 text-sm font-bold tracking-wider text-amber-800/90 uppercase dark:text-amber-200/90">
             <div class="flex items-center gap-2 whitespace-nowrap">
               <app-lum-icon [extraClass]="'text-[18px]'" [name]="'calendar_today'" />
-              Due date
+              {{ 'loans.table.dueDate' | t }}
             </div>
           </th>
           <th
@@ -30,13 +30,13 @@
           >
             <div class="flex items-center gap-2 whitespace-nowrap">
               <app-lum-icon [extraClass]="'text-[18px]'" [name]="'hourglass_empty'" />
-              Time remaining
+              {{ 'loans.table.timeRemaining' | t }}
             </div>
           </th>
           <th
             class="px-6 py-4 text-right text-sm font-bold tracking-wider text-amber-800/90 uppercase dark:text-amber-200/90"
           >
-            Action
+            {{ 'loans.table.action' | t }}
           </th>
         </tr>
       </thead>
@@ -69,14 +69,14 @@
                 (click)="onRenew(row)"
               >
                 <app-lum-icon [extraClass]="'text-[18px]'" [name]="'update'" />
-                Return
+                {{ 'loans.table.return' | t }}
               </button>
             </td>
           </tr>
         } @empty {
           <tr>
             <td class="p-12 text-center text-sm text-slate-500 dark:text-slate-400" colspan="5">
-              No loans match your search.
+              {{ 'loans.empty' | t }}
             </td>
           </tr>
         }
@@ -89,11 +89,17 @@
   >
     <span class="text-sm font-medium text-slate-500 dark:text-slate-400">
       @if ((pagination()?.total ?? rows().length) === 0) {
-        Showing 0 loans
+        {{ 'loans.pagination.showingZero' | t }}
       } @else {
-        Showing {{ rows().length }} {{ rows().length === 1 ? 'loan' : 'loans' }}
+        @if (rows().length === 1) {
+          {{ 'loans.pagination.showingOne' | t:{ n: rows().length } }}
+        } @else {
+          {{ 'loans.pagination.showingOther' | t:{ n: rows().length } }}
+        }
         @if (pagination(); as p) {
-          <span class="ml-1">· Page {{ p.current_page }} of {{ p.total_pages || 1 }}</span>
+          <span class="ml-1">{{
+            'loans.pagination.pageOf' | t: { n: p.current_page, m: p.total_pages || 1 }
+          }}</span>
         }
       }
     </span>
@@ -102,7 +108,7 @@
         class="rounded-lg border border-slate-200 bg-white p-2 text-slate-800 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
         [disabled]="!(pagination()?.has_prev ?? false)"
         type="button"
-        aria-label="Previous page"
+        [attr.aria-label]="'common.prevPage' | t"
         (click)="onPrevPage()"
       >
         <app-lum-icon [extraClass]="'text-sm'" [name]="'chevron_left'" />
@@ -111,7 +117,7 @@
         class="rounded-lg border border-slate-200 bg-white p-2 text-slate-800 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
         [disabled]="!(pagination()?.has_next ?? false)"
         type="button"
-        aria-label="Next page"
+        [attr.aria-label]="'common.nextPage' | t"
         (click)="onNextPage()"
       >
         <app-lum-icon [extraClass]="'text-sm'" [name]="'chevron_right'" />

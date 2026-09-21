@@ -1,9 +1,9 @@
 <div class="flex min-w-0 flex-col overflow-x-hidden pb-8">
   <app-lum-students-page-toolbar
-    addButtonLabel="Add student"
-    searchPlaceholder="Search students by name, ID, or reason…"
-    [subtitle]="store.pageSubtitle"
-    title="Students"
+    [addButtonLabel]="'students.add' | t"
+    [searchPlaceholder]="'students.searchPlaceholder' | t"
+    [subtitle]="store.pageSubtitle()"
+    [title]="'students.title' | t"
     [searchQuery]="store.searchControl.value"
     (addStudentClick)="onAddStudent()"
     (searchQueryChange)="store.searchControl.setValue($event)"
@@ -18,7 +18,7 @@
   }
 
   @if (store.isLoading()) {
-    <p class="mb-4 text-sm text-slate-500 dark:text-slate-400">Loading students...</p>
+    <p class="mb-4 text-sm text-slate-500 dark:text-slate-400">{{ 'students.loading' | t }}</p>
   }
   @if (store.loadError(); as message) {
     <div
@@ -31,7 +31,7 @@
           class="rounded-lg border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100 dark:border-red-700 dark:text-red-200 dark:hover:bg-red-900/40"
           (click)="store.retryLoad()"
         >
-          Retry
+          {{ 'common.retry' | t }}
         </button>
       </div>
     </div>
@@ -41,11 +41,13 @@
 
   <div class="mt-2 flex flex-wrap items-center justify-between gap-3">
     <p class="text-sm text-slate-600 dark:text-slate-400">
-      Page {{ store.pagination().current_page || 1 }}
-      @if (store.pagination().total_pages > 0) {
-        <span>of {{ store.pagination().total_pages }}</span>
-      }
-      <span class="ml-2">({{ store.pagination().total }} students)</span>
+      {{
+        'students.pagination.pageOf'
+          | t: { n: store.pagination().current_page || 1, m: store.pagination().total_pages || 1 }
+      }}
+      <span class="ml-2">{{
+        'students.pagination.total' | t: { n: store.pagination().total }
+      }}</span>
     </p>
     <div class="flex items-center gap-2">
       <button
@@ -54,7 +56,7 @@
         [disabled]="!store.pagination().has_prev"
         (click)="store.goToPrevPage()"
       >
-        Previous
+        {{ 'common.previous' | t }}
       </button>
       <button
         type="button"
@@ -62,15 +64,18 @@
         [disabled]="!store.pagination().has_next"
         (click)="store.goToNextPage()"
       >
-        Next
+        {{ 'common.next' | t }}
       </button>
     </div>
   </div>
 
   @if (store.isCreateModalOpen()) {
     <app-lum-create-student-modal
+      [title]="'students.modal.createTitle' | t"
+      [subtitle]="'students.modal.createSubtitle' | t"
+      [submitLabel]="'students.modal.createSubmit' | t"
       [form]="store.createForm"
-      [degreeOptions]="store.degreeOptions"
+      [degreeOptions]="store.degreeOptions()"
       [isSaving]="store.isCreating()"
       [errorMessage]="store.createError()"
       (cancelClick)="store.closeCreateModal()"

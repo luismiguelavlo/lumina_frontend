@@ -7,11 +7,11 @@
         <tr
           class="border-b border-slate-200/60 bg-[color-mix(in_oklab,var(--color-background-light)_92%,#e2e8f0)] text-[0.75rem] font-semibold tracking-wider text-slate-500 uppercase dark:border-slate-700/60 dark:bg-slate-900/50 dark:text-slate-400"
         >
-          <th class="px-6 py-4">Student</th>
-          <th class="px-6 py-4 text-right">Amount</th>
-          <th class="px-6 py-4">Status</th>
-          <th class="px-6 py-4">Reason</th>
-          <th class="px-6 py-4 text-center">Actions</th>
+          <th class="px-6 py-4">{{ 'fines.table.student' | t }}</th>
+          <th class="px-6 py-4 text-right">{{ 'fines.table.amount' | t }}</th>
+          <th class="px-6 py-4">{{ 'fines.table.status' | t }}</th>
+          <th class="px-6 py-4">{{ 'fines.table.reason' | t }}</th>
+          <th class="px-6 py-4 text-center">{{ 'fines.table.actions' | t }}</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-200/30 text-[0.875rem] dark:divide-slate-700/40">
@@ -19,7 +19,7 @@
           <tr class="group transition-colors hover:bg-white/60 dark:hover:bg-white/5">
             <td class="px-6 py-4">
               <app-lum-table-student-identity-cell
-                [detailLine]="'ID: ' + row.studentIdDisplay"
+                [detailLine]="'students.table.idPrefix' | t: { id: row.studentIdDisplay }"
                 [initials]="row.initials"
                 [name]="row.studentName"
               />
@@ -48,25 +48,27 @@
                     type="button"
                     (click)="onMarkPaid(row)"
                   >
-                    Mark paid
+                    {{ 'fines.table.markPaid' | t }}
                   </button>
                   <button
                     class="inline-flex h-9 cursor-pointer items-center justify-center rounded-lg border border-amber-300/60 bg-amber-50 px-3 text-xs font-bold text-amber-700 shadow-sm transition-colors hover:bg-amber-500 hover:text-white dark:border-amber-800/60 dark:bg-amber-950/30 dark:text-amber-300 dark:hover:bg-amber-600"
                     type="button"
                     (click)="onMarkWaived(row)"
                   >
-                    Mark waived
+                    {{ 'fines.table.markWaived' | t }}
                   </button>
                 </div>
               } @else {
-                <span class="text-xs font-medium text-slate-400 dark:text-slate-500">No actions</span>
+                <span class="text-xs font-medium text-slate-400 dark:text-slate-500">{{
+                  'fines.table.noActions' | t
+                }}</span>
               }
             </td>
           </tr>
         } @empty {
           <tr>
             <td class="px-6 py-12 text-center text-sm text-slate-500 dark:text-slate-400" colspan="5">
-              No fines match the current filters.
+              {{ 'fines.empty' | t }}
             </td>
           </tr>
         }
@@ -79,11 +81,17 @@
   >
     <span class="text-sm font-medium text-slate-500 dark:text-slate-400">
       @if ((pagination()?.total ?? rows().length) === 0) {
-        Showing 0 fines
+        {{ 'fines.pagination.showingZero' | t }}
       } @else {
-        Showing {{ rows().length }} {{ rows().length === 1 ? 'fine' : 'fines' }}
+        @if (rows().length === 1) {
+          {{ 'fines.pagination.showingOne' | t:{ n: rows().length } }}
+        } @else {
+          {{ 'fines.pagination.showingOther' | t:{ n: rows().length } }}
+        }
         @if (pagination(); as p) {
-          <span class="ml-1">· Page {{ p.current_page }} of {{ p.total_pages || 1 }}</span>
+          <span class="ml-1">{{
+            'fines.pagination.pageOf' | t: { n: p.current_page, m: p.total_pages || 1 }
+          }}</span>
         }
       }
     </span>
@@ -92,7 +100,7 @@
         class="rounded-lg border border-slate-200 bg-white p-2 text-slate-800 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-400 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
         [disabled]="!(pagination()?.has_prev ?? false)"
         type="button"
-        aria-label="Previous page"
+        [attr.aria-label]="'common.prevPage' | t"
         (click)="onPrevPage()"
       >
         <app-lum-icon [extraClass]="'text-sm'" [name]="'chevron_left'" />
@@ -101,7 +109,7 @@
         class="rounded-lg border border-slate-200 bg-white p-2 text-slate-800 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-400 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
         [disabled]="!(pagination()?.has_next ?? false)"
         type="button"
-        aria-label="Next page"
+        [attr.aria-label]="'common.nextPage' | t"
         (click)="onNextPage()"
       >
         <app-lum-icon [extraClass]="'text-sm'" [name]="'chevron_right'" />

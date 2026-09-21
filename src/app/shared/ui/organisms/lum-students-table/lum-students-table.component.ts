@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import type { StudentPatronRow } from '../../../models/student-patron.model';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumStudentStatusChipComponent } from '../../molecules/lum-student-status-chip/lum-student-status-chip.component';
 import { LumTableStudentIdentityCellComponent } from '../../molecules/lum-table-student-identity-cell/lum-table-student-identity-cell.component';
 
 @Component({
   selector: 'app-lum-students-table',
-  imports: [LumStudentStatusChipComponent, LumTableStudentIdentityCellComponent],
+  imports: [LumStudentStatusChipComponent, LumTableStudentIdentityCellComponent, TranslatePipe],
   templateUrl: './lum-students-table.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

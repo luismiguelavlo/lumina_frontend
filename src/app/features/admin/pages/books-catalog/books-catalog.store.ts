@@ -16,6 +16,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { PublicBooksApiService } from '../../../../shared/data-access/public-books-api.service';
 import { PublicGenresApiService } from '../../../../shared/data-access/public-genres-api.service';
 import { AuthorsApiService } from '../../../../shared/data-access/authors-api.service';
+import { I18nService } from '../../../../shared/i18n/i18n.service';
 import type { CatalogBook } from '../../../../shared/models/catalog-book.model';
 import type {
   CreateBookRequest,
@@ -39,6 +40,7 @@ export class AdminBooksCatalogStore {
   private readonly genresApi = inject(PublicGenresApiService);
   private readonly authorsApi = inject(AuthorsApiService);
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly i18n = inject(I18nService);
 
   private readonly currentPage = signal(1);
   private readonly isLoadingState = signal(false);
@@ -101,7 +103,8 @@ export class AdminBooksCatalogStore {
   );
 
   readonly genreFilterOptions = computed(() => {
-    const all = { id: 'all', name: 'All' };
+    this.i18n.locale();
+    const all = { id: 'all', name: this.i18n.t('books.filters.all') };
     return [all, ...this.genres()];
   });
 
@@ -126,17 +129,18 @@ export class AdminBooksCatalogStore {
     { initialValue: this.emptyResponse(PAGE_SIZE, 0) },
   );
 
-  readonly books = computed<readonly CatalogBook[]>(() =>
-    (this.booksResponse().data ?? []).map((row) => ({
+  readonly books = computed<readonly CatalogBook[]>(() => {
+    this.i18n.locale();
+    return (this.booksResponse().data ?? []).map((row) => ({
       id: row.id,
       title: row.title,
       author: row.author,
       sku: row.isbn ?? row.id,
       coverUrl: row.cover_url || COVER_PLACEHOLDER,
-      coverAlt: `Book cover for ${row.title}`,
+      coverAlt: this.i18n.t('books.coverAlt', { title: row.title }),
       availability: row.status === 'available' ? 'available' : 'borrowed',
-    })),
-  );
+    }));
+  });
 
   readonly pagination = computed<PublicBooksPagination>(() => this.booksResponse().pagination);
   readonly isLoading = computed(() => this.isLoadingState());
@@ -194,7 +198,7 @@ export class AdminBooksCatalogStore {
     if (this.isCreatingAuthor()) return;
     if (this.authorForm.invalid) {
       this.authorForm.markAllAsTouched();
-      this.authorCreateError.set('Please enter a valid author name (at least 2 characters).');
+      this.authorCreateError.set(this.i18n.t('books.errors.authorValidation'));
       return;
     }
 
@@ -217,7 +221,7 @@ export class AdminBooksCatalogStore {
         next: (created) => {
           const label = created.name?.trim() || payload.name;
           this.isCreateModalOpen.set(false);
-          this.authorCreateSuccess.set(`Author "${label}" was created successfully.`);
+          this.authorCreateSuccess.set(this.i18n.t('books.success.authorCreated', { name: label }));
         },
         error: (error: unknown) => {
           this.authorCreateError.set(this.toAuthorCreateErrorMessage(error));
@@ -229,7 +233,7 @@ export class AdminBooksCatalogStore {
     if (this.isCreatingBook()) return;
     if (this.bookForm.invalid) {
       this.bookForm.markAllAsTouched();
-      this.bookCreateError.set('Please complete all required fields with valid values.');
+      this.bookCreateError.set(this.i18n.t('books.errors.bookValidation'));
       return;
     }
 
@@ -261,7 +265,7 @@ export class AdminBooksCatalogStore {
         next: (created) => {
           const titleLabel = created.title?.trim() || payload.title;
           this.isCreateModalOpen.set(false);
-          this.bookCreateSuccess.set(`Book "${titleLabel}" was created successfully.`);
+          this.bookCreateSuccess.set(this.i18n.t('books.success.bookCreated', { title: titleLabel }));
           this.catalogRefreshNonce.update((n) => n + 1);
         },
         error: (error: unknown) => {
@@ -341,7 +345,7 @@ export class AdminBooksCatalogStore {
 
   private toAuthorCreateErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'Could not create the author. Please try again.';
+      return this.i18n.t('books.errors.authorCreate');
     }
 
     const backendMessage =
@@ -354,15 +358,15 @@ export class AdminBooksCatalogStore {
     }
 
     if (error.status === 0) {
-      return 'Could not connect to the server.';
+      return this.i18n.t('common.errors.network');
     }
 
-    return 'Could not create the author. Please try again.';
+    return this.i18n.t('books.errors.authorCreate');
   }
 
   private toBookCreateErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'Could not create the book. Please try again.';
+      return this.i18n.t('books.errors.bookCreate');
     }
 
     const backendMessage =
@@ -375,9 +379,9 @@ export class AdminBooksCatalogStore {
     }
 
     if (error.status === 0) {
-      return 'Could not connect to the server.';
+      return this.i18n.t('common.errors.network');
     }
 
-    return 'Could not create the book. Please try again.';
+    return this.i18n.t('books.errors.bookCreate');
   }
 }

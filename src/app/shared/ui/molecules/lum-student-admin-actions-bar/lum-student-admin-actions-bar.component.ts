@@ -1,18 +1,18 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 
 @Component({
   selector: 'app-lum-student-admin-actions-bar',
-  imports: [LumIconComponent],
+  imports: [LumIconComponent, TranslatePipe],
   templateUrl: './lum-student-admin-actions-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LumStudentAdminActionsBarComponent {
-  readonly heading = input<string>('Administrative actions');
-
-  readonly sanctionLabel = input<string>('Start sanction');
-  readonly fineLabel = input<string>('Start fine');
-  readonly deactivateLabel = input<string>('Deactivate user');
+  readonly heading = input<string | undefined>(undefined);
+  readonly sanctionLabel = input<string | undefined>(undefined);
+  readonly fineLabel = input<string | undefined>(undefined);
+  readonly deactivateLabel = input<string | undefined>(undefined);
   readonly deactivateLoading = input(false);
 
   readonly sanctionClick = output<void>();

@@ -14,7 +14,7 @@
       routerLink="/admin/students"
     >
       <app-lum-icon [extraClass]="'text-lg'" [name]="'arrow_back'" />
-      Students
+      {{ 'students.back' | t }}
     </a>
 
     @let p = store.profile();
@@ -59,6 +59,10 @@
     }
 
     <app-lum-student-admin-actions-bar
+      [heading]="'studentDetail.actions.heading' | t"
+      [sanctionLabel]="'studentDetail.actions.startSanction' | t"
+      [fineLabel]="'studentDetail.actions.startFine' | t"
+      [deactivateLabel]="'studentDetail.actions.deactivate' | t"
       [deactivateLoading]="store.isDeactivating()"
       (fineClick)="startFineFlow()"
       (sanctionClick)="startSanctionFlow()"
@@ -67,10 +71,10 @@
 
     @if (isDeactivateConfirmOpen()) {
       <app-lum-confirm-action-modal
-        [title]="'Confirm user deactivation'"
-        [message]="'Are you sure you want to deactivate this student account?'"
-        [confirmLabel]="'Deactivate user'"
-        [cancelLabel]="'Cancel'"
+        [title]="'studentDetail.deactivate.title' | t"
+        [message]="'studentDetail.deactivate.message' | t"
+        [confirmLabel]="'studentDetail.deactivate.confirm' | t"
+        [cancelLabel]="'common.cancel' | t"
         [isLoading]="store.isDeactivating()"
         (cancelClick)="cancelDeactivateUser()"
         (confirmClick)="confirmDeactivateUser()"
@@ -81,12 +85,12 @@
       <div class="flex flex-col gap-8 lg:col-span-1">
         <app-lum-student-profile-stats-section
           sectionIcon="bar_chart"
-          sectionTitle="Personal Stats"
+          [sectionTitle]="'studentDetail.statsTitle' | t"
           [stats]="p.stats"
         />
         <app-lum-student-badge-gallery
           sectionIcon="military_tech"
-          sectionTitle="Badge Gallery"
+          [sectionTitle]="'studentDetail.badgesTitle' | t"
           [badges]="p.badges"
           [countLabel]="store.badgeCountLabel()"
           [adminMode]="true"
@@ -99,7 +103,7 @@
       <div class="flex flex-col gap-4 lg:col-span-2">
         <app-lum-student-loan-history
           sectionIcon="history"
-          sectionTitle="Loan History"
+          [sectionTitle]="'studentDetail.loansTitle' | t"
           [items]="p.loans"
         />
       </div>
@@ -108,11 +112,11 @@
 
   @if (store.isEditModalOpen()) {
     <app-lum-create-student-modal
-      [title]="'Edit student profile'"
-      [subtitle]="'Update the student information and save the changes.'"
-      [submitLabel]="'Save changes'"
+      [title]="'studentDetail.edit.title' | t"
+      [subtitle]="'studentDetail.edit.subtitle' | t"
+      [submitLabel]="'studentDetail.edit.submit' | t"
       [form]="store.editForm"
-      [degreeOptions]="store.degreeOptions"
+      [degreeOptions]="store.degreeOptions()"
       [isSaving]="store.isUpdating()"
       [errorMessage]="store.updateError()"
       (cancelClick)="store.closeEditModal()"
@@ -134,10 +138,10 @@
 
   @if (store.isFineConfirmOpen()) {
     <app-lum-confirm-action-modal
-      [title]="'Confirm fine creation'"
-      [message]="'Are you sure you want to create this fine for the selected loan?'"
-      [confirmLabel]="'Create fine'"
-      [cancelLabel]="'Cancel'"
+      [title]="'studentDetail.fineConfirm.title' | t"
+      [message]="'studentDetail.fineConfirm.message' | t"
+      [confirmLabel]="'studentDetail.fineConfirm.confirm' | t"
+      [cancelLabel]="'common.cancel' | t"
       [isLoading]="store.isFineCreating()"
       (cancelClick)="store.cancelFineConfirmation()"
       (confirmClick)="store.confirmCreateFine()"
@@ -156,10 +160,10 @@
 
   @if (store.isSanctionConfirmOpen()) {
     <app-lum-confirm-action-modal
-      [title]="'Confirm sanction creation'"
-      [message]="'Are you sure you want to create this sanction for the student?'"
-      [confirmLabel]="'Create sanction'"
-      [cancelLabel]="'Cancel'"
+      [title]="'studentDetail.sanctionConfirm.title' | t"
+      [message]="'studentDetail.sanctionConfirm.message' | t"
+      [confirmLabel]="'studentDetail.sanctionConfirm.confirm' | t"
+      [cancelLabel]="'common.cancel' | t"
       [isLoading]="store.isSanctionCreating()"
       (cancelClick)="store.cancelSanctionConfirmation()"
       (confirmClick)="store.confirmCreateSanction()"
@@ -190,7 +194,7 @@
           class="shrink-0 rounded-lg px-2 py-0.5 text-xs font-semibold opacity-80 transition-opacity hover:opacity-100"
           (click)="store.dismissBadgeToast()"
         >
-          OK
+          {{ 'common.ok' | t }}
         </button>
       </div>
     </div>

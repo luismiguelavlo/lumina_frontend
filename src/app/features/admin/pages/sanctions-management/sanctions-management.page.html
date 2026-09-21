@@ -14,17 +14,17 @@
   <div class="relative z-10 flex flex-col">
     <header class="mb-8 flex flex-col gap-2 md:mb-10">
       <h1 class="text-3xl leading-tight font-bold tracking-tight text-slate-900 dark:text-slate-100">
-        {{ pageTitle }}
+        {{ 'sanctions.title' | t }}
       </h1>
       <p class="text-base font-medium text-slate-500 dark:text-slate-400 md:text-lg">
-        {{ pageSubtitle }}
+        {{ 'sanctions.subtitle' | t }}
       </p>
     </header>
 
     <app-lum-students-neo-search
       class="mb-6 block max-w-xl"
-      ariaLabel="Search by student"
-      placeholder="Student..."
+      [ariaLabel]="'sanctions.searchAria' | t"
+      [placeholder]="'sanctions.searchPlaceholder' | t"
       [query]="searchQuery()"
       (queryChange)="onSearchChange($event)"
     />
@@ -34,14 +34,14 @@
         <span
           class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
         >
-          Student: {{ selected.first_name }} {{ selected.last_name }}
+          {{ 'sanctions.selectedStudent' | t:{ name: selected.first_name + ' ' + selected.last_name } }}
         </span>
         <button
           type="button"
           class="rounded-lg px-2 py-1 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-700"
           (click)="clearSelectedStudent()"
         >
-          Clear
+          {{ 'common.clear' | t }}
         </button>
       </div>
     } @else if (studentSuggestions().length > 0) {
@@ -68,7 +68,9 @@
     }
 
     @if (isStudentLookupLoading()) {
-      <div class="mb-4 text-sm font-medium text-slate-500 dark:text-slate-400">Searching students...</div>
+      <div class="mb-4 text-sm font-medium text-slate-500 dark:text-slate-400">
+        {{ 'sanctions.searching' | t }}
+      </div>
     }
 
     @if (loadError(); as message) {
@@ -88,7 +90,9 @@
     }
 
     @if (isLoading()) {
-      <div class="mb-6 text-sm font-medium text-slate-500 dark:text-slate-400">Loading sanctions...</div>
+      <div class="mb-6 text-sm font-medium text-slate-500 dark:text-slate-400">
+        {{ 'sanctions.loading' | t }}
+      </div>
     }
 
     <app-lum-sanctions-active-table
@@ -101,10 +105,10 @@
 
     @if (pendingLiftSanction(); as pending) {
       <app-lum-confirm-action-modal
-        [title]="'Confirm lift sanction'"
-        [message]="'Are you sure you want to lift this sanction?'"
-        [confirmLabel]="'Lift sanction'"
-        [cancelLabel]="'Cancel'"
+        [title]="'sanctions.confirm.title' | t"
+        [message]="'sanctions.confirm.message' | t"
+        [confirmLabel]="'sanctions.confirm.lift' | t"
+        [cancelLabel]="'common.cancel' | t"
         [isLoading]="isLiftingSanction()"
         (cancelClick)="cancelLiftSanction()"
         (confirmClick)="confirmLiftSanction()"

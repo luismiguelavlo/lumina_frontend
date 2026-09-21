@@ -10,6 +10,8 @@ import {
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { finalize, take } from 'rxjs';
 import { UploadsApiService } from '../../../data-access/uploads-api.service';
+import { I18nService } from '../../../i18n/i18n.service';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import type { UploadFolder } from '../../../models/uploads-api.model';
 import { LumNeoFieldLabelComponent } from '../lum-neo-field-label/lum-neo-field-label.component';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
@@ -19,18 +21,19 @@ const MAX_BYTES = 5 * 1024 * 1024;
 
 @Component({
   selector: 'app-lum-image-upload',
-  imports: [ReactiveFormsModule, LumNeoFieldLabelComponent, LumIconComponent],
+  imports: [ReactiveFormsModule, LumNeoFieldLabelComponent, LumIconComponent, TranslatePipe],
   templateUrl: './lum-image-upload.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LumImageUploadComponent {
   private readonly uploadsApi = inject(UploadsApiService);
+  private readonly i18n = inject(I18nService);
   private readonly fileInput = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
   readonly label = input.required<string>();
   readonly control = input.required<FormControl<string>>();
   readonly folder = input.required<UploadFolder>();
-  readonly hint = input('JPEG, PNG, WebP o GIF · máx. 5 MB');
+  readonly hint = input<string | undefined>(undefined);
   readonly disabled = input(false);
   /** Aspect ratio CSS value for the preview frame, e.g. "2 / 3" or "1 / 1". */
   readonly previewAspect = input('1 / 1');
@@ -40,6 +43,10 @@ export class LumImageUploadComponent {
   readonly errorMessage = signal<string | null>(null);
 
   protected readonly accept = ACCEPTED;
+
+  protected hintText(): string {
+    return this.hint() ?? this.i18n.t('upload.hint');
+  }
 
   protected previewUrl(): string {
     return this.control().value?.trim() ?? '';
@@ -65,11 +72,11 @@ export class LumImageUploadComponent {
     if (!file) return;
 
     if (!ACCEPTED.split(',').includes(file.type)) {
-      this.errorMessage.set('Tipo de archivo no permitido (usa JPEG, PNG, WebP o GIF).');
+      this.errorMessage.set(this.i18n.t('upload.errors.type'));
       return;
     }
     if (file.size > MAX_BYTES) {
-      this.errorMessage.set('El archivo supera el tamaño máximo (5 MB).');
+      this.errorMessage.set(this.i18n.t('upload.errors.size'));
       return;
     }
 
@@ -87,7 +94,9 @@ export class LumImageUploadComponent {
           this.control().markAsDirty();
         },
         error: (err: unknown) => {
-          this.errorMessage.set(err instanceof Error ? err.message : 'No fue posible subir la imagen.');
+          this.errorMessage.set(
+            err instanceof Error ? err.message : this.i18n.t('upload.errors.failed'),
+          );
         },
       });
   }

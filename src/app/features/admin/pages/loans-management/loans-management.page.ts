@@ -16,6 +16,8 @@ import {
 import type { LoanRow } from '../../../../shared/models/loan-row.model';
 import type { LoansApiPagination, LoansApiResponse } from '../../../../shared/models/loans-api.model';
 import type { StudentsApiItem } from '../../../../shared/models/students-api.model';
+import { I18nService } from '../../../../shared/i18n/i18n.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { LoansApiService } from '../../../../shared/data-access/loans-api.service';
 import { StudentsApiService } from '../../../../shared/data-access/students-api.service';
 import { LumIconComponent } from '../../../../shared/ui/atoms/lum-icon/lum-icon.component';
@@ -24,7 +26,7 @@ import { LumStudentsNeoSearchComponent } from '../../../../shared/ui/molecules/l
 
 @Component({
   selector: 'app-loans-management-page',
-  imports: [LumIconComponent, LumStudentsNeoSearchComponent, LumLoansTableComponent],
+  imports: [LumIconComponent, LumStudentsNeoSearchComponent, LumLoansTableComponent, TranslatePipe],
   templateUrl: './loans-management.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,11 +34,9 @@ export class LoansManagementPage {
   private readonly router = inject(Router);
   private readonly loansApi = inject(LoansApiService);
   private readonly studentsApi = inject(StudentsApiService);
+  private readonly i18n = inject(I18nService);
   private readonly currentPage = signal(1);
   private readonly refreshNonce = signal(0);
-
-  protected readonly pageTitle = 'Loan control panel';
-  protected readonly pageSubtitle = 'Chronological list of active loans requiring attention';
 
   protected readonly searchQuery = signal('');
   protected readonly selectedStudent = signal<StudentsApiItem | null>(null);
@@ -90,7 +90,7 @@ export class LoansManagementPage {
           })
           .pipe(
             catchError((error: unknown) => {
-              this.searchError.set(this.toErrorMessage(error));
+              this.searchError.set(this.toErrorMessage(error, 'loans.errors.load'));
               return of(this.emptyResponse(page));
             }),
             finalize(() => this.isLoading.set(false)),
@@ -100,27 +100,31 @@ export class LoansManagementPage {
     { initialValue: this.emptyResponse(1) },
   );
 
-  protected readonly filteredRows = computed((): readonly LoanRow[] =>
-    this.loansResponse().data.map((row) => {
-      const borrowerName = row.borrower ?? row.borrower_name ?? 'Unknown borrower';
+  protected readonly filteredRows = computed((): readonly LoanRow[] => {
+    this.i18n.locale();
+    return this.loansResponse().data.map((row) => {
+      const borrowerName = row.borrower ?? row.borrower_name ?? this.i18n.t('loans.unknownBorrower');
       const initials = this.initialsFromName(borrowerName);
       const dueDateRaw = row.due_date ?? '';
       const dueDate = this.formatDate(dueDateRaw);
       const daysLeft = typeof row.time_remaining === 'number' ? Math.max(0, Math.trunc(row.time_remaining)) : 0;
       return {
         id: row.loan_id,
-        bookTitle: row.book_title ?? 'Untitled',
-        loanIdLabel: `ID: #${row.loan_id}`,
+        bookTitle: row.book_title ?? this.i18n.t('loans.untitled'),
+        loanIdLabel: this.i18n.t('loans.idLabel', { id: row.loan_id }),
         borrowerName,
         borrowerInitials: initials,
         dueIsToday: daysLeft === 0,
         dueDateLabel: dueDate,
-        daysLeftLabel: `${daysLeft} ${daysLeft === 1 ? 'Day' : 'Days'} Left`,
+        daysLeftLabel:
+          daysLeft === 1
+            ? this.i18n.t('loans.daysLeft.one', { n: daysLeft })
+            : this.i18n.t('loans.daysLeft.other', { n: daysLeft }),
         progressPercent: this.toProgressPercent(daysLeft),
         urgency: this.toUrgency(daysLeft),
       };
-    }),
-  );
+    });
+  });
   protected readonly pagination = computed<LoansApiPagination>(() => this.loansResponse().pagination);
 
   protected onSearchChange(value: string): void {
@@ -159,10 +163,11 @@ export class LoansManagementPage {
       )
       .subscribe({
         next: () => {
-          this.returnActionSuccess.set(`Loan ${row.id} was returned successfully.`);
+          this.returnActionSuccess.set(this.i18n.t('loans.success.returned', { id: row.id }));
           this.refreshNonce.update((n) => n + 1);
         },
-        error: (error: unknown) => this.returnActionError.set(this.toErrorMessage(error)),
+        error: (error: unknown) =>
+          this.returnActionError.set(this.toErrorMessage(error, 'loans.errors.return')),
       });
   }
 
@@ -228,9 +233,9 @@ export class LoansManagementPage {
     return 15;
   }
 
-  private toErrorMessage(error: unknown): string {
+  private toErrorMessage(error: unknown, fallbackKey: string): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'Could not load loans.';
+      return this.i18n.t(fallbackKey);
     }
     const backendMessage =
       error.error && typeof error.error === 'object' && 'message' in error.error
@@ -239,6 +244,6 @@ export class LoansManagementPage {
     if (typeof backendMessage === 'string' && backendMessage.trim()) {
       return backendMessage;
     }
-    return 'Could not load loans.';
+    return this.i18n.t(fallbackKey);
   }
 }

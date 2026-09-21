@@ -2,22 +2,26 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  inject,
   input,
   output,
   signal,
   viewChild,
 } from '@angular/core';
 import type { CatalogAvailability } from '../../../models/catalog-book.model';
+import { I18nService } from '../../../i18n/i18n.service';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 
 @Component({
   selector: 'app-lum-book-cover-column',
-  imports: [LumIconComponent],
+  imports: [LumIconComponent, TranslatePipe],
   templateUrl: './lum-book-cover-column.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LumBookCoverColumnComponent {
   private readonly fileInput = viewChild<ElementRef<HTMLInputElement>>('fileInput');
+  private readonly i18n = inject(I18nService);
 
   readonly coverUrl = input.required<string>();
   readonly coverAlt = input.required<string>();
@@ -31,7 +35,10 @@ export class LumBookCoverColumnComponent {
   readonly localError = signal<string | null>(null);
 
   protected statusLabel(): string {
-    return this.availability() === 'available' ? 'Available for checkout' : 'Currently borrowed';
+    this.i18n.locale();
+    return this.availability() === 'available'
+      ? this.i18n.t('bookDetail.status.available')
+      : this.i18n.t('bookDetail.status.borrowed');
   }
 
   protected openPicker(): void {
@@ -47,11 +54,11 @@ export class LumBookCoverColumnComponent {
     if (!file) return;
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     if (!allowed.includes(file.type)) {
-      this.localError.set('Usa JPEG, PNG, WebP o GIF.');
+      this.localError.set(this.i18n.t('bookDetail.cover.errors.type'));
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      this.localError.set('Máximo 5 MB.');
+      this.localError.set(this.i18n.t('bookDetail.cover.errors.size'));
       return;
     }
     this.coverFileSelected.emit(file);

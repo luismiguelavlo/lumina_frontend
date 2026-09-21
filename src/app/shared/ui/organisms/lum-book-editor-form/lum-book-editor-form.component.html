@@ -6,33 +6,43 @@
   <h2
     class="mb-6 border-b border-slate-200 pb-2 text-xl font-semibold text-slate-800 dark:border-slate-700 dark:text-slate-200"
   >
-    Basic information
+    {{ 'bookDetail.sections.basic' | t }}
   </h2>
 
   <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-    <app-lum-neo-input-field label="Title" [control]="$any(form().get('title'))" />
-    <app-lum-neo-input-field label="Author" [control]="$any(form().get('author'))" />
+    <app-lum-neo-input-field
+      [label]="'bookDetail.form.title' | t"
+      [control]="$any(form().get('title'))"
+    />
+    <app-lum-neo-input-field
+      [label]="'bookDetail.form.author' | t"
+      [control]="$any(form().get('author'))"
+    />
   </div>
 
   <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
     <app-lum-neo-input-field
       [control]="$any(form().get('isbn'))"
       [mono]="true"
-      label="ISBN"
+      [label]="'bookDetail.form.isbn' | t"
     />
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <app-lum-neo-input-field
         inputType="number"
-        label="Publication year"
+        [label]="'bookDetail.form.publicationYear' | t"
         [control]="$any(form().get('publicationYear'))"
       />
-      <app-lum-neo-input-field inputType="number" label="Pages" [control]="$any(form().get('pages'))" />
+      <app-lum-neo-input-field
+        inputType="number"
+        [label]="'bookDetail.form.pages' | t"
+        [control]="$any(form().get('pages'))"
+      />
     </div>
   </div>
 
   <div class="mb-8">
     <app-lum-neo-textarea-field
-      label="Synopsis"
+      [label]="'bookDetail.form.synopsis' | t"
       [control]="$any(form().get('synopsis'))"
       [rows]="4"
     />
@@ -41,15 +51,18 @@
   <h2
     class="mb-6 border-b border-slate-200 pb-2 text-xl font-semibold text-slate-800 dark:border-slate-700 dark:text-slate-200"
   >
-    Categorization
+    {{ 'bookDetail.sections.categorization' | t }}
   </h2>
 
   <div class="mb-4 grid grid-cols-1 gap-6 md:grid-cols-2">
     <app-lum-neo-select-field
-      label="Genre"
+      [label]="'bookDetail.form.genre' | t"
       [control]="$any(form().get('genre'))"
       [options]="genreOptions()"
     />
-    <app-lum-neo-input-field label="Location / shelf" [control]="$any(form().get('locationShelf'))" />
+    <app-lum-neo-input-field
+      [label]="'bookDetail.form.locationShelf' | t"
+      [control]="$any(form().get('locationShelf'))"
+    />
   </div>
 </form>

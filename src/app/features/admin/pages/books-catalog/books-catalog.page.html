@@ -11,7 +11,7 @@
           class="rounded-lg border border-emerald-300 px-3 py-1.5 text-xs font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 dark:border-emerald-700 dark:text-emerald-100 dark:hover:bg-emerald-900/40"
           (click)="store.dismissAuthorSuccess()"
         >
-          Dismiss
+          {{ 'common.dismiss' | t }}
         </button>
       </div>
     </div>
@@ -29,16 +29,16 @@
           class="rounded-lg border border-emerald-300 px-3 py-1.5 text-xs font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 dark:border-emerald-700 dark:text-emerald-100 dark:hover:bg-emerald-900/40"
           (click)="store.dismissBookSuccess()"
         >
-          Dismiss
+          {{ 'common.dismiss' | t }}
         </button>
       </div>
     </div>
   }
 
   <app-lum-catalog-hero
-    searchPlaceholder="Search by title, author, or ISBN..."
-    tagline="Curate and oversee the library's expanding collection"
-    title="Catalog Management"
+    [searchPlaceholder]="'books.searchPlaceholder' | t"
+    [tagline]="'books.tagline' | t"
+    [title]="'books.title' | t"
     [searchQuery]="store.searchControl.value"
     (queryChange)="store.searchControl.setValue($event)"
   />
@@ -56,11 +56,11 @@
 
   <!-- Loading state -->
   @if (store.isLoading()) {
-    <p class="text-sm text-slate-500 dark:text-slate-400">Loading books...</p>
+    <p class="text-sm text-slate-500 dark:text-slate-400">{{ 'books.loading' | t }}</p>
   }
 
   <!-- Book grid -->
-  <section aria-label="Book catalog">
+  <section [attr.aria-label]="'books.aria.catalog' | t">
     @if (store.books().length > 0) {
       <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         @for (book of store.books(); track book.id) {
@@ -68,7 +68,7 @@
         }
       </div>
     } @else if (!store.isLoading()) {
-      <p class="py-12 text-center text-slate-400 dark:text-slate-500">No books found for the current filters.</p>
+      <p class="py-12 text-center text-slate-400 dark:text-slate-500">{{ 'books.empty' | t }}</p>
     }
   </section>
 
@@ -76,8 +76,13 @@
   @if (store.pagination().total_pages > 1) {
     <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
       <p class="text-sm text-slate-500 dark:text-slate-400">
-        Page {{ store.pagination().current_page }} of {{ store.pagination().total_pages }}
-        <span class="ml-2">({{ store.pagination().total }} books)</span>
+        {{
+          'books.pagination.pageOf'
+            | t: { n: store.pagination().current_page, m: store.pagination().total_pages }
+        }}
+        <span class="ml-2">{{
+          'books.pagination.totalBooks' | t: { n: store.pagination().total }
+        }}</span>
       </p>
       <div class="flex items-center gap-2">
         <button
@@ -86,7 +91,7 @@
           [disabled]="!store.pagination().has_prev"
           (click)="store.goToPrevPage()"
         >
-          Previous
+          {{ 'common.previous' | t }}
         </button>
         <button
           type="button"
@@ -94,7 +99,7 @@
           [disabled]="!store.pagination().has_next"
           (click)="store.goToNextPage()"
         >
-          Next
+          {{ 'common.next' | t }}
         </button>
       </div>
     </div>
@@ -121,4 +126,4 @@
   />
 }
 
-<app-lum-catalog-fab ariaLabel="Add book or author to catalog" (fabClick)="onAddToCatalog()" />
+<app-lum-catalog-fab [ariaLabel]="'books.fabAria' | t" (fabClick)="onAddToCatalog()" />

@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-lum-loan-due-display',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './lum-loan-due-display.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

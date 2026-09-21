@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import type { LoanRow } from '../../../models/loan-row.model';
 import type { LoansApiPagination } from '../../../models/loans-api.model';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 import { LumLoanBookCellComponent } from '../../molecules/lum-loan-book-cell/lum-loan-book-cell.component';
 import { LumLoanCountdownBarComponent } from '../../molecules/lum-loan-countdown-bar/lum-loan-countdown-bar.component';
@@ -15,6 +16,7 @@ import { LumTableStudentIdentityCellComponent } from '../../molecules/lum-table-
     LumLoanCountdownBarComponent,
     LumLoanDueDisplayComponent,
     LumTableStudentIdentityCellComponent,
+    TranslatePipe,
   ],
   templateUrl: './lum-loans-table.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import type { FineStatusFilter } from '../../../models/fine-row.model';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-lum-fine-status-filter',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './lum-fine-status-filter.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

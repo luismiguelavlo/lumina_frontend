@@ -10,14 +10,23 @@ const DICTS: Record<AppLocale, TranslationDictionary> = {
   es: TRANSLATIONS_ES,
 };
 
+export type TranslationParams = Readonly<Record<string, string | number>>;
+
 function readStoredLocale(): AppLocale {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw === 'en' || raw === 'es') return raw;
   } catch {
-    // ignore (SSR / private mode)
+    // ignore
   }
   return 'en';
+}
+
+function interpolate(template: string, params?: TranslationParams): string {
+  if (!params) return template;
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) =>
+    params[key] !== undefined && params[key] !== null ? String(params[key]) : `{{${key}}}`,
+  );
 }
 
 @Injectable({ providedIn: 'root' })
@@ -27,9 +36,10 @@ export class I18nService {
   readonly locale = this.localeState.asReadonly();
   readonly isSpanish = computed(() => this.localeState() === 'es');
 
-  t(key: string): string {
+  t(key: string, params?: TranslationParams): string {
     const dict = DICTS[this.localeState()];
-    return dict[key] ?? DICTS.en[key] ?? key;
+    const raw = dict[key] ?? DICTS.en[key] ?? key;
+    return interpolate(raw, params);
   }
 
   setLocale(locale: AppLocale): void {

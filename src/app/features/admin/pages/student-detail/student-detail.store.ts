@@ -10,6 +10,7 @@ import { BadgesApiService } from '../../../../shared/data-access/badges-api.serv
 import { LoansApiService } from '../../../../shared/data-access/loans-api.service';
 import { FinesApiService } from '../../../../shared/data-access/fines-api.service';
 import { SanctionsApiService } from '../../../../shared/data-access/sanctions-api.service';
+import { I18nService } from '../../../../shared/i18n/i18n.service';
 import type { BadgeCatalogItem } from '../../../../shared/models/badges-api.model';
 import type { ProfileBadgeTileData, StudentProfileDetail } from '../../../../shared/models/student-profile.model';
 import type {
@@ -37,6 +38,7 @@ export class StudentDetailStore {
   private readonly finesApi = inject(FinesApiService);
   private readonly sanctionsApi = inject(SanctionsApiService);
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly i18n = inject(I18nService);
   private readonly refreshNonce = signal(0);
 
   private readonly studentId = toSignal(
@@ -65,12 +67,15 @@ export class StudentDetailStore {
 
   private badgeToastClearHandle: ReturnType<typeof setTimeout> | null = null;
 
-  readonly degreeOptions: readonly LumSelectOption[] = [
-    { value: 'Undergraduate Student', label: 'Undergraduate Student' },
-    { value: 'Graduate Student', label: 'Graduate Student' },
-    { value: 'Doctoral Student', label: 'Doctoral Student' },
-    { value: 'Faculty', label: 'Faculty' },
-  ];
+  readonly degreeOptions = computed((): readonly LumSelectOption[] => {
+    this.i18n.locale();
+    return [
+      { value: 'Undergraduate Student', label: this.i18n.t('students.degree.undergraduate') },
+      { value: 'Graduate Student', label: this.i18n.t('students.degree.graduate') },
+      { value: 'Doctoral Student', label: this.i18n.t('students.degree.doctoral') },
+      { value: 'Faculty', label: this.i18n.t('students.degree.faculty') },
+    ];
+  });
 
   readonly editForm = this.fb.group({
     firstName: ['', [Validators.required, Validators.minLength(2)]],
@@ -167,7 +172,7 @@ export class StudentDetailStore {
       )
       .subscribe({
         next: () => {
-          this.showBadgeToast('Badge added successfully.', 'success');
+          this.showBadgeToast(this.i18n.t('studentDetail.badges.added'), 'success');
           this.refreshNonce.update((n) => n + 1);
         },
         error: (error: unknown) => {
@@ -190,7 +195,7 @@ export class StudentDetailStore {
       )
       .subscribe({
         next: () => {
-          this.showBadgeToast('Badge removed successfully.', 'success');
+          this.showBadgeToast(this.i18n.t('studentDetail.badges.removed'), 'success');
           this.refreshNonce.update((n) => n + 1);
         },
         error: (error: unknown) => {
@@ -220,7 +225,7 @@ export class StudentDetailStore {
 
   private toBadgeErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'Could not update the badge. Please try again.';
+      return this.i18n.t('studentDetail.badges.error');
     }
 
     const backendMessage =
@@ -233,20 +238,20 @@ export class StudentDetailStore {
     }
 
     if (error.status === 409) {
-      return 'This badge is already assigned or cannot be modified.';
+      return this.i18n.t('studentDetail.badges.conflict');
     }
 
     if (error.status === 0) {
-      return 'Could not connect to the server.';
+      return this.i18n.t('common.errors.network');
     }
 
-    return 'Could not update the badge. Please try again.';
+    return this.i18n.t('studentDetail.badges.error');
   }
 
   openEditModal(): void {
     const raw = this.rawProfile();
     if (!raw) {
-      this.updateError.set('Student profile data is not ready yet.');
+      this.updateError.set(this.i18n.t('studentDetail.errors.notReady'));
       return;
     }
 
@@ -275,7 +280,7 @@ export class StudentDetailStore {
     if (!id || this.isUpdating()) return;
     if (this.editForm.invalid) {
       this.editForm.markAllAsTouched();
-      this.updateError.set('Please complete all required fields with valid values.');
+      this.updateError.set(this.i18n.t('studentDetail.errors.validation'));
       return;
     }
 
@@ -302,7 +307,7 @@ export class StudentDetailStore {
       .subscribe({
         next: () => {
           this.isEditModalOpen.set(false);
-          this.updateSuccess.set('Student profile updated successfully.');
+          this.updateSuccess.set(this.i18n.t('studentDetail.success.updated'));
           this.deactivateError.set(null);
           this.refreshNonce.update((n) => n + 1);
         },
@@ -366,7 +371,7 @@ export class StudentDetailStore {
   requestSanctionConfirmation(): void {
     if (this.createSanctionForm.invalid) {
       this.createSanctionForm.markAllAsTouched();
-      this.sanctionError.set('Please provide a valid reason.');
+      this.sanctionError.set(this.i18n.t('studentDetail.sanction.validation'));
       return;
     }
     this.sanctionError.set(null);
@@ -404,7 +409,7 @@ export class StudentDetailStore {
         next: () => {
           this.isSanctionModalOpen.set(false);
           this.isSanctionConfirmOpen.set(false);
-          this.sanctionSuccess.set('Sanction created successfully. Redirecting...');
+          this.sanctionSuccess.set(this.i18n.t('studentDetail.sanction.success'));
           setTimeout(() => {
             void this.router.navigate(['/admin', 'sanctions']);
           }, 700);
@@ -425,7 +430,7 @@ export class StudentDetailStore {
   requestFineConfirmation(): void {
     if (this.createFineForm.invalid) {
       this.createFineForm.markAllAsTouched();
-      this.fineError.set('Please complete all required fine fields.');
+      this.fineError.set(this.i18n.t('studentDetail.fine.validation'));
       return;
     }
     this.fineError.set(null);
@@ -475,7 +480,9 @@ export class StudentDetailStore {
   private mapApiToView(api: StudentProfileApiResponse, catalog: readonly BadgeCatalogItem[]): StudentProfileDetail {
     const fullName = `${api.first_name} ${api.last_name}`.trim();
     const subtitle = [api.degree_level, api.major].filter(Boolean).join(' — ') || api.email;
-    const memberSinceLabel = `Member since ${this.formatMemberSince(api.member_since)}`;
+    const memberSinceLabel = this.i18n.t('studentDetail.memberSince', {
+      date: this.formatMemberSince(api.member_since),
+    });
 
     const earnedIds = new Set(
       (api.badge_gallery.badges ?? []).filter((b) => b.earned).map((b) => b.id),
@@ -516,33 +523,35 @@ export class StudentDetailStore {
 
     return {
       patronId: api.student_id_code || api.id,
-      name: fullName || 'Library patron',
+      name: fullName || this.i18n.t('studentDetail.fallback.patron'),
       subtitle,
       memberSinceLabel,
       avatarUrl: api.avatar_url?.trim() || AVATAR_PLACEHOLDER,
-      avatarAlt: `Avatar of ${fullName || 'student'}`,
+      avatarAlt: this.i18n.t('students.avatarAlt', {
+        name: fullName || this.i18n.t('studentDetail.fallback.patron'),
+      }),
       verified: true,
       stats: [
         {
-          label: 'Total Read',
+          label: this.i18n.t('studentDetail.stats.totalRead'),
           value: String(api.personal_stats.total_read ?? 0),
           icon: 'menu_book',
           accent: 'primary',
         },
         {
-          label: 'Active',
+          label: this.i18n.t('studentDetail.stats.active'),
           value: String(api.personal_stats.active_loans ?? 0),
           icon: 'bookmark',
           accent: 'primary',
         },
         {
-          label: 'Overdue',
+          label: this.i18n.t('studentDetail.stats.overdue'),
           value: String(api.personal_stats.overdue_count ?? 0),
           icon: 'warning',
           accent: (api.personal_stats.overdue_count ?? 0) > 0 ? 'danger' : 'neutral',
         },
         {
-          label: 'Streak',
+          label: this.i18n.t('studentDetail.stats.streak'),
           value: String(api.personal_stats.current_streak_days ?? 0),
           icon: 'local_fire_department',
           accent: 'primary',
@@ -556,13 +565,24 @@ export class StudentDetailStore {
         const returned = Boolean(loan.returned_at);
         return {
           coverUrl: loan.cover_url?.trim() || BOOK_PLACEHOLDER,
-          coverAlt: `Book cover ${loan.title ?? ''}`.trim() || 'Book cover',
-          title: loan.title ?? 'Library book',
-          authors: loan.authors ?? 'Unknown author',
-          statusLabel: returned ? 'Returned' : 'Active',
+          coverAlt: loan.title
+            ? this.i18n.t('bookDetail.coverAltNamed', { title: loan.title })
+            : this.i18n.t('studentDetail.loanFallbacks.bookCover'),
+          title: loan.title ?? this.i18n.t('studentDetail.loanFallbacks.libraryBook'),
+          authors: loan.authors ?? this.i18n.t('studentDetail.loanFallbacks.unknownAuthor'),
+          statusLabel: returned
+            ? this.i18n.t('studentDetail.loanStatus.returned')
+            : this.i18n.t('studentDetail.loanStatus.active'),
           tone: returned ? 'returned' : 'active',
-          primaryDateLabel: loan.borrowed_at ? `Borrowed: ${this.formatDate(loan.borrowed_at)}` : 'Borrowed',
-          dueDateLabel: !returned && loan.due_at ? `Due: ${this.formatDate(loan.due_at)}` : undefined,
+          primaryDateLabel: loan.borrowed_at
+            ? this.i18n.t('studentDetail.loanDates.borrowed', {
+                date: this.formatDate(loan.borrowed_at),
+              })
+            : this.i18n.t('studentDetail.loanDates.borrowedLabel'),
+          dueDateLabel:
+            !returned && loan.due_at
+              ? this.i18n.t('studentDetail.loanDates.due', { date: this.formatDate(loan.due_at) })
+              : undefined,
           dateRangeLabel:
             returned && loan.borrowed_at && loan.returned_at
               ? `${this.formatDate(loan.borrowed_at)} - ${this.formatDate(loan.returned_at)}`
@@ -576,17 +596,38 @@ export class StudentDetailStore {
   private fallbackProfile(patronId: string): StudentProfileDetail {
     return {
       patronId,
-      name: 'Library patron',
-      subtitle: 'Student profile',
-      memberSinceLabel: 'Member since —',
+      name: this.i18n.t('studentDetail.fallback.patron'),
+      subtitle: this.i18n.t('studentDetail.fallback.profile'),
+      memberSinceLabel: this.i18n.t('studentDetail.memberSinceEmpty'),
       avatarUrl: AVATAR_PLACEHOLDER,
-      avatarAlt: 'Profile picture',
+      avatarAlt: this.i18n.t('studentDetail.fallback.picture'),
       verified: true,
       stats: [
-        { label: 'Total Read', value: '0', icon: 'menu_book', accent: 'primary' },
-        { label: 'Active', value: '0', icon: 'bookmark', accent: 'primary' },
-        { label: 'Overdue', value: '0', icon: 'warning', accent: 'neutral' },
-        { label: 'Streak', value: '0', icon: 'local_fire_department', accent: 'primary', valueSuffix: 'd' },
+        {
+          label: this.i18n.t('studentDetail.stats.totalRead'),
+          value: '0',
+          icon: 'menu_book',
+          accent: 'primary',
+        },
+        {
+          label: this.i18n.t('studentDetail.stats.active'),
+          value: '0',
+          icon: 'bookmark',
+          accent: 'primary',
+        },
+        {
+          label: this.i18n.t('studentDetail.stats.overdue'),
+          value: '0',
+          icon: 'warning',
+          accent: 'neutral',
+        },
+        {
+          label: this.i18n.t('studentDetail.stats.streak'),
+          value: '0',
+          icon: 'local_fire_department',
+          accent: 'primary',
+          valueSuffix: 'd',
+        },
       ],
       badges: [],
       badgeUnlocked: 0,
@@ -637,7 +678,7 @@ export class StudentDetailStore {
 
   private toUpdateErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'Could not update the student profile.';
+      return this.i18n.t('studentDetail.errors.update');
     }
 
     const backendMessage =
@@ -650,15 +691,15 @@ export class StudentDetailStore {
     }
 
     if (error.status === 0) {
-      return 'Could not connect to the server.';
+      return this.i18n.t('common.errors.network');
     }
 
-    return 'Could not update the student profile.';
+    return this.i18n.t('studentDetail.errors.update');
   }
 
   private toDeactivateErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'Could not deactivate the student.';
+      return this.i18n.t('studentDetail.errors.deactivate');
     }
 
     const backendMessage =
@@ -671,17 +712,17 @@ export class StudentDetailStore {
     }
 
     if (error.status === 0) {
-      return 'Could not connect to the server.';
+      return this.i18n.t('common.errors.network');
     }
 
-    return 'Could not deactivate the student.';
+    return this.i18n.t('studentDetail.errors.deactivate');
   }
 
   private loadActiveLoansForStudent(): void {
     const studentId = this.studentRouteId();
     if (!studentId) {
       this.activeLoanOptions.set([]);
-      this.fineError.set('Student ID is not available.');
+      this.fineError.set(this.i18n.t('studentDetail.fine.noStudentId'));
       return;
     }
 
@@ -696,15 +737,19 @@ export class StudentDetailStore {
         next: (response) => {
           const options = response.data
             .filter((loan) => (loan.status ?? '').toLowerCase() === 'active')
-            .map((loan) => ({
-              value: loan.loan_id,
-              label: `${loan.book_title ?? 'Untitled'} · Due ${loan.due_date ?? '—'}`,
-            }));
+            .map((loan) => {
+              const title = loan.book_title?.trim() || this.i18n.t('loans.untitled');
+              const due = loan.due_date ?? '—';
+              return {
+                value: loan.loan_id,
+                label: `${title} · ${this.i18n.t('studentDetail.loanDates.due', { date: due })}`,
+              };
+            });
           this.activeLoanOptions.set(options);
           if (options.length > 0) {
             this.createFineForm.controls.loanId.setValue(options[0].value);
           } else {
-            this.fineError.set('This student has no active loans available for creating a fine.');
+            this.fineError.set(this.i18n.t('studentDetail.fine.noActiveLoans'));
           }
         },
         error: (error: unknown) => {
@@ -716,7 +761,7 @@ export class StudentDetailStore {
 
   private toFineErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'Could not create the fine.';
+      return this.i18n.t('studentDetail.fine.error');
     }
 
     const backendMessage =
@@ -727,14 +772,14 @@ export class StudentDetailStore {
       return backendMessage;
     }
     if (error.status === 0) {
-      return 'Could not connect to the server.';
+      return this.i18n.t('common.errors.network');
     }
-    return 'Could not create the fine.';
+    return this.i18n.t('studentDetail.fine.error');
   }
 
   private toSanctionErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'Could not create the sanction.';
+      return this.i18n.t('studentDetail.sanction.error');
     }
 
     const backendMessage =
@@ -745,8 +790,8 @@ export class StudentDetailStore {
       return backendMessage;
     }
     if (error.status === 0) {
-      return 'Could not connect to the server.';
+      return this.i18n.t('common.errors.network');
     }
-    return 'Could not create the sanction.';
+    return this.i18n.t('studentDetail.sanction.error');
   }
 }

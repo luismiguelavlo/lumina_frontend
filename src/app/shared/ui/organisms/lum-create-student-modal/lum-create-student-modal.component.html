@@ -19,10 +19,10 @@
         </div>
         <div class="min-w-0">
           <h3 id="create-student-title" class="text-lg font-bold text-slate-900 dark:text-slate-100">
-            {{ title() }}
+            {{ title() || ('students.modal.createTitle' | t) }}
           </h3>
           <p class="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">
-            {{ subtitle() }}
+            {{ subtitle() || ('students.modal.createSubtitle' | t) }}
           </p>
         </div>
       </div>
@@ -38,30 +38,42 @@
 
     <form class="space-y-4" [formGroup]="form()" (ngSubmit)="$event.preventDefault(); submitClick.emit()">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <app-lum-neo-input-field label="First name" [control]="$any(form().get('firstName'))" />
-        <app-lum-neo-input-field label="Last name" [control]="$any(form().get('lastName'))" />
+        <app-lum-neo-input-field
+          [label]="'students.form.firstName' | t"
+          [control]="$any(form().get('firstName'))"
+        />
+        <app-lum-neo-input-field
+          [label]="'students.form.lastName' | t"
+          [control]="$any(form().get('lastName'))"
+        />
       </div>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <app-lum-neo-input-field label="Email" [control]="$any(form().get('email'))" />
+        <app-lum-neo-input-field
+          [label]="'students.form.email' | t"
+          [control]="$any(form().get('email'))"
+        />
         <app-lum-neo-select-field
-          label="Degree level"
+          [label]="'students.form.degreeLevel' | t"
           [control]="$any(form().get('degreeLevel'))"
           [options]="degreeOptions()"
         />
       </div>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <app-lum-neo-input-field label="Major" [control]="$any(form().get('major'))" />
+        <app-lum-neo-input-field
+          [label]="'students.form.major' | t"
+          [control]="$any(form().get('major'))"
+        />
         <app-lum-neo-input-field
           inputType="number"
-          label="Expected graduation year"
+          [label]="'students.form.expectedGraduationYear' | t"
           [control]="$any(form().get('expectedGraduationYear'))"
         />
       </div>
 
       <app-lum-image-upload
-        label="Avatar (optional)"
+        [label]="'students.form.avatar' | t"
         folder="students"
         previewAspect="1 / 1"
         rounded="full"
@@ -77,7 +89,7 @@
         [disabled]="isSaving()"
         (click)="cancelClick.emit()"
       >
-        Cancel
+        {{ 'common.cancel' | t }}
       </button>
       <button
         type="button"
@@ -86,9 +98,9 @@
         (click)="submitClick.emit()"
       >
         @if (isSaving()) {
-          Saving...
+          {{ 'common.saving' | t }}
         } @else {
-          {{ submitLabel() }}
+          {{ submitLabel() || ('students.modal.createSubmit' | t) }}
         }
       </button>
     </div>

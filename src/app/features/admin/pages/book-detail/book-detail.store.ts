@@ -6,6 +6,7 @@ import { catchError, finalize, map, of, switchMap, take } from 'rxjs';
 import { PublicBooksApiError, PublicBooksApiService } from '../../../../shared/data-access/public-books-api.service';
 import { UploadsApiService } from '../../../../shared/data-access/uploads-api.service';
 import { PublicGenresApiService } from '../../../../shared/data-access/public-genres-api.service';
+import { I18nService } from '../../../../shared/i18n/i18n.service';
 import type { CatalogAvailability } from '../../../../shared/models/catalog-book.model';
 import type {
   PublicBookDetailApiResponse,
@@ -29,6 +30,7 @@ export class AdminBookDetailStore {
   private readonly uploadsApi = inject(UploadsApiService);
   private readonly genresApi = inject(PublicGenresApiService);
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly i18n = inject(I18nService);
 
   /** Last successful GET/PUT payload; used for fields not editable in the form (e.g. total_copies, status). */
   private lastDetail: PublicBookDetailApiResponse | null = null;
@@ -46,7 +48,7 @@ export class AdminBookDetailStore {
 
   readonly titlePreview = signal('');
   readonly coverUrl = signal(COVER_PLACEHOLDER);
-  readonly coverAlt = signal('Book cover');
+  readonly coverAlt = signal('');
   readonly availability = signal<CatalogAvailability>('available');
   readonly totalCopies = signal(0);
   readonly checkedOut = signal(0);
@@ -88,7 +90,7 @@ export class AdminBookDetailStore {
             }
             return of<BookDetailState>({
               status: 'error',
-              message: 'No fue posible cargar los datos del libro.',
+              message: this.i18n.t('bookDetail.errors.load'),
             });
           }),
         );
@@ -103,6 +105,8 @@ export class AdminBookDetailStore {
   });
 
   constructor() {
+    this.coverAlt.set(this.i18n.t('bookDetail.coverAlt'));
+
     this.form.controls.title.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe((v) => {
@@ -118,7 +122,7 @@ export class AdminBookDetailStore {
           void this.router.navigate(['/admin/books']);
         }
         if (state.status === 'error') {
-          this.loadError.set(state.message ?? 'Error desconocido.');
+          this.loadError.set(state.message ?? this.i18n.t('common.errors.unknown'));
         }
       });
   }
@@ -161,7 +165,7 @@ export class AdminBookDetailStore {
           this.applyApiData(response);
           this.form.markAsPristine();
           this.saveError.set(null);
-          this.saveSuccess.set('Libro actualizado correctamente.');
+          this.saveSuccess.set(this.i18n.t('bookDetail.success.saved'));
         },
         error: (error: unknown) => {
           if (error instanceof PublicBooksApiError && error.code === 'not_found') {
@@ -171,7 +175,7 @@ export class AdminBookDetailStore {
           const message =
             error instanceof PublicBooksApiError
               ? error.message
-              : 'No fue posible guardar los cambios del libro.';
+              : this.i18n.t('bookDetail.errors.save');
           this.saveError.set(message);
         },
       });
@@ -214,7 +218,7 @@ export class AdminBookDetailStore {
       .subscribe({
         next: (response) => {
           this.applyApiData(response);
-          this.saveSuccess.set('Portada actualizada correctamente.');
+          this.saveSuccess.set(this.i18n.t('bookDetail.success.cover'));
         },
         error: (error: unknown) => {
           const message =
@@ -222,7 +226,7 @@ export class AdminBookDetailStore {
               ? error.message
               : error instanceof Error
                 ? error.message
-                : 'No fue posible actualizar la portada.';
+                : this.i18n.t('bookDetail.errors.cover');
           this.saveError.set(message);
         },
       });
@@ -250,7 +254,7 @@ export class AdminBookDetailStore {
 
     this.titlePreview.set(api.title);
     this.coverUrl.set(api.cover_url?.trim() || COVER_PLACEHOLDER);
-    this.coverAlt.set(`Book cover for ${api.title}`);
+    this.coverAlt.set(this.i18n.t('bookDetail.coverAltNamed', { title: api.title }));
     this.availability.set(availability);
     this.totalCopies.set(api.total_copies ?? 0);
     this.checkedOut.set(

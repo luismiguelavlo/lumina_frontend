@@ -10,7 +10,9 @@
       [style.aspect-ratio]="previewAspect()"
       [style.width.px]="rounded() === 'full' ? 96 : 112"
       [disabled]="disabled() || isUploading()"
-      [attr.aria-label]="previewUrl() ? 'Cambiar imagen' : 'Subir imagen'"
+      [attr.aria-label]="
+        previewUrl() ? ('upload.aria.change' | t) : ('upload.aria.upload' | t)
+      "
       (click)="openPicker()"
     >
       @if (previewUrl(); as url) {
@@ -18,7 +20,9 @@
       } @else {
         <span class="flex h-full w-full flex-col items-center justify-center gap-1 px-2 text-slate-500 dark:text-slate-400">
           <app-lum-icon [name]="'add_a_photo'" [extraClass]="'text-2xl'" />
-          <span class="text-[10px] font-semibold uppercase tracking-wide">Upload</span>
+          <span class="text-[10px] font-semibold uppercase tracking-wide">{{
+            'upload.upload' | t
+          }}</span>
         </span>
       }
 
@@ -26,13 +30,13 @@
         <span
           class="absolute inset-0 flex items-center justify-center bg-slate-900/50 text-xs font-bold text-white"
         >
-          Uploading…
+          {{ 'upload.uploading' | t }}
         </span>
       }
     </button>
 
     <div class="min-w-0 flex-1 space-y-2 pt-1">
-      <p class="text-xs text-slate-500 dark:text-slate-400">{{ hint() }}</p>
+      <p class="text-xs text-slate-500 dark:text-slate-400">{{ hintText() }}</p>
       <div class="flex flex-wrap gap-2">
         <button
           type="button"
@@ -40,7 +44,7 @@
           [disabled]="disabled() || isUploading()"
           (click)="openPicker()"
         >
-          {{ previewUrl() ? 'Change image' : 'Choose image' }}
+          {{ previewUrl() ? ('upload.changeImage' | t) : ('upload.chooseImage' | t) }}
         </button>
         @if (previewUrl()) {
           <button
@@ -49,7 +53,7 @@
             [disabled]="disabled() || isUploading()"
             (click)="clearImage()"
           >
-            Remove
+            {{ 'upload.remove' | t }}
           </button>
         }
       </div>

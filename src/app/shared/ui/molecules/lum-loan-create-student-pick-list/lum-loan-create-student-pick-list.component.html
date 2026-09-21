@@ -2,7 +2,7 @@
   <ul
     class="mt-2 max-h-56 space-y-1 overflow-y-auto rounded-xl border border-slate-200/80 bg-white/60 p-1 dark:border-slate-700/80 dark:bg-slate-900/50"
     role="listbox"
-    aria-label="Matching students"
+    [attr.aria-label]="'loanCreate.aria.matchingStudents' | t"
   >
     @for (o of options(); track o.id) {
       <li>

@@ -20,6 +20,8 @@ import {
 } from 'rxjs';
 import type { SanctionRow } from '../../../../shared/models/sanction-row.model';
 import type { SanctionsApiPagination, SanctionsApiResponse } from '../../../../shared/models/sanctions-api.model';
+import { I18nService } from '../../../../shared/i18n/i18n.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { SanctionsApiService } from '../../../../shared/data-access/sanctions-api.service';
 import { StudentsApiService } from '../../../../shared/data-access/students-api.service';
 import type { StudentsApiItem } from '../../../../shared/models/students-api.model';
@@ -29,18 +31,21 @@ import { LumConfirmActionModalComponent } from '../../../../shared/ui/organisms/
 
 @Component({
   selector: 'app-sanctions-management-page',
-  imports: [LumStudentsNeoSearchComponent, LumSanctionsActiveTableComponent, LumConfirmActionModalComponent],
+  imports: [
+    LumStudentsNeoSearchComponent,
+    LumSanctionsActiveTableComponent,
+    LumConfirmActionModalComponent,
+    TranslatePipe,
+  ],
   templateUrl: './sanctions-management.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SanctionsManagementPage {
   private readonly sanctionsApi = inject(SanctionsApiService);
   private readonly studentsApi = inject(StudentsApiService);
+  private readonly i18n = inject(I18nService);
   private readonly currentPage = signal(1);
   private readonly refreshNonce = signal(0);
-
-  protected readonly pageTitle = 'Active sanctions';
-  protected readonly pageSubtitle = 'Students with a current borrowing restriction';
 
   protected readonly searchQuery = signal('');
   protected readonly selectedStudent = signal<StudentsApiItem | null>(null);
@@ -93,7 +98,7 @@ export class SanctionsManagementPage {
           })
           .pipe(
             catchError((error: unknown) => {
-              this.loadError.set(this.toErrorMessage(error));
+              this.loadError.set(this.toErrorMessage(error, 'sanctions.errors.load'));
               return of(this.emptyResponse(page));
             }),
             finalize(() => this.isLoading.set(false)),
@@ -103,9 +108,11 @@ export class SanctionsManagementPage {
     { initialValue: this.emptyResponse(1) },
   );
 
-  protected readonly filteredRows = computed((): readonly SanctionRow[] =>
-    this.sanctionsResponse().data.map((row) => {
-      const studentName = `${row.first_name ?? ''} ${row.last_name ?? ''}`.trim() || 'Unknown student';
+  protected readonly filteredRows = computed((): readonly SanctionRow[] => {
+    this.i18n.locale();
+    return this.sanctionsResponse().data.map((row) => {
+      const studentName =
+        `${row.first_name ?? ''} ${row.last_name ?? ''}`.trim() || this.i18n.t('sanctions.unknownStudent');
       return {
         id: row.sanction_id,
         studentName,
@@ -113,10 +120,10 @@ export class SanctionsManagementPage {
         initials: this.initialsFromName(studentName),
         reason: row.reason,
         appliedOnLabel: this.formatDate(row.applied_at),
-        appliedByLabel: row.applied_by_id ?? 'System',
+        appliedByLabel: row.applied_by_id ?? this.i18n.t('sanctions.appliedBySystem'),
       } satisfies SanctionRow;
-    }),
-  );
+    });
+  });
 
   protected readonly pagination = computed<SanctionsApiPagination>(() => this.sanctionsResponse().pagination);
 
@@ -180,11 +187,11 @@ export class SanctionsManagementPage {
       .subscribe({
         next: () => {
           this.pendingLiftSanction.set(null);
-          this.actionSuccess.set(`Sanction ${pending.id} was lifted successfully.`);
+          this.actionSuccess.set(this.i18n.t('sanctions.success.lifted', { id: pending.id }));
           this.refreshNonce.update((n) => n + 1);
         },
         error: (error: unknown) => {
-          this.loadError.set(this.toErrorMessage(error));
+          this.loadError.set(this.toErrorMessage(error, 'sanctions.errors.lift'));
         },
       });
   }
@@ -224,9 +231,9 @@ export class SanctionsManagementPage {
     return new Intl.DateTimeFormat('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).format(date);
   }
 
-  private toErrorMessage(error: unknown): string {
+  private toErrorMessage(error: unknown, fallbackKey: string): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'Could not load sanctions.';
+      return this.i18n.t(fallbackKey);
     }
     const backendMessage =
       error.error && typeof error.error === 'object' && 'message' in error.error
@@ -235,6 +242,6 @@ export class SanctionsManagementPage {
     if (typeof backendMessage === 'string' && backendMessage.trim()) {
       return backendMessage;
     }
-    return 'Could not load sanctions.';
+    return this.i18n.t(fallbackKey);
   }
 }

@@ -6,11 +6,12 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 
 @Component({
   selector: 'app-lum-student-profile-hero',
-  imports: [LumIconComponent],
+  imports: [LumIconComponent, TranslatePipe],
   templateUrl: './lum-student-profile-hero.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

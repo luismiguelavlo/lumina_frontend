@@ -20,16 +20,16 @@
           </div>
           <div class="min-w-0">
             <h3 id="catalog-create-title" class="text-lg font-bold text-slate-900 dark:text-slate-100">
-              Add to catalog
+              {{ 'books.modal.title' | t }}
             </h3>
             <p class="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">
-              Create a new book or register an author.
+              {{ 'books.modal.subtitle' | t }}
             </p>
           </div>
         </div>
       </div>
 
-      <div class="mt-5 flex gap-2" role="tablist" aria-label="Creation type">
+      <div class="mt-5 flex gap-2" role="tablist" [attr.aria-label]="'books.modal.tablistAria' | t">
         <button
           id="tab-book"
           type="button"
@@ -49,7 +49,7 @@
           [disabled]="isModalBusy()"
           (click)="selectTab('book')"
         >
-          New book
+          {{ 'books.modal.tab.book' | t }}
         </button>
         <button
           id="tab-author"
@@ -70,7 +70,7 @@
           [disabled]="isModalBusy()"
           (click)="selectTab('author')"
         >
-          New author
+          {{ 'books.modal.tab.author' | t }}
         </button>
       </div>
     </div>
@@ -96,7 +96,9 @@
       @if (activeTab() === 'book') {
         <div role="tabpanel" id="panel-book" aria-labelledby="tab-book" tabindex="0">
           @if (isLoadingPicklists()) {
-            <p class="text-sm text-slate-500 dark:text-slate-400">Loading authors and genres…</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">{{
+              'books.modal.loadingPicklists' | t
+            }}</p>
           } @else {
             <form
               class="space-y-4"
@@ -104,46 +106,66 @@
               (ngSubmit)="$event.preventDefault(); submitBookClick.emit()"
             >
               <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <app-lum-neo-input-field label="Title" [control]="$any(bookForm().get('title'))" />
-                <app-lum-neo-input-field label="ISBN" [control]="$any(bookForm().get('isbn'))" />
+                <app-lum-neo-input-field
+                  [label]="'books.form.title' | t"
+                  [control]="$any(bookForm().get('title'))"
+                />
+                <app-lum-neo-input-field
+                  [label]="'books.form.isbn' | t"
+                  [control]="$any(bookForm().get('isbn'))"
+                />
               </div>
               <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <app-lum-neo-input-field label="Catalog code" [control]="$any(bookForm().get('catalog_code'))" />
+                <app-lum-neo-input-field
+                  [label]="'books.form.catalogCode' | t"
+                  [control]="$any(bookForm().get('catalog_code'))"
+                />
                 <app-lum-neo-input-field
                   inputType="number"
-                  label="Publication year"
+                  [label]="'books.form.publicationYear' | t"
                   [control]="$any(bookForm().get('publication_year'))"
                 />
               </div>
               <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <app-lum-neo-input-field inputType="number" label="Pages" [control]="$any(bookForm().get('pages'))" />
                 <app-lum-neo-input-field
                   inputType="number"
-                  label="Total copies"
+                  [label]="'books.form.pages' | t"
+                  [control]="$any(bookForm().get('pages'))"
+                />
+                <app-lum-neo-input-field
+                  inputType="number"
+                  [label]="'books.form.totalCopies' | t"
                   [control]="$any(bookForm().get('total_copies'))"
                 />
               </div>
-              <app-lum-neo-input-field label="Location" [control]="$any(bookForm().get('location'))" />
+              <app-lum-neo-input-field
+                [label]="'books.form.location' | t"
+                [control]="$any(bookForm().get('location'))"
+              />
               <app-lum-image-upload
-                label="Cover image (optional)"
+                [label]="'books.form.cover' | t"
                 folder="books"
-                hint="JPEG, PNG, WebP o GIF · máx. 5 MB"
+                [hint]="'upload.hint' | t"
                 previewAspect="2 / 3"
                 [control]="$any(bookForm().get('cover_url'))"
                 [disabled]="isModalBusy()"
               />
-              <app-lum-neo-textarea-field label="Synopsis (optional)" [rows]="4" [control]="$any(bookForm().get('synopsis'))" />
+              <app-lum-neo-textarea-field
+                [label]="'books.form.synopsis' | t"
+                [rows]="4"
+                [control]="$any(bookForm().get('synopsis'))"
+              />
               <app-lum-neo-multi-search-pick
-                label="Authors"
-                searchPlaceholder="Search authors…"
-                emptyListHint="No authors match your search."
+                [label]="'books.form.authors' | t"
+                [searchPlaceholder]="'books.form.searchAuthors' | t"
+                [emptyListHint]="'books.form.emptyAuthors' | t"
                 [options]="authorPickOptions()"
                 [control]="$any(bookForm().get('author_ids'))"
               />
               <app-lum-neo-multi-search-pick
-                label="Genres"
-                searchPlaceholder="Search genres…"
-                emptyListHint="No genres match your search."
+                [label]="'books.form.genres' | t"
+                [searchPlaceholder]="'books.form.searchGenres' | t"
+                [emptyListHint]="'books.form.emptyGenres' | t"
                 [options]="genrePickOptions()"
                 [control]="$any(bookForm().get('genre_ids'))"
               />
@@ -157,9 +179,12 @@
             [formGroup]="authorForm()"
             (ngSubmit)="$event.preventDefault(); submitAuthorClick.emit()"
           >
-            <app-lum-neo-input-field label="Name" [control]="$any(authorForm().get('name'))" />
+            <app-lum-neo-input-field
+              [label]="'books.authorForm.name' | t"
+              [control]="$any(authorForm().get('name'))"
+            />
             <app-lum-neo-textarea-field
-              label="Biography (optional)"
+              [label]="'books.authorForm.bio' | t"
               [rows]="5"
               [control]="$any(authorForm().get('bio'))"
             />
@@ -175,7 +200,7 @@
         [disabled]="isModalBusy()"
         (click)="cancelClick.emit()"
       >
-        Cancel
+        {{ 'common.cancel' | t }}
       </button>
       @if (activeTab() === 'author') {
         <button
@@ -185,9 +210,9 @@
           (click)="submitAuthorClick.emit()"
         >
           @if (isSavingAuthor()) {
-            Creating…
+            {{ 'common.creating' | t }}
           } @else {
-            Create author
+            {{ 'books.modal.createAuthor' | t }}
           }
         </button>
       }
@@ -199,9 +224,9 @@
           (click)="submitBookClick.emit()"
         >
           @if (isSavingBook()) {
-            Creating…
+            {{ 'common.creating' | t }}
           } @else {
-            Create book
+            {{ 'books.modal.createBook' | t }}
           }
         </button>
       }

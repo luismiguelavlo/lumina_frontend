@@ -12,7 +12,7 @@
     type="button"
     (click)="select('pending')"
   >
-    Pending
+    {{ 'fines.status.pending' | t }}
   </button>
   <button
     class="rounded-full px-4 py-2 text-sm font-semibold transition-all"
@@ -27,7 +27,7 @@
     type="button"
     (click)="select('paid')"
   >
-    Paid
+    {{ 'fines.status.paid' | t }}
   </button>
   <button
     class="rounded-full px-4 py-2 text-sm font-semibold transition-all"
@@ -42,6 +42,6 @@
     type="button"
     (click)="select('waived')"
   >
-    Waived
+    {{ 'fines.status.waived' | t }}
   </button>
 </div>

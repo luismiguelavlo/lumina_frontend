@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import type { FineStatusFilter } from '../../../models/fine-row.model';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 import { LumFineStatusFilterComponent } from '../../molecules/lum-fine-status-filter/lum-fine-status-filter.component';
 
 @Component({
   selector: 'app-lum-fines-filters-bar',
-  imports: [LumIconComponent, LumFineStatusFilterComponent],
+  imports: [LumIconComponent, LumFineStatusFilterComponent, TranslatePipe],
   templateUrl: './lum-fines-filters-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

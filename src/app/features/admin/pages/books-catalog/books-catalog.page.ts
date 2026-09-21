@@ -4,6 +4,7 @@ import { LumCatalogFabComponent } from '../../../../shared/ui/atoms/lum-catalog-
 import { LumCatalogHeroComponent } from '../../../../shared/ui/organisms/lum-catalog-hero/lum-catalog-hero.component';
 import { LumFilterPillButtonComponent } from '../../../../shared/ui/atoms/lum-filter-pill-button/lum-filter-pill-button.component';
 import { LumCatalogCreateModalComponent } from '../../../../shared/ui/organisms/lum-catalog-create-modal/lum-catalog-create-modal.component';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { AdminBooksCatalogStore } from './books-catalog.store';
 
 @Component({
@@ -14,6 +15,7 @@ import { AdminBooksCatalogStore } from './books-catalog.store';
     LumCatalogFabComponent,
     LumFilterPillButtonComponent,
     LumCatalogCreateModalComponent,
+    TranslatePipe,
   ],
   providers: [AdminBooksCatalogStore],
   templateUrl: './books-catalog.page.html',

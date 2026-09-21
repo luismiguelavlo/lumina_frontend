@@ -10,8 +10,8 @@
     <input
       class="w-full rounded-xl border border-slate-200/90 bg-white py-2 pr-4 pl-9 text-sm text-slate-900 shadow-sm outline-none transition-shadow placeholder:text-slate-400 focus:border-primary/50 focus:ring-2 focus:ring-primary/30 dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder:text-slate-500"
       type="search"
-      aria-label="Filter by student name"
-      placeholder="Student name…"
+      [attr.aria-label]="'fines.filters.studentAria' | t"
+      [placeholder]="'fines.filters.studentPlaceholder' | t"
       [value]="studentIdQuery()"
       (input)="onStudentInput($any($event.target).value)"
     />

@@ -17,9 +17,11 @@
         <app-lum-icon [extraClass]="'text-xl'" [name]="'receipt_long'" />
       </div>
       <div>
-        <h3 id="create-fine-title" class="text-lg font-bold text-slate-900 dark:text-slate-100">Create fine</h3>
+        <h3 id="create-fine-title" class="text-lg font-bold text-slate-900 dark:text-slate-100">
+          {{ 'studentDetail.fineModal.title' | t }}
+        </h3>
         <p class="mt-1 text-sm font-medium text-slate-600 dark:text-slate-300">
-          Choose an active loan and register the corresponding charge.
+          {{ 'studentDetail.fineModal.subtitle' | t }}
         </p>
       </div>
     </div>
@@ -34,24 +36,30 @@
 
     <form class="space-y-4" [formGroup]="form()" (ngSubmit)="$event.preventDefault(); submitClick.emit()">
       <app-lum-neo-select-field
-        label="Active loan"
+        [label]="'studentDetail.fineModal.activeLoan' | t"
         [control]="$any(form().get('loanId'))"
         [options]="loanOptions()"
       />
 
       @if (isLoadingLoans()) {
-        <p class="text-sm text-slate-500 dark:text-slate-400">Loading active loans...</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400">{{
+          'studentDetail.fineModal.loadingLoans' | t
+        }}</p>
       }
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <app-lum-neo-input-field
           inputType="number"
-          label="Amount (USD)"
+          [label]="'studentDetail.fineModal.amount' | t"
           [control]="$any(form().get('amount'))"
         />
       </div>
 
-      <app-lum-neo-textarea-field label="Reason" [control]="$any(form().get('reason'))" [rows]="3" />
+      <app-lum-neo-textarea-field
+        [label]="'studentDetail.fineModal.reason' | t"
+        [control]="$any(form().get('reason'))"
+        [rows]="3"
+      />
     </form>
 
     <div class="mt-6 flex items-center justify-end gap-3">
@@ -61,7 +69,7 @@
         [disabled]="isSaving()"
         (click)="cancelClick.emit()"
       >
-        Cancel
+        {{ 'common.cancel' | t }}
       </button>
       <button
         type="button"
@@ -69,7 +77,7 @@
         [disabled]="isSaving()"
         (click)="submitClick.emit()"
       >
-        Continue
+        {{ 'studentDetail.fineModal.continue' | t }}
       </button>
     </div>
   </div>

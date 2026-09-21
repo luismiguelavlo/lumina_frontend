@@ -8,27 +8,27 @@
           <th
             class="px-6 py-5 text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-slate-400"
           >
-            Student
+            {{ 'students.table.student' | t }}
           </th>
           <th
             class="hidden px-6 py-5 text-xs font-semibold tracking-wider text-slate-500 uppercase md:table-cell dark:text-slate-400"
           >
-            Status
+            {{ 'students.table.status' | t }}
           </th>
           <th
             class="hidden px-6 py-5 text-xs font-semibold tracking-wider text-slate-500 uppercase lg:table-cell dark:text-slate-400"
           >
-            Date applied
+            {{ 'students.table.dateApplied' | t }}
           </th>
           <th
             class="hidden px-6 py-5 text-xs font-semibold tracking-wider text-slate-500 uppercase xl:table-cell dark:text-slate-400"
           >
-            Reason
+            {{ 'students.table.reason' | t }}
           </th>
           <th
             class="px-6 py-5 text-right text-xs font-semibold tracking-wider text-slate-500 uppercase dark:text-slate-400"
           >
-            Action
+            {{ 'students.table.action' | t }}
           </th>
         </tr>
       </thead>
@@ -37,7 +37,7 @@
           <tr class="group transition-colors hover:bg-white/30 dark:hover:bg-white/5">
             <td class="px-6 py-4">
               <app-lum-table-student-identity-cell
-                [detailLine]="'ID: ' + row.patronId"
+                [detailLine]="'students.table.idPrefix' | t: { id: row.patronId }"
                 [initials]="initialsFromName(row.name)"
                 [name]="row.name"
               />
@@ -65,7 +65,7 @@
                 type="button"
                 (click)="onViewProfile(row)"
               >
-                View profile
+                {{ 'students.table.viewProfile' | t }}
               </button>
             </td>
           </tr>

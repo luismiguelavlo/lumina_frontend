@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 import { LumNeoInputFieldComponent } from '../../molecules/lum-neo-input-field/lum-neo-input-field.component';
 import {
@@ -16,6 +17,7 @@ import { LumNeoTextareaFieldComponent } from '../../molecules/lum-neo-textarea-f
     LumNeoSelectFieldComponent,
     LumNeoInputFieldComponent,
     LumNeoTextareaFieldComponent,
+    TranslatePipe,
   ],
   templateUrl: './lum-create-fine-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

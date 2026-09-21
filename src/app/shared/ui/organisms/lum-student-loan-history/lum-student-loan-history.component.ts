@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import type { StudentLoanHistoryItem } from '../../../models/student-profile.model';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 import { LumStudentLoanTimelineItemComponent } from '../../molecules/lum-student-loan-timeline-item/lum-student-loan-timeline-item.component';
 
 @Component({
   selector: 'app-lum-student-loan-history',
-  imports: [LumIconComponent, LumStudentLoanTimelineItemComponent],
+  imports: [LumIconComponent, LumStudentLoanTimelineItemComponent, TranslatePipe],
   templateUrl: './lum-student-loan-history.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

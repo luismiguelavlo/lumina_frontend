@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 
 @Component({
   selector: 'app-lum-profile-badge-tile',
-  imports: [LumIconComponent],
+  imports: [LumIconComponent, TranslatePipe],
   templateUrl: './lum-profile-badge-tile.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

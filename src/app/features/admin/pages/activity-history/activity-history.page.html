@@ -1,6 +1,6 @@
 <app-lum-dashboard-page-header
-  [subtitle]="subtitle"
-  title="Activity History"
+  [subtitle]="'activityHistory.subtitle' | t"
+  [title]="'activityHistory.title' | t"
   (notificationsClick)="onNotificationsClick()"
 />
 
@@ -14,7 +14,7 @@
 
 <app-lum-recent-activity
   [items]="activityItems()"
-  sectionTitle="All Events"
-  viewAllLabel="Back to Dashboard"
+  [sectionTitle]="'activityHistory.allEvents' | t"
+  [viewAllLabel]="'activityHistory.backToDashboard' | t"
   (viewAllClick)="onViewAllActivity()"
 />

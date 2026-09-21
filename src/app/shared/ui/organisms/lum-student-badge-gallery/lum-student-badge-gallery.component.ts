@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import type { ProfileBadgeTileData } from '../../../models/student-profile.model';
+import { TranslatePipe } from '../../../i18n/translate.pipe';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 import { LumProfileBadgeTileComponent } from '../../molecules/lum-profile-badge-tile/lum-profile-badge-tile.component';
 
 @Component({
   selector: 'app-lum-student-badge-gallery',
-  imports: [LumIconComponent, LumProfileBadgeTileComponent],
+  imports: [LumIconComponent, LumProfileBadgeTileComponent, TranslatePipe],
   templateUrl: './lum-student-badge-gallery.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

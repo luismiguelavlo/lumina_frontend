@@ -33,7 +33,7 @@
         [disabled]="isLoading()"
         (click)="cancelClick.emit()"
       >
-        {{ cancelLabel() }}
+        {{ cancelLabel() || ('common.cancel' | t) }}
       </button>
       <button
         type="button"
@@ -42,9 +42,9 @@
         (click)="confirmClick.emit()"
       >
         @if (isLoading()) {
-          Processing...
+          {{ 'common.processing' | t }}
         } @else {
-          {{ confirmLabel() }}
+          {{ confirmLabel() || ('common.confirm' | t) }}
         }
       </button>
     </div>

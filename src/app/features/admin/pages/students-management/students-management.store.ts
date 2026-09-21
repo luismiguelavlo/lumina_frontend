@@ -13,6 +13,7 @@ import {
 } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { StudentsApiService } from '../../../../shared/data-access/students-api.service';
+import { I18nService } from '../../../../shared/i18n/i18n.service';
 import type { StudentPatronRow } from '../../../../shared/models/student-patron.model';
 import type {
   CreateStudentRequest,
@@ -29,12 +30,12 @@ const AVATAR_PLACEHOLDER =
 export class StudentsManagementStore {
   private readonly studentsApi = inject(StudentsApiService);
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly i18n = inject(I18nService);
   private readonly currentPage = signal(1);
   private readonly refreshNonce = signal(0);
   private readonly isLoadingState = signal(false);
   private readonly didInitialRetry = signal(false);
 
-  readonly pageSubtitle = 'Manage library students, outstanding sanctions, and account statuses.';
   readonly searchControl = new FormControl<string>('', { nonNullable: true });
   readonly loadError = signal<string | null>(null);
   readonly isCreateModalOpen = signal(false);
@@ -52,12 +53,20 @@ export class StudentsManagementStore {
     avatarUrl: [''],
   });
 
-  readonly degreeOptions: readonly LumSelectOption[] = [
-    { value: 'Undergraduate Student', label: 'Undergraduate Student' },
-    { value: 'Graduate Student', label: 'Graduate Student' },
-    { value: 'Doctoral Student', label: 'Doctoral Student' },
-    { value: 'Faculty', label: 'Faculty' },
-  ];
+  readonly pageSubtitle = computed(() => {
+    this.i18n.locale();
+    return this.i18n.t('students.subtitle');
+  });
+
+  readonly degreeOptions = computed((): readonly LumSelectOption[] => {
+    this.i18n.locale();
+    return [
+      { value: 'Undergraduate Student', label: this.i18n.t('students.degree.undergraduate') },
+      { value: 'Graduate Student', label: this.i18n.t('students.degree.graduate') },
+      { value: 'Doctoral Student', label: this.i18n.t('students.degree.doctoral') },
+      { value: 'Faculty', label: this.i18n.t('students.degree.faculty') },
+    ];
+  });
 
   private readonly searchText = toSignal(
     this.searchControl.valueChanges.pipe(
@@ -92,18 +101,22 @@ export class StudentsManagementStore {
     { initialValue: this.emptyResponse(PAGE_SIZE, 0) },
   );
 
-  readonly rows = computed<readonly StudentPatronRow[]>(() =>
-    this.studentsResponse().data.map((row) => ({
-      patronId: row.student_id_code || row.id,
-      routeId: row.id,
-      name: `${row.first_name} ${row.last_name}`.trim(),
-      status: row.is_active ? 'active' : 'sanctioned',
-      dateApplied: this.formatDate(row.member_since ?? row.created_at),
-      reason: null,
-      avatarAlt: `Avatar of ${row.first_name} ${row.last_name}`.trim(),
-      avatarUrl: row.avatar_url?.trim() || AVATAR_PLACEHOLDER,
-    })),
-  );
+  readonly rows = computed<readonly StudentPatronRow[]>(() => {
+    this.i18n.locale();
+    return this.studentsResponse().data.map((row) => {
+      const name = `${row.first_name} ${row.last_name}`.trim();
+      return {
+        patronId: row.student_id_code || row.id,
+        routeId: row.id,
+        name,
+        status: row.is_active ? 'active' : 'sanctioned',
+        dateApplied: this.formatDate(row.member_since ?? row.created_at),
+        reason: null,
+        avatarAlt: this.i18n.t('students.avatarAlt', { name }),
+        avatarUrl: row.avatar_url?.trim() || AVATAR_PLACEHOLDER,
+      };
+    });
+  });
 
   readonly pagination = computed<StudentsApiPagination>(() => this.studentsResponse().pagination);
   readonly isLoading = computed(() => this.isLoadingState());
@@ -167,7 +180,7 @@ export class StudentsManagementStore {
     if (this.isCreating()) return;
     if (this.createForm.invalid) {
       this.createForm.markAllAsTouched();
-      this.createError.set('Please complete all required fields with valid values.');
+      this.createError.set(this.i18n.t('students.errors.validation'));
       return;
     }
 
@@ -194,7 +207,9 @@ export class StudentsManagementStore {
       .subscribe({
         next: (created) => {
           this.isCreateModalOpen.set(false);
-          this.createSuccess.set(`Student created successfully (${created.student_id_code}).`);
+          this.createSuccess.set(
+            this.i18n.t('students.success.created', { code: created.student_id_code }),
+          );
           this.currentPage.set(1);
           this.refreshNonce.update((n) => n + 1);
         },
@@ -234,7 +249,7 @@ export class StudentsManagementStore {
 
   private toErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'No fue posible cargar los estudiantes.';
+      return this.i18n.t('students.errors.load');
     }
 
     const backendMessage =
@@ -247,15 +262,15 @@ export class StudentsManagementStore {
     }
 
     if (error.status === 0) {
-      return 'No fue posible conectar con el servidor.';
+      return this.i18n.t('students.errors.network');
     }
 
-    return 'No fue posible cargar los estudiantes.';
+    return this.i18n.t('students.errors.load');
   }
 
   private toCreateErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'No fue posible crear el estudiante.';
+      return this.i18n.t('students.errors.create');
     }
 
     const backendMessage =
@@ -266,7 +281,7 @@ export class StudentsManagementStore {
     if (error.status === 409) {
       return typeof backendMessage === 'string' && backendMessage.trim()
         ? backendMessage
-        : 'El recurso ya existe';
+        : this.i18n.t('students.errors.conflict');
     }
 
     if (typeof backendMessage === 'string' && backendMessage.trim()) {
@@ -274,9 +289,9 @@ export class StudentsManagementStore {
     }
 
     if (error.status === 0) {
-      return 'No fue posible conectar con el servidor.';
+      return this.i18n.t('students.errors.network');
     }
 
-    return 'No fue posible crear el estudiante.';
+    return this.i18n.t('students.errors.create');
   }
 }

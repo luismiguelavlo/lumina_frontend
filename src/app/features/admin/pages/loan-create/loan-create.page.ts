@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -15,6 +15,8 @@ import {
   take,
 } from 'rxjs';
 import type { LoanCreateBookOption, LoanCreateStudentOption } from '../../../../shared/models/loan-create.models';
+import { I18nService } from '../../../../shared/i18n/i18n.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { PublicBooksApiService } from '../../../../shared/data-access/public-books-api.service';
 import { StudentsApiService } from '../../../../shared/data-access/students-api.service';
 import { LoansApiService } from '../../../../shared/data-access/loans-api.service';
@@ -47,6 +49,7 @@ function isoDatePlusDays(days: number): string {
     LumLoanCreateSelectedBookCardComponent,
     LumLoanCreateSelectedStudentCardComponent,
     LumLoanCreateStudentPickListComponent,
+    TranslatePipe,
   ],
   templateUrl: './loan-create.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,9 +60,7 @@ export class LoanCreatePage {
   private readonly studentsApi = inject(StudentsApiService);
   private readonly booksApi = inject(PublicBooksApiService);
   private readonly loansApi = inject(LoansApiService);
-
-  protected readonly pageTitle = 'New loan registration';
-  protected readonly pageSubtitle = 'Complete the information to finalize the loan.';
+  private readonly i18n = inject(I18nService);
 
   protected readonly studentQuery = signal('');
   protected readonly bookQuery = signal('');
@@ -68,7 +69,7 @@ export class LoanCreatePage {
   protected readonly saveError = signal<string | null>(null);
   protected readonly isSaving = signal(false);
   protected readonly showSuccessModal = signal(false);
-  protected readonly successMessage = signal('Loan registered successfully.');
+  protected readonly successMessage = signal('');
 
   protected readonly form = this.fb.nonNullable.group({
     dueDate: this.fb.nonNullable.control(isoDatePlusDays(0), [Validators.required]),
@@ -88,16 +89,21 @@ export class LoanCreatePage {
         }
         return this.studentsApi.listStudents({ limit: 20, offset: 0, search: q }).pipe(
           map((response) =>
-            response.data.map((student) => ({
-              id: student.student_id_code || student.id,
-              studentId: student.id,
-              name: `${student.first_name} ${student.last_name}`.trim(),
-              avatarUrl:
-                student.avatar_url?.trim() ||
-                'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=240&q=80',
-              avatarAlt: `Portrait of ${student.first_name} ${student.last_name}`,
-              statusLabel: student.is_active ? 'Active' : 'Inactive',
-            })),
+            response.data.map((student) => {
+              const name = `${student.first_name} ${student.last_name}`.trim();
+              return {
+                id: student.student_id_code || student.id,
+                studentId: student.id,
+                name,
+                avatarUrl:
+                  student.avatar_url?.trim() ||
+                  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=240&q=80',
+                avatarAlt: this.i18n.t('loanCreate.alt.portrait', { name }),
+                statusLabel: student.is_active
+                  ? this.i18n.t('loanCreate.student.active')
+                  : this.i18n.t('loanCreate.student.inactive'),
+              };
+            }),
           ),
           map((rows) => rows.slice(0, 5)),
           catchError(() => of([] as readonly LoanCreateStudentOption[])),
@@ -126,11 +132,11 @@ export class LoanCreatePage {
               bookId: book.id,
               title: book.title,
               author: book.author,
-              isbn: book.isbn ?? 'N/A',
+              isbn: book.isbn ?? this.i18n.t('common.na'),
               coverUrl:
                 book.cover_url ||
                 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=320&q=80',
-              coverAlt: `Book cover: ${book.title}`,
+              coverAlt: this.i18n.t('loanCreate.alt.bookCover', { title: book.title }),
             })),
           ),
           map((rows) => rows.slice(0, 5)),
@@ -177,18 +183,18 @@ export class LoanCreatePage {
     const student = this.selectedStudent();
     const book = this.selectedBook();
     if (!student || !book) {
-      this.saveError.set('Please select both a student and a book before registering the loan.');
+      this.saveError.set(this.i18n.t('loanCreate.errors.selectBoth'));
       return;
     }
     if (this.form.controls.dueDate.invalid) {
-      this.saveError.set('Please provide a valid due date.');
+      this.saveError.set(this.i18n.t('loanCreate.errors.dueDate'));
       return;
     }
 
     const studentId = student.studentId ?? student.id;
     const bookId = book.bookId ?? book.id;
     if (!studentId || !bookId) {
-      this.saveError.set('Could not resolve student/book IDs. Please reselect both entries.');
+      this.saveError.set(this.i18n.t('loanCreate.errors.resolveIds'));
       return;
     }
     if (this.isSaving()) {
@@ -218,7 +224,9 @@ export class LoanCreatePage {
           const loanId =
             body && 'loan_id' in body && typeof body.loan_id === 'string' ? body.loan_id : null;
           this.successMessage.set(
-            loanId ? `Loan ${loanId} was registered successfully.` : 'Loan was registered successfully.',
+            loanId
+              ? this.i18n.t('loanCreate.success.registeredWithId', { id: loanId })
+              : this.i18n.t('loanCreate.success.registeredFallback'),
           );
           this.showSuccessModal.set(true);
         },
@@ -235,7 +243,7 @@ export class LoanCreatePage {
 
   private toErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
-      return 'No fue posible registrar el prestamo.';
+      return this.i18n.t('loanCreate.errors.register');
     }
     const backendMessage =
       error.error && typeof error.error === 'object' && 'message' in error.error
@@ -244,6 +252,6 @@ export class LoanCreatePage {
     if (typeof backendMessage === 'string' && backendMessage.trim()) {
       return backendMessage;
     }
-    return 'No fue posible registrar el prestamo.';
+    return this.i18n.t('loanCreate.errors.register');
   }
 }

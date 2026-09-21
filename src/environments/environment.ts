@@ -2,5 +2,5 @@ import type { Environment } from './environment.model';
 
 export const environment: Environment = {
   production: true,
-  apiBaseUrl: 'http://localhost:8080',
+  apiBaseUrl: 'https://luminabackend-production-0828.up.railway.app',
 };

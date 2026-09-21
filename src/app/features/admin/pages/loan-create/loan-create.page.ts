@@ -93,6 +93,7 @@ export class LoanCreatePage {
               studentId: student.id,
               name: `${student.first_name} ${student.last_name}`.trim(),
               avatarUrl:
+                student.avatar_url?.trim() ||
                 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=240&q=80',
               avatarAlt: `Portrait of ${student.first_name} ${student.last_name}`,
               statusLabel: student.is_active ? 'Active' : 'Inactive',

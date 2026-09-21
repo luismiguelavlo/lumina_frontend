@@ -28,8 +28,9 @@
     [checkedOut]="store.checkedOut()"
     [coverAlt]="store.coverAlt()"
     [coverUrl]="store.coverUrl()"
+    [isUploadingCover]="store.isUploadingCover()"
     [totalCopies]="store.totalCopies()"
-    (changeCoverClick)="store.onChangeCover()"
+    (coverFileSelected)="store.onCoverFileSelected($event)"
   />
 
   <div class="flex min-w-0 flex-1 flex-col lg:w-2/3">

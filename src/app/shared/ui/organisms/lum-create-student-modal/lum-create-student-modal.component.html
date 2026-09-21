@@ -59,6 +59,15 @@
           [control]="$any(form().get('expectedGraduationYear'))"
         />
       </div>
+
+      <app-lum-image-upload
+        label="Avatar (optional)"
+        folder="students"
+        previewAspect="1 / 1"
+        rounded="full"
+        [control]="$any(form().get('avatarUrl'))"
+        [disabled]="isSaving()"
+      />
     </form>
 
     <div class="mt-6 flex items-center justify-end gap-3">

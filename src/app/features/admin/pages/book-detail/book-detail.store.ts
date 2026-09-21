@@ -4,6 +4,7 @@ import { NonNullableFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, finalize, map, of, switchMap, take } from 'rxjs';
 import { PublicBooksApiError, PublicBooksApiService } from '../../../../shared/data-access/public-books-api.service';
+import { UploadsApiService } from '../../../../shared/data-access/uploads-api.service';
 import { PublicGenresApiService } from '../../../../shared/data-access/public-genres-api.service';
 import type { CatalogAvailability } from '../../../../shared/models/catalog-book.model';
 import type {
@@ -25,6 +26,7 @@ export class AdminBookDetailStore {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly booksApi = inject(PublicBooksApiService);
+  private readonly uploadsApi = inject(UploadsApiService);
   private readonly genresApi = inject(PublicGenresApiService);
   private readonly fb = inject(NonNullableFormBuilder);
 
@@ -53,6 +55,7 @@ export class AdminBookDetailStore {
   readonly saveError = signal<string | null>(null);
   readonly saveSuccess = signal<string | null>(null);
   readonly isSaving = signal(false);
+  readonly isUploadingCover = signal(false);
 
   readonly genreOptions = toSignal(
     this.genresApi.getGenres().pipe(
@@ -144,6 +147,7 @@ export class AdminBookDetailStore {
       location: v.locationShelf.trim() || undefined,
       total_copies: base.total_copies ?? 0,
       status: base.status ?? 'available',
+      ...(base.cover_url ? { cover_url: base.cover_url } : {}),
     };
 
     this.booksApi
@@ -177,8 +181,51 @@ export class AdminBookDetailStore {
     void this.router.navigate(['/admin/books']);
   }
 
-  onChangeCover(): void {
-    // Wire to media picker when available.
+  onCoverFileSelected(file: File): void {
+    const id = this.bookId();
+    const base = this.lastDetail;
+    if (!id || !base || this.isUploadingCover() || this.isSaving()) return;
+
+    this.saveError.set(null);
+    this.saveSuccess.set(null);
+    this.isUploadingCover.set(true);
+
+    this.uploadsApi
+      .uploadImage(file, 'books')
+      .pipe(
+        take(1),
+        switchMap((uploaded) => {
+          const body: PublicBookPatchBody = {
+            title: base.title,
+            isbn: base.isbn,
+            catalog_code: base.catalog_code,
+            synopsis: base.synopsis,
+            publication_year: base.publication_year ?? new Date().getFullYear(),
+            pages: base.pages ?? 0,
+            location: base.location,
+            total_copies: base.total_copies ?? 0,
+            status: base.status ?? 'available',
+            cover_url: uploaded.url,
+          };
+          return this.booksApi.updateBook(id, body);
+        }),
+        finalize(() => this.isUploadingCover.set(false)),
+      )
+      .subscribe({
+        next: (response) => {
+          this.applyApiData(response);
+          this.saveSuccess.set('Portada actualizada correctamente.');
+        },
+        error: (error: unknown) => {
+          const message =
+            error instanceof PublicBooksApiError
+              ? error.message
+              : error instanceof Error
+                ? error.message
+                : 'No fue posible actualizar la portada.';
+          this.saveError.set(message);
+        },
+      });
   }
 
   private applyApiData(api: PublicBookDetailApiResponse): void {
@@ -202,7 +249,7 @@ export class AdminBookDetailStore {
     this.form.controls.genre.disable({ emitEvent: false });
 
     this.titlePreview.set(api.title);
-    this.coverUrl.set(COVER_PLACEHOLDER);
+    this.coverUrl.set(api.cover_url?.trim() || COVER_PLACEHOLDER);
     this.coverAlt.set(`Book cover for ${api.title}`);
     this.availability.set(availability);
     this.totalCopies.set(api.total_copies ?? 0);

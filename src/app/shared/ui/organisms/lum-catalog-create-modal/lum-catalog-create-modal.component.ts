@@ -3,10 +3,8 @@ import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { LumIconComponent } from '../../atoms/lum-icon/lum-icon.component';
 import { LumNeoInputFieldComponent } from '../../molecules/lum-neo-input-field/lum-neo-input-field.component';
 import { LumNeoTextareaFieldComponent } from '../../molecules/lum-neo-textarea-field/lum-neo-textarea-field.component';
-import {
-  LumNeoMultiSearchPickComponent,
-  type LumMultiSearchPickOption,
-} from '../../molecules/lum-neo-multi-search-pick/lum-neo-multi-search-pick.component';
+import { LumNeoMultiSearchPickComponent, type LumMultiSearchPickOption } from '../../molecules/lum-neo-multi-search-pick/lum-neo-multi-search-pick.component';
+import { LumImageUploadComponent } from '../../molecules/lum-image-upload/lum-image-upload.component';
 import type { LumCatalogCreateTab } from './lum-catalog-create-tab';
 
 @Component({
@@ -17,6 +15,7 @@ import type { LumCatalogCreateTab } from './lum-catalog-create-tab';
     LumNeoInputFieldComponent,
     LumNeoTextareaFieldComponent,
     LumNeoMultiSearchPickComponent,
+    LumImageUploadComponent,
   ],
   templateUrl: './lum-catalog-create-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

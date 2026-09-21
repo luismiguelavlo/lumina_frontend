@@ -24,6 +24,7 @@ export interface StudentProfileLoanHistoryApiItem {
   readonly id?: string;
   readonly title?: string;
   readonly authors?: string;
+  readonly cover_url?: string;
   readonly status?: string;
   readonly borrowed_at?: string;
   readonly due_at?: string;
@@ -40,6 +41,7 @@ export interface StudentProfileApiResponse {
   readonly member_since?: string;
   readonly email: string;
   readonly expected_graduation_year?: number;
+  readonly avatar_url?: string;
   readonly personal_stats: StudentProfileStatsApi;
   readonly loan_history: readonly StudentProfileLoanHistoryApiItem[];
   readonly badge_gallery: StudentProfileBadgeGalleryApi;

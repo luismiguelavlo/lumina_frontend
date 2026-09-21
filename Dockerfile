@@ -12,11 +12,19 @@ RUN sed -i "s|apiBaseUrl: '.*'|apiBaseUrl: '${API_BASE_URL}'|" src/environments/
     && npm run build -- --configuration production
 
 FROM nginx:1.27-alpine
+
+# Quita el default de nginx (escucha en 80) para no chocar con Railway.
+RUN rm -f /etc/nginx/conf.d/default.conf
+
 COPY nginx.conf /etc/nginx/templates/default.conf.template
+COPY docker-entrypoint.sh /docker-entrypoint-lumina.sh
 COPY --from=builder /app/dist/library_front/browser /usr/share/nginx/html
 
-ENV PORT=80
+RUN chmod +x /docker-entrypoint-lumina.sh
 
-EXPOSE 80
-HEALTHCHECK --interval=15s --timeout=3s --start-period=10s --retries=5 \
-    CMD sh -c 'wget -qO- http://127.0.0.1:${PORT}/ >/dev/null || exit 1'
+# Convención Railway: la app escucha en PORT (default 8080).
+ENV PORT=8080
+
+EXPOSE 8080
+
+ENTRYPOINT ["/docker-entrypoint-lumina.sh"]

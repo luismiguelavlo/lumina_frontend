@@ -6,10 +6,17 @@ import {
   LumNeoSelectFieldComponent,
   type LumSelectOption,
 } from '../../molecules/lum-neo-select-field/lum-neo-select-field.component';
+import { LumImageUploadComponent } from '../../molecules/lum-image-upload/lum-image-upload.component';
 
 @Component({
   selector: 'app-lum-create-student-modal',
-  imports: [ReactiveFormsModule, LumIconComponent, LumNeoInputFieldComponent, LumNeoSelectFieldComponent],
+  imports: [
+    ReactiveFormsModule,
+    LumIconComponent,
+    LumNeoInputFieldComponent,
+    LumNeoSelectFieldComponent,
+    LumImageUploadComponent,
+  ],
   templateUrl: './lum-create-student-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

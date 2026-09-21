@@ -7,6 +7,7 @@ export interface StudentsApiItem {
   readonly degree_level?: string;
   readonly major?: string;
   readonly expected_graduation_year?: number;
+  readonly avatar_url?: string;
   readonly is_active: boolean;
   readonly member_since?: string;
   readonly created_at?: string;
@@ -20,6 +21,7 @@ export interface CreateStudentRequest {
   readonly degree_level: string;
   readonly major: string;
   readonly expected_graduation_year: number;
+  readonly avatar_url?: string;
 }
 
 export interface StudentsApiPagination {

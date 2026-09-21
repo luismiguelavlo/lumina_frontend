@@ -79,6 +79,7 @@ export class StudentDetailStore {
     degreeLevel: ['Undergraduate Student', [Validators.required]],
     major: ['', [Validators.required, Validators.minLength(2)]],
     expectedGraduationYear: [new Date().getFullYear() + 1, [Validators.required, Validators.min(1900)]],
+    avatarUrl: [''],
   });
 
   readonly createFineForm = this.fb.group({
@@ -229,6 +230,7 @@ export class StudentDetailStore {
       degreeLevel: raw.degree_level ?? 'Undergraduate Student',
       major: raw.major ?? '',
       expectedGraduationYear: raw.expected_graduation_year ?? new Date().getFullYear() + 1,
+      avatarUrl: raw.avatar_url ?? '',
     });
     this.updateError.set(null);
     this.updateSuccess.set(null);
@@ -258,6 +260,7 @@ export class StudentDetailStore {
       degree_level: v.degreeLevel,
       major: v.major.trim(),
       expected_graduation_year: Math.trunc(v.expectedGraduationYear),
+      ...(v.avatarUrl.trim() ? { avatar_url: v.avatarUrl.trim() } : {}),
     };
 
     this.isUpdating.set(true);
@@ -489,7 +492,7 @@ export class StudentDetailStore {
       name: fullName || 'Library patron',
       subtitle,
       memberSinceLabel,
-      avatarUrl: AVATAR_PLACEHOLDER,
+      avatarUrl: api.avatar_url?.trim() || AVATAR_PLACEHOLDER,
       avatarAlt: `Avatar of ${fullName || 'student'}`,
       verified: true,
       stats: [
@@ -525,7 +528,7 @@ export class StudentDetailStore {
       loans: (api.loan_history ?? []).map((loan) => {
         const returned = Boolean(loan.returned_at);
         return {
-          coverUrl: BOOK_PLACEHOLDER,
+          coverUrl: loan.cover_url?.trim() || BOOK_PLACEHOLDER,
           coverAlt: `Book cover ${loan.title ?? ''}`.trim() || 'Book cover',
           title: loan.title ?? 'Library book',
           authors: loan.authors ?? 'Unknown author',

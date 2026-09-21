@@ -30,6 +30,7 @@ export interface PublicBookDetailApiResponse {
   readonly synopsis?: string;
   readonly publication_year?: number;
   readonly pages?: number;
+  readonly cover_url?: string;
   readonly location?: string;
   readonly total_copies?: number;
   readonly status?: PublicBookStatus;
@@ -47,6 +48,7 @@ export interface PublicBookPatchBody {
   readonly synopsis?: string;
   readonly publication_year: number;
   readonly pages: number;
+  readonly cover_url?: string;
   readonly location?: string;
   readonly total_copies: number;
   readonly status: PublicBookStatus;

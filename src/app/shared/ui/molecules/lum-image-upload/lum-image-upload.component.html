@@ -1,0 +1,70 @@
+<div class="space-y-2">
+  <app-lum-neo-field-label [text]="label()" />
+
+  <div class="flex flex-wrap items-start gap-4">
+    <button
+      type="button"
+      class="relative overflow-hidden border border-dashed border-slate-300 bg-stone-50 text-left transition-colors hover:border-primary hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-800/60 dark:hover:border-primary"
+      [class.rounded-xl]="rounded() === 'xl'"
+      [class.rounded-full]="rounded() === 'full'"
+      [style.aspect-ratio]="previewAspect()"
+      [style.width.px]="rounded() === 'full' ? 96 : 112"
+      [disabled]="disabled() || isUploading()"
+      [attr.aria-label]="previewUrl() ? 'Cambiar imagen' : 'Subir imagen'"
+      (click)="openPicker()"
+    >
+      @if (previewUrl(); as url) {
+        <img [src]="url" alt="" class="h-full w-full object-cover" />
+      } @else {
+        <span class="flex h-full w-full flex-col items-center justify-center gap-1 px-2 text-slate-500 dark:text-slate-400">
+          <app-lum-icon [name]="'add_a_photo'" [extraClass]="'text-2xl'" />
+          <span class="text-[10px] font-semibold uppercase tracking-wide">Upload</span>
+        </span>
+      }
+
+      @if (isUploading()) {
+        <span
+          class="absolute inset-0 flex items-center justify-center bg-slate-900/50 text-xs font-bold text-white"
+        >
+          Uploading…
+        </span>
+      }
+    </button>
+
+    <div class="min-w-0 flex-1 space-y-2 pt-1">
+      <p class="text-xs text-slate-500 dark:text-slate-400">{{ hint() }}</p>
+      <div class="flex flex-wrap gap-2">
+        <button
+          type="button"
+          class="rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary transition-colors hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+          [disabled]="disabled() || isUploading()"
+          (click)="openPicker()"
+        >
+          {{ previewUrl() ? 'Change image' : 'Choose image' }}
+        </button>
+        @if (previewUrl()) {
+          <button
+            type="button"
+            class="rounded-lg px-3 py-1.5 text-xs font-bold text-slate-600 transition-colors hover:bg-stone-100 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
+            [disabled]="disabled() || isUploading()"
+            (click)="clearImage()"
+          >
+            Remove
+          </button>
+        }
+      </div>
+      @if (errorMessage(); as err) {
+        <p class="text-xs font-medium text-red-600 dark:text-red-300" role="alert">{{ err }}</p>
+      }
+    </div>
+  </div>
+
+  <input
+    #fileInput
+    type="file"
+    class="sr-only"
+    [accept]="accept"
+    [disabled]="disabled() || isUploading()"
+    (change)="onFileChange($event)"
+  />
+</div>

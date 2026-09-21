@@ -124,7 +124,14 @@
                 />
               </div>
               <app-lum-neo-input-field label="Location" [control]="$any(bookForm().get('location'))" />
-              <app-lum-neo-input-field label="Cover URL (optional)" [control]="$any(bookForm().get('cover_url'))" />
+              <app-lum-image-upload
+                label="Cover image (optional)"
+                folder="books"
+                hint="JPEG, PNG, WebP o GIF · máx. 5 MB"
+                previewAspect="2 / 3"
+                [control]="$any(bookForm().get('cover_url'))"
+                [disabled]="isModalBusy()"
+              />
               <app-lum-neo-textarea-field label="Synopsis (optional)" [rows]="4" [control]="$any(bookForm().get('synopsis'))" />
               <app-lum-neo-multi-search-pick
                 label="Authors"

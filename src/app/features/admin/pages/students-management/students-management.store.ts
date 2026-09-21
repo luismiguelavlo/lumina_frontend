@@ -49,6 +49,7 @@ export class StudentsManagementStore {
     degreeLevel: ['Undergraduate Student', [Validators.required]],
     major: ['', [Validators.required, Validators.minLength(2)]],
     expectedGraduationYear: [new Date().getFullYear() + 1, [Validators.required, Validators.min(1900)]],
+    avatarUrl: [''],
   });
 
   readonly degreeOptions: readonly LumSelectOption[] = [
@@ -100,7 +101,7 @@ export class StudentsManagementStore {
       dateApplied: this.formatDate(row.member_since ?? row.created_at),
       reason: null,
       avatarAlt: `Avatar of ${row.first_name} ${row.last_name}`.trim(),
-      avatarUrl: AVATAR_PLACEHOLDER,
+      avatarUrl: row.avatar_url?.trim() || AVATAR_PLACEHOLDER,
     })),
   );
 
@@ -151,6 +152,7 @@ export class StudentsManagementStore {
       degreeLevel: 'Undergraduate Student',
       major: '',
       expectedGraduationYear: new Date().getFullYear() + 1,
+      avatarUrl: '',
     });
     this.isCreateModalOpen.set(true);
   }
@@ -177,6 +179,7 @@ export class StudentsManagementStore {
       degree_level: v.degreeLevel,
       major: v.major.trim(),
       expected_graduation_year: Math.trunc(v.expectedGraduationYear),
+      ...(v.avatarUrl.trim() ? { avatar_url: v.avatarUrl.trim() } : {}),
     };
 
     this.isCreating.set(true);

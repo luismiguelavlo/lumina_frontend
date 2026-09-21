@@ -3,12 +3,16 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* Brand amber — works on light cream and deep warm dark */
   --color-primary: #ffb247;
   --color-background-light: #f8f7f5;
-  --color-background-dark: #231b0f;
+  /* Warm charcoal (readable, not muddy brown) */
+  --color-background-dark: #14110e;
   --color-text-dark: #2d2424;
-  --color-text-light: #fffbf5;
-  --color-surface-dark: #3d3333;
+  --color-text-light: #f7f1e8;
+  --color-surface-dark: #1e1a16;
+  --color-surface-elevated-dark: #2a241e;
+  --color-border-dark: rgb(255 255 255 / 0.1);
 
   --font-display: 'Lexend', ui-sans-serif, system-ui, sans-serif;
 
@@ -25,11 +29,11 @@
   --shadow-neumorphic-lift-hover: 2px 2px 5px rgb(0 0 0 / 0.1), -2px -2px 5px rgb(255 255 255 / 1);
 
   --shadow-neo-icon: 4px 4px 8px rgb(0 0 0 / 0.05), -4px -4px 8px rgb(255 255 255 / 0.8);
-  --shadow-neo-icon-dark: 4px 4px 8px rgb(0 0 0 / 0.4), -4px -4px 8px rgb(255 255 255 / 0.05);
+  --shadow-neo-icon-dark: 4px 4px 8px rgb(0 0 0 / 0.55), -4px -4px 8px rgb(255 255 255 / 0.04);
   --shadow-neo-icon-active:
     inset 4px 4px 8px rgb(0 0 0 / 0.05), inset -4px -4px 8px rgb(255 255 255 / 0.8);
   --shadow-neo-icon-active-dark:
-    inset 4px 4px 8px rgb(0 0 0 / 0.4), inset -4px -4px 8px rgb(255 255 255 / 0.05);
+    inset 4px 4px 8px rgb(0 0 0 / 0.55), inset -4px -4px 8px rgb(255 255 255 / 0.04);
 
   --shadow-primary-glow: 0 0 15px rgb(255 178 71 / 0.5);
 
@@ -44,4 +48,48 @@
   --shadow-neumorphic: 8px 8px 16px #e0dfdd, -8px -8px 16px #ffffff;
   --shadow-neumorphic-inset: inset 4px 4px 8px #e0dfdd, inset -4px -4px 8px #ffffff;
   --shadow-save-primary: 4px 4px 10px rgb(255 178 71 / 0.3), -4px -4px 10px rgb(255 255 255 / 0.8);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100%;
+    background-color: var(--color-background-light);
+    color: var(--color-text-dark);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html.dark body {
+    background-color: var(--color-background-dark);
+    color: var(--color-text-light);
+  }
+
+  /* Soft amber selection that stays readable in both modes */
+  ::selection {
+    background-color: rgb(255 178 71 / 0.35);
+    color: inherit;
+  }
+
+  html.dark ::selection {
+    background-color: rgb(255 178 71 / 0.45);
+    color: #fff8ee;
+  }
+
+  /* Scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(0 0 0 / 0.2) transparent;
+  }
+
+  html.dark * {
+    scrollbar-color: rgb(255 255 255 / 0.22) transparent;
+  }
 }

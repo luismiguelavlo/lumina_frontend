@@ -1,8 +1,8 @@
 <aside
   id="admin-nav-drawer"
   role="complementary"
-  aria-label="Admin navigation"
-  class="z-10 h-full w-64 flex-shrink-0 border-r border-slate-200/70 bg-background-light shadow-glass md:relative md:block dark:border-white/10 dark:bg-background-dark dark:shadow-[0_8px_32px_0_rgb(0_0_0/0.3)]"
+  [attr.aria-label]="'nav.aria' | t"
+  class="z-10 h-full w-64 flex-shrink-0 border-r border-slate-200/70 bg-background-light shadow-glass md:relative md:block dark:border-white/10 dark:bg-background-dark dark:shadow-[0_8px_32px_0_rgb(0_0_0/0.35)]"
   [class.max-md:hidden]="!mobileOpen()"
   [class.max-md:fixed]="mobileOpen()"
   [class.max-md:inset-y-0]="mobileOpen()"
@@ -34,7 +34,78 @@
       }
     </nav>
 
-    <div class="mt-auto px-4">
+    <div class="mt-auto space-y-2.5 px-4">
+      <button
+        type="button"
+        class="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-white/70 px-3 py-2.5 text-left transition-colors hover:border-primary/40 hover:bg-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-white/10 dark:bg-surface-dark dark:hover:border-primary/35 dark:hover:bg-primary/10"
+        [attr.aria-label]="themeButtonLabel()"
+        [title]="themeButtonLabel()"
+        (click)="toggleTheme()"
+      >
+        <span class="flex min-w-0 items-center gap-2.5">
+          <span
+            class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary"
+            aria-hidden="true"
+          >
+            <app-lum-icon [extraClass]="'text-lg'" [name]="themeIcon()" />
+          </span>
+          <span class="min-w-0">
+            <span class="block text-xs font-medium tracking-wide text-slate-500 uppercase dark:text-slate-400">
+              {{ 'nav.theme' | t }}
+            </span>
+            <span class="block truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+              {{ themeModeLabel() }}
+            </span>
+          </span>
+        </span>
+        <span
+          class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors"
+          [class.bg-slate-300]="!isDark()"
+          [class.bg-primary]="isDark()"
+          aria-hidden="true"
+        >
+          <span
+            class="inline-block size-5 rounded-full bg-white shadow transition-transform"
+            [class.translate-x-0.5]="!isDark()"
+            [class.translate-x-[1.35rem]]="isDark()"
+          ></span>
+        </span>
+      </button>
+
+      <button
+        type="button"
+        class="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200/80 bg-white/70 px-3 py-2.5 text-left transition-colors hover:border-primary/40 hover:bg-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-white/10 dark:bg-surface-dark dark:hover:border-primary/35 dark:hover:bg-primary/10"
+        [attr.aria-label]="languageButtonLabel()"
+        [title]="languageButtonLabel()"
+        (click)="toggleLanguage()"
+      >
+        <span class="flex min-w-0 items-center gap-2.5">
+          <span
+            class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary"
+            aria-hidden="true"
+          >
+            <app-lum-icon [extraClass]="'text-lg'" [name]="'translate'" />
+          </span>
+          <span class="min-w-0">
+            <span class="block text-xs font-medium tracking-wide text-slate-500 uppercase dark:text-slate-400">
+              {{ 'nav.language' | t }}
+            </span>
+            <span class="block truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+              @if (locale() === 'en') {
+                {{ 'nav.language.en' | t }}
+              } @else {
+                {{ 'nav.language.es' | t }}
+              }
+            </span>
+          </span>
+        </span>
+        <span
+          class="shrink-0 rounded-md bg-slate-900 px-2 py-1 text-xs font-bold tracking-wide text-white dark:bg-primary dark:text-slate-900"
+        >
+          {{ languageButtonShort() }}
+        </span>
+      </button>
+
       <app-lum-admin-glass [interactive]="true" [paddingClass]="'p-4'" [roundedClass]="'rounded-xl'">
         <div class="flex items-center gap-3">
           <img
@@ -50,9 +121,9 @@
           </div>
           <button
             type="button"
-            class="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-200/70 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-slate-400 dark:hover:bg-slate-700/60"
-            aria-label="Logout"
-            title="Logout"
+            class="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-200/70 hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-slate-400 dark:hover:bg-white/10"
+            [attr.aria-label]="'nav.logout' | t"
+            [attr.title]="'nav.logout' | t"
             (click)="requestLogout()"
           >
             <app-lum-icon [extraClass]="'text-xl'" [name]="'logout'" />

@@ -47,7 +47,7 @@ export class AdminBookDetailStore {
   });
 
   readonly titlePreview = signal('');
-  readonly coverUrl = signal(COVER_PLACEHOLDER);
+  readonly coverUrl = signal('');
   readonly coverAlt = signal('');
   readonly availability = signal<CatalogAvailability>('available');
   readonly totalCopies = signal(0);
@@ -78,6 +78,8 @@ export class AdminBookDetailStore {
     toObservable(this.bookId).pipe(
       switchMap((id) => {
         this.lastDetail = null;
+        this.coverUrl.set('');
+        this.loadError.set(null);
         if (!id) return of<BookDetailState>({ status: 'empty' });
         return this.booksApi.getBookById(id).pipe(
           map((response) => {

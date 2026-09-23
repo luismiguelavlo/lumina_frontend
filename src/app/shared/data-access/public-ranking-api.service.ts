@@ -21,8 +21,14 @@ export class PublicRankingApiService {
     return this.http.get<PublicRankingTopApiResponse>(this.top3Url).pipe(
       map((response) =>
         (response.data ?? [])
-          .filter((entry) => Number.isFinite(entry.rank) && entry.rank >= 1 && entry.rank <= 3)
-          .sort((a, b) => a.rank - b.rank),
+          .filter((entry) => Number.isFinite(entry.rank) && entry.rank >= 1)
+          .sort(
+            (a, b) =>
+              a.rank - b.rank ||
+              b.points - a.points ||
+              a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }),
+          )
+          .slice(0, 3),
       ),
     );
   }
@@ -57,12 +63,17 @@ export class PublicRankingApiService {
         ? `${streak} días de racha`
         : 'Posición en el ranking general';
 
+    const avatarFromApi =
+      typeof entry.avatar_url === 'string' && entry.avatar_url.trim()
+        ? entry.avatar_url.trim()
+        : '';
+
     return {
       rank: Number.isFinite(rank) && rank > 0 ? rank : 0,
       displayName: name,
       subtitle,
       pointsDisplay: new Intl.NumberFormat('es-ES').format(Number.isFinite(points) ? points : 0),
-      avatarUrl: RANKING_LOOKUP_AVATAR,
+      avatarUrl: avatarFromApi || RANKING_LOOKUP_AVATAR,
       avatarAlt: `Avatar de ${name}`,
     };
   }

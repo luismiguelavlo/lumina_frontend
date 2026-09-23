@@ -1,10 +1,18 @@
 <div class="flex items-start gap-3">
-  <div
-    class="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/20 bg-slate-200/90 text-sm font-bold text-primary shadow-neomorph-inset dark:border-white/10 dark:bg-slate-700/90 dark:shadow-neo-icon-active-dark"
-    aria-hidden="true"
-  >
-    {{ initials() }}
-  </div>
+  @if (avatarUrl(); as url) {
+    <img
+      class="size-10 shrink-0 rounded-full border border-white/20 object-cover shadow-neomorph-inset dark:border-white/10 dark:shadow-neo-icon-active-dark"
+      [alt]="avatarAlt() || name()"
+      [src]="url"
+    />
+  } @else {
+    <div
+      class="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/20 bg-slate-200/90 text-sm font-bold text-primary shadow-neomorph-inset dark:border-white/10 dark:bg-slate-700/90 dark:shadow-neo-icon-active-dark"
+      aria-hidden="true"
+    >
+      {{ initials() }}
+    </div>
+  }
   <div class="min-w-0 pt-0.5">
     <p
       class="text-sm font-bold text-slate-900 transition-colors group-hover:text-primary dark:text-slate-100 dark:group-hover:text-primary"

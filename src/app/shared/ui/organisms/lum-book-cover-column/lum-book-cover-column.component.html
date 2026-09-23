@@ -8,10 +8,10 @@
       class="rounded-2xl bg-[#ece8e2] p-4 shadow-[inset_0_1px_2px_rgb(0_0_0/0.06)] dark:bg-slate-800/90 dark:shadow-inner"
     >
       <div
-        class="group relative mx-auto aspect-[2/3] w-full max-w-[220px] overflow-hidden rounded-xl bg-cover bg-center shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+        class="group relative mx-auto aspect-[2/3] w-full max-w-[220px] overflow-hidden rounded-xl bg-slate-200/80 bg-cover bg-center shadow-sm ring-1 ring-black/5 dark:bg-slate-700/80 dark:ring-white/10"
         role="img"
         [attr.aria-label]="coverAlt()"
-        [style.background-image]="'url(' + coverUrl() + ')'"
+        [style.background-image]="coverUrl() ? 'url(' + coverUrl() + ')' : null"
       >
         <div
           class="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-black/50 to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100"

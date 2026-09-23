@@ -23,8 +23,6 @@ import type {
 import type { LumSelectOption } from '../../../../shared/ui/molecules/lum-neo-select-field/lum-neo-select-field.component';
 
 const PAGE_SIZE = 20;
-const AVATAR_PLACEHOLDER =
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=240&q=80';
 
 @Injectable()
 export class StudentsManagementStore {
@@ -113,7 +111,7 @@ export class StudentsManagementStore {
         dateApplied: this.formatDate(row.member_since ?? row.created_at),
         reason: null,
         avatarAlt: this.i18n.t('students.avatarAlt', { name }),
-        avatarUrl: row.avatar_url?.trim() || AVATAR_PLACEHOLDER,
+        avatarUrl: row.avatar_url?.trim() || '',
       };
     });
   });

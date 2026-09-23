@@ -89,7 +89,7 @@ export class PublicBookDetailStore {
       breadcrumbCategory: primaryGenre,
       title: api.title,
       author: primaryAuthor,
-      coverUrl: COVER_PLACEHOLDER,
+      coverUrl: api.cover_url?.trim() || COVER_PLACEHOLDER,
       coverAlt: `Book cover for ${api.title}`,
       availability: api.status === 'available' ? 'available' : 'checked_out',
       secondaryBadgeLabel: primaryGenre,

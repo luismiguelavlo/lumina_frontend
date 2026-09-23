@@ -9,7 +9,7 @@
       </p>
     </div>
     <div class="grid items-end gap-8 md:grid-cols-3">
-      @for (leader of leaders(); track leader.rank) {
+      @for (leader of leaders(); track leader.rank + ':' + leader.name) {
         <app-lum-landing-leader-card [leader]="leader" />
       }
     </div>

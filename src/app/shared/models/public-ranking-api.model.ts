@@ -3,6 +3,7 @@ export interface PublicRankingTopApiItem {
   readonly name: string;
   readonly points: number;
   readonly student_id: string;
+  readonly avatar_url?: string | null;
 }
 
 export interface PublicRankingTopApiResponse {
@@ -18,4 +19,5 @@ export interface StudentRankingApiEntry {
   readonly name?: string;
   readonly student_id?: string;
   readonly current_streak_days?: number;
+  readonly avatar_url?: string | null;
 }

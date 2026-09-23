@@ -12,6 +12,9 @@ import { AuthSessionService } from '../../auth/data-access/auth-session.service'
 import { LumIconComponent } from '../../../shared/ui/atoms/lum-icon/lum-icon.component';
 import { LumAdminSidebarComponent } from '../../../shared/ui/organisms/lum-admin-sidebar/lum-admin-sidebar.component';
 
+const STAFF_AVATAR_FALLBACK =
+  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=160&q=80';
+
 @Component({
   selector: 'app-admin-shell',
   imports: [RouterOutlet, LumAdminSidebarComponent, LumIconComponent, TranslatePipe],
@@ -72,14 +75,15 @@ export class AdminShellComponent {
     this.i18n.locale();
     const user = this.authSession.user();
     const roleKey = user?.role ? `role.${user.role}` : 'role.library_staff';
+    const displayName = user
+      ? `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim()
+      : this.i18n.t('role.librarian');
+    const avatarFromApi = user?.avatar_url?.trim() ?? '';
     return {
-      name: user
-        ? `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim()
-        : this.i18n.t('role.librarian'),
+      name: displayName || this.i18n.t('role.librarian'),
       role: this.i18n.t(roleKey),
-      avatarUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuCElwiBj6bDh6i5LRIgymQJMFPgt7A_tgaGksBCK7wJ6q8nlkLD4w6KTlCUSjjRuzwFva9Tc1YTpmHom3uAQX-RaY1C5wnLQ3EWBJGscY4BOFanlSX2oHcA97NCS6Nr2a7jkiB5j8Qhg5eZ-Os859xLD9ItKHD_sTjyYU0gyBDZZNdTWH9nvOmWM_l-WAlv6RZHhGXeux4TGPjuLGFRUcrLmJ8qU5nVgHFiNfgmsKwgXMOeyPdrafpRej8PMO968UBPE4N_6q5mLBc',
-      avatarAlt: 'Portrait of an admin user',
+      avatarUrl: avatarFromApi || STAFF_AVATAR_FALLBACK,
+      avatarAlt: this.i18n.t('nav.avatarAlt'),
     };
   });
 

@@ -1,4 +1,4 @@
-import type { LandingLeaderCard } from '../../../shared/models/landing.models';
+import type { LandingLeaderCard, LandingLeaderRank } from '../../../shared/models/landing.models';
 import type { PublicRankingTopApiItem } from '../../../shared/models/public-ranking-api.model';
 
 /** Display order: 2nd, 1st, 3rd (podium layout). */
@@ -33,20 +33,25 @@ export const LANDING_TOP_LEADERS_FALLBACK: readonly LandingLeaderCard[] = [
   },
 ];
 
-const BADGES_BY_RANK: Record<1 | 2 | 3, readonly string[]> = {
+const BADGES_BY_RANK: Record<LandingLeaderRank, readonly string[]> = {
   1: ['workspace_premium', 'local_fire_department', 'menu_book'],
   2: ['workspace_premium', 'local_fire_department'],
   3: ['workspace_premium'],
 };
 
-const AVATAR_BY_RANK: Record<1 | 2 | 3, string> = {
-  1: LANDING_TOP_LEADERS_FALLBACK.find((x) => x.rank === 1)?.avatarUrl ?? '',
-  2: LANDING_TOP_LEADERS_FALLBACK.find((x) => x.rank === 2)?.avatarUrl ?? '',
-  3: LANDING_TOP_LEADERS_FALLBACK.find((x) => x.rank === 3)?.avatarUrl ?? '',
-};
+/** Visual podium slots in DOM order: 2nd, 1st, 3rd. */
+const DISPLAY_ORDER: readonly LandingLeaderRank[] = [2, 1, 3];
 
-const DISPLAY_ORDER: readonly (1 | 2 | 3)[] = [2, 1, 3];
+function resolveAvatarUrl(apiAvatar: string | null | undefined, fallbackUrl: string): string {
+  const trimmed = typeof apiAvatar === 'string' ? apiAvatar.trim() : '';
+  return trimmed || fallbackUrl;
+}
 
+/**
+ * Maps API top3 rows into podium cards.
+ * Uses sorted order (not unique rank numbers) so ties (e.g. two rank=2) still fill places 1–3,
+ * and prefers each student's `avatar_url` from the API.
+ */
 export function mapTopRankingToLandingLeaders(
   apiEntries: readonly PublicRankingTopApiItem[],
 ): readonly LandingLeaderCard[] {
@@ -54,26 +59,37 @@ export function mapTopRankingToLandingLeaders(
     return LANDING_TOP_LEADERS_FALLBACK;
   }
 
-  const byRank = new Map<number, PublicRankingTopApiItem>(apiEntries.map((entry) => [entry.rank, entry]));
+  const sorted = [...apiEntries]
+    .filter((entry) => Number.isFinite(entry.rank) && entry.rank >= 1)
+    .sort(
+      (a, b) =>
+        a.rank - b.rank ||
+        b.points - a.points ||
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }),
+    )
+    .slice(0, 3);
 
-  return DISPLAY_ORDER.map((rank) => {
-    const current = byRank.get(rank);
-    const fallback = LANDING_TOP_LEADERS_FALLBACK.find((x) => x.rank === rank)!;
+  const byPlace = new Map<LandingLeaderRank, PublicRankingTopApiItem>();
+  sorted.forEach((entry, index) => {
+    byPlace.set((index + 1) as LandingLeaderRank, entry);
+  });
+
+  return DISPLAY_ORDER.map((place) => {
+    const current = byPlace.get(place);
+    const fallback = LANDING_TOP_LEADERS_FALLBACK.find((x) => x.rank === place)!;
 
     if (!current) {
       return fallback;
     }
 
-    const pointsLabel = `${new Intl.NumberFormat('en-US').format(current.points)} pts`;
-
     return {
-      rank,
+      rank: place,
       name: current.name,
-      pointsDisplay: pointsLabel,
-      avatarUrl: AVATAR_BY_RANK[rank],
+      pointsDisplay: `${new Intl.NumberFormat('en-US').format(current.points)} pts`,
+      avatarUrl: resolveAvatarUrl(current.avatar_url, fallback.avatarUrl),
       avatarAlt: `Portrait of ${current.name}`,
-      badgeIcons: BADGES_BY_RANK[rank],
-      championSubtitle: rank === 1 ? 'Reigning champion' : undefined,
+      badgeIcons: BADGES_BY_RANK[place],
+      championSubtitle: place === 1 ? 'Reigning champion' : undefined,
     };
   });
 }

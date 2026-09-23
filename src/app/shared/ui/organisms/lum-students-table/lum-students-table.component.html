@@ -37,6 +37,8 @@
           <tr class="group transition-colors hover:bg-white/30 dark:hover:bg-white/5">
             <td class="px-6 py-4">
               <app-lum-table-student-identity-cell
+                [avatarAlt]="row.avatarAlt"
+                [avatarUrl]="row.avatarUrl || undefined"
                 [detailLine]="'students.table.idPrefix' | t: { id: row.patronId }"
                 [initials]="initialsFromName(row.name)"
                 [name]="row.name"

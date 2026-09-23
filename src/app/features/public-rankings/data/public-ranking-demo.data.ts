@@ -1,4 +1,4 @@
-import type { PublicPodiumLeader, PublicRankLookupResult } from '../../../shared/models/public-ranking.models';
+import type { PublicPodiumLeader, PublicPodiumPlace, PublicRankLookupResult } from '../../../shared/models/public-ranking.models';
 import type { PublicRankingTopApiItem } from '../../../shared/models/public-ranking-api.model';
 
 /** Orden visual del podio: 2.º, 1.º, 3.º */
@@ -42,26 +42,26 @@ export const PUBLIC_RANKING_LOOKUP_DEMO_RESULT: PublicRankLookupResult = {
   avatarAlt: 'Tu avatar en el ranking',
 };
 
-const PODIUM_CONFIG = {
-  first: {
-    rank: 1,
-    icon: 'military_tech',
-    fallbackAvatar: PUBLIC_RANKING_PODIUM_FALLBACK.find((x) => x.place === 'first')?.avatarUrl ?? '',
-  },
-  second: {
-    rank: 2,
-    icon: 'emoji_events',
-    fallbackAvatar: PUBLIC_RANKING_PODIUM_FALLBACK.find((x) => x.place === 'second')?.avatarUrl ?? '',
-  },
-  third: {
-    rank: 3,
-    icon: 'workspace_premium',
-    fallbackAvatar: PUBLIC_RANKING_PODIUM_FALLBACK.find((x) => x.place === 'third')?.avatarUrl ?? '',
-  },
-} as const;
+const PLACE_BY_INDEX: readonly PublicPodiumPlace[] = ['first', 'second', 'third'];
 
-const DISPLAY_ORDER: readonly ('second' | 'first' | 'third')[] = ['second', 'first', 'third'];
+const PODIUM_ICON: Record<PublicPodiumPlace, string> = {
+  first: 'military_tech',
+  second: 'emoji_events',
+  third: 'workspace_premium',
+};
 
+/** Orden visual del podio en el DOM: 2.º, 1.º, 3.º */
+const DISPLAY_ORDER: readonly PublicPodiumPlace[] = ['second', 'first', 'third'];
+
+function resolveAvatarUrl(apiAvatar: string | null | undefined, fallbackUrl: string): string {
+  const trimmed = typeof apiAvatar === 'string' ? apiAvatar.trim() : '';
+  return trimmed || fallbackUrl;
+}
+
+/**
+ * Maps API top3 into podium leaders.
+ * Fills places by sorted order (handles tied ranks) and uses each student's `avatar_url`.
+ */
 export function mapTopRankingToPublicPodium(
   apiEntries: readonly PublicRankingTopApiItem[],
 ): readonly PublicPodiumLeader[] {
@@ -69,11 +69,26 @@ export function mapTopRankingToPublicPodium(
     return PUBLIC_RANKING_PODIUM_FALLBACK;
   }
 
-  const byRank = new Map<number, PublicRankingTopApiItem>(apiEntries.map((entry) => [entry.rank, entry]));
+  const sorted = [...apiEntries]
+    .filter((entry) => Number.isFinite(entry.rank) && entry.rank >= 1)
+    .sort(
+      (a, b) =>
+        a.rank - b.rank ||
+        b.points - a.points ||
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }),
+    )
+    .slice(0, 3);
+
+  const byPlace = new Map<PublicPodiumPlace, PublicRankingTopApiItem>();
+  sorted.forEach((entry, index) => {
+    const place = PLACE_BY_INDEX[index];
+    if (place) {
+      byPlace.set(place, entry);
+    }
+  });
 
   return DISPLAY_ORDER.map((place) => {
-    const cfg = PODIUM_CONFIG[place];
-    const current = byRank.get(cfg.rank);
+    const current = byPlace.get(place);
     const fallback = PUBLIC_RANKING_PODIUM_FALLBACK.find((x) => x.place === place)!;
 
     if (!current) {
@@ -84,9 +99,9 @@ export function mapTopRankingToPublicPodium(
       place,
       name: current.name,
       pointsDisplay: `${new Intl.NumberFormat('en-US').format(current.points)} Pts`,
-      avatarUrl: cfg.fallbackAvatar,
+      avatarUrl: resolveAvatarUrl(current.avatar_url, fallback.avatarUrl),
       avatarAlt: `Profile photo of ${current.name}`,
-      pedestalIcon: cfg.icon,
+      pedestalIcon: PODIUM_ICON[place],
     };
   });
 }

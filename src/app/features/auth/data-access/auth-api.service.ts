@@ -20,6 +20,7 @@ export interface LoginResponse {
     readonly role: string;
     readonly is_active: boolean;
     readonly created_at: string;
+    readonly avatar_url?: string | null;
   };
   readonly message?: string;
 }
@@ -55,6 +56,7 @@ export interface AuthUser {
   readonly role: string;
   readonly is_active: boolean;
   readonly created_at: string;
+  readonly avatar_url?: string | null;
 }
 
 export class AuthApiError extends Error {

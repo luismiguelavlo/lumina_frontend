@@ -13,6 +13,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class LumTableStudentIdentityCellComponent {
   readonly name = input.required<string>();
   readonly initials = input.required<string>();
+  /** When set, shows the student photo instead of initials. */
+  readonly avatarUrl = input<string | undefined>(undefined);
+  readonly avatarAlt = input<string | undefined>(undefined);
   /** Optional second line (e.g. record ID). Rendered in monospace when set. */
   readonly detailLine = input<string | undefined>(undefined);
 }

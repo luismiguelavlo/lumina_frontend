@@ -94,9 +94,15 @@ export class PublicRankingStore {
         take(1),
         finalize(() => this.isLoadingRanking.set(false)),
       )
-      .subscribe({
+      .      subscribe({
         next: (result) => {
-          this.lookupResult.set(result);
+          const student = this.suggestionItems().find((s) => s.id === studentId);
+          const avatarFromStudent = student?.avatar_url?.trim() ?? '';
+          this.lookupResult.set(
+            avatarFromStudent
+              ? { ...result, avatarUrl: avatarFromStudent, avatarAlt: `Avatar de ${result.displayName}` }
+              : result,
+          );
         },
         error: (error: unknown) => {
           this.lookupResult.set(null);

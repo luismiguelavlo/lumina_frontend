@@ -12,7 +12,7 @@
   </div>
 }
 
-<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+<div class="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
   @for (card of statCards(); track card.title) {
     <app-lum-stat-summary-card
       [accent]="card.accent"
@@ -37,7 +37,14 @@
     />
   </div>
 
-  <div class="min-w-0 lg:col-span-1">
+  <div class="min-w-0 space-y-8 lg:col-span-1">
+    <app-lum-dashboard-overdue-list
+      [emptyLabel]="'dashboard.overdue.empty' | t"
+      [items]="overdueRows()"
+      [sectionTitle]="'dashboard.overdue.title' | t"
+      [viewAllLabel]="'dashboard.overdue.viewAll' | t"
+      (viewAllClick)="onViewAllLoans()"
+    />
     <app-lum-recent-activity
       [items]="activityItems()"
       [sectionTitle]="'dashboard.activity.title' | t"

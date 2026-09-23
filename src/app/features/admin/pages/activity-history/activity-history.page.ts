@@ -63,8 +63,18 @@ export class ActivityHistoryPage {
       total_books: 0,
       active_students: 0,
       overdue_fines: 0,
+      pending_fines_count: 0,
+      overdue_loans: 0,
+      active_loans: 0,
+      due_soon: 0,
+      active_sanctions: 0,
+      returns_this_week: 0,
+      new_students_month: 0,
+      available_copies: 0,
+      checked_out_copies: 0,
       most_borrowed_books: [],
       recent_activity: [],
+      top_overdue: [],
     };
   }
 

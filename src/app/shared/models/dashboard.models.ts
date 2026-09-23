@@ -1,4 +1,4 @@
-export type StatAccent = 'primary' | 'blue' | 'red';
+export type StatAccent = 'primary' | 'blue' | 'red' | 'green' | 'amber';
 
 export interface StatCardModel {
   readonly title: string;
@@ -24,6 +24,15 @@ export interface ActivityItemModel {
   readonly subtitle: string;
   readonly time: string;
   readonly showConnector?: boolean;
+}
+
+export interface OverdueLoanRowModel {
+  readonly loanId: string;
+  readonly studentName: string;
+  readonly studentCode: string;
+  readonly bookTitle: string;
+  readonly daysOverdueLabel: string;
+  readonly dueDateLabel: string;
 }
 
 export interface AdminNavItemModel {
